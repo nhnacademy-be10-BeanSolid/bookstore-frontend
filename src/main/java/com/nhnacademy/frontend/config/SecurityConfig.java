@@ -3,7 +3,6 @@ package com.nhnacademy.frontend.config;
 import com.nhnacademy.frontend.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.filter.LoginFilter;
 import com.nhnacademy.frontend.handler.LoginSuccessHandler;
-import com.nhnacademy.frontend.provider.JwtTokenProvider;
 import com.nhnacademy.frontend.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   JwtAuthenticationFilter jwtAuthenticationFilter, AuthService authService) throws Exception {
-        LoginSuccessHandler successHandler = new LoginSuccessHandler();
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                   AuthService authService,
+                                                   LoginSuccessHandler successHandler) throws Exception {
         LoginFilter loginFilter = new LoginFilter("/auth/login", authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -33,17 +33,12 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
-                        .deleteCookies("accessToken")
+                        .deleteCookies("accessToken", "refreshToken")
                         .permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
-        return new JwtAuthenticationFilter(jwtTokenProvider);
     }
 }
