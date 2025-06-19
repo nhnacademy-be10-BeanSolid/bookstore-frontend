@@ -3,7 +3,7 @@ package com.nhnacademy.frontend.filter;
 import com.nhnacademy.frontend.adapter.AuthAdapter;
 import com.nhnacademy.frontend.domain.LoginResponseDto;
 import com.nhnacademy.frontend.domain.RefreshTokenRequestDto;
-import com.nhnacademy.frontend.provider.JwtTokenProvider;
+import com.nhnacademy.frontend.domain.TokenParseResponseDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthAdapter authAdapter;
 
     @Override
@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwt = extractJwtFromCookie(request);
 
-        if(jwt != null && jwtTokenProvider.validateToken(jwt)) {
+        if(jwt != null && authAdapter.validate(jwt)) {
             // 1. AccessToken이 유효한 경우 기존 인증 처리
             authenticateAndContinue(jwt, request, response, filterChain);
             return;
@@ -99,11 +99,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 인증 처리 메서드
     private void authenticateAndContinue(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-        String username = jwtTokenProvider.getUsernameFromJwt(jwt);
-        List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(jwt);
+        TokenParseResponseDto parsed = authAdapter.parse(jwt);
+        String username = parsed.username();
+        List<String> authorities = parsed.authorities();
+
+        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(username, null, authorities);
+                new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
