@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.config;
 
 import com.nhnacademy.frontend.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.filter.LoginFilter;
+import com.nhnacademy.frontend.handler.CustomCookieClearingLogoutHandler;
 import com.nhnacademy.frontend.handler.LoginSuccessHandler;
 import com.nhnacademy.frontend.service.AuthService;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    AuthService authService,
-                                                   LoginSuccessHandler successHandler) throws Exception {
+                                                   LoginSuccessHandler successHandler,
+                                                   CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
         LoginFilter loginFilter = new LoginFilter("/auth/login", authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
         http
                 .authorizeHttpRequests(auth -> auth
@@ -28,12 +30,11 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
-                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
-                        .deleteCookies("accessToken", "refreshToken")
-                        .permitAll()
+                        .addLogoutHandler(customCookieClearingLogoutHandler)
+                        .logoutSuccessUrl("/")
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
