@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -25,6 +26,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthAdapter authAdapter;
+
+    @Value("${custom.security.jwt.access-token-expiration}")
+    private int accessTokenExpiration;
+
+    @Value("${custom.security.jwt.refresh-token-expiration}")
+    private int refreshTokenExpiration;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -51,13 +58,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 accessCookie.setHttpOnly(true);
                 accessCookie.setPath("/");
                 accessCookie.setSecure(true);
-                accessCookie.setMaxAge(60 * 60);
+                accessCookie.setMaxAge(accessTokenExpiration);
 
                 Cookie refreshCookie = new Cookie("refreshToken", newRefreshToken);
                 refreshCookie.setHttpOnly(true);
                 refreshCookie.setPath("/");
                 refreshCookie.setSecure(true);
-                refreshCookie.setMaxAge(60 * 60 * 24 * 7);
+                refreshCookie.setMaxAge(refreshTokenExpiration);
 
                 response.addCookie(accessCookie);
                 response.addCookie(refreshCookie);
