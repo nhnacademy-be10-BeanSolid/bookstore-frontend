@@ -14,11 +14,6 @@ public class CustomCookieClearingLogoutHandler implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("로그아웃 요청: IP={}, User-Agent={}", request.getRemoteAddr(), request.getHeader("User-Agent"));
-        if (authentication != null) {
-            log.info("로그아웃 사용자: {}", authentication.getName());
-        } else {
-            log.info("로그아웃 시 인증 정보가 없습니다.");
-        }
 
         Cookie accessToken = new Cookie("accessToken", null);
         accessToken.setPath("/");
