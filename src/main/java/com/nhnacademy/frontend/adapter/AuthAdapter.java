@@ -11,7 +11,7 @@ public interface AuthAdapter {
     LoginResponseDto login(@RequestBody LoginRequestDto request);
 
     @PostMapping("/auth-service/auth/refresh")
-    RefreshTokenResponseDto refresh(@RequestBody RefreshTokenRequestDto request);
+    RefreshTokenResponseDto refresh(@RequestBody String request);
 
     @PostMapping("/auth-service/auth/validate")
     Boolean validate(@RequestBody String token);

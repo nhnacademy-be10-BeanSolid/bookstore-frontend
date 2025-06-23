@@ -1,8 +1,7 @@
 package com.nhnacademy.frontend.auth.service;
 
 import com.nhnacademy.frontend.adapter.AuthAdapter;
-import com.nhnacademy.frontend.auth.domain.LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
+import com.nhnacademy.frontend.auth.domain.*;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,5 +22,20 @@ public class AuthServiceImpl implements AuthService {
             log.error("Login failed for user {}: {}", username, e.getMessage(), e);
             return null;
         }
+    }
+
+    @Override
+    public boolean validate(String token) {
+        return authAdapter.validate(token);
+    }
+
+    @Override
+    public TokenParseResponseDto parse(String token) {
+        return authAdapter.parse(token);
+    }
+
+    @Override
+    public RefreshTokenResponseDto refresh(String refreshToken) {
+        return authAdapter.refresh(refreshToken);
     }
 }
