@@ -1,10 +1,10 @@
-package com.nhnacademy.frontend.config;
+package com.nhnacademy.frontend.auth.config;
 
-import com.nhnacademy.frontend.filter.JwtAuthenticationFilter;
-import com.nhnacademy.frontend.filter.LoginFilter;
-import com.nhnacademy.frontend.handler.CustomCookieClearingLogoutHandler;
-import com.nhnacademy.frontend.handler.LoginSuccessHandler;
-import com.nhnacademy.frontend.service.AuthService;
+import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
+import com.nhnacademy.frontend.auth.filter.LoginFilter;
+import com.nhnacademy.frontend.auth.handler.CustomCookieClearingLogoutHandler;
+import com.nhnacademy.frontend.auth.handler.LoginSuccessHandler;
+import com.nhnacademy.frontend.auth.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

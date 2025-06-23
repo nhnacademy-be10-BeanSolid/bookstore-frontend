@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.domain;
+package com.nhnacademy.frontend.auth.domain;
 
 import java.util.List;
 

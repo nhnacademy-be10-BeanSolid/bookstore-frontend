@@ -1,8 +1,8 @@
-package com.nhnacademy.frontend.service;
+package com.nhnacademy.frontend.auth.service;
 
 import com.nhnacademy.frontend.adapter.AuthAdapter;
-import com.nhnacademy.frontend.domain.LoginRequestDto;
-import com.nhnacademy.frontend.domain.LoginResponseDto;
+import com.nhnacademy.frontend.auth.domain.LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

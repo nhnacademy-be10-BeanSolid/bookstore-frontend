@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.controller;
 
-import com.nhnacademy.frontend.service.AuthService;
+import com.nhnacademy.frontend.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

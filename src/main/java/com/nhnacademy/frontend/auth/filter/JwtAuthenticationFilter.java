@@ -1,9 +1,9 @@
-package com.nhnacademy.frontend.filter;
+package com.nhnacademy.frontend.auth.filter;
 
 import com.nhnacademy.frontend.adapter.AuthAdapter;
-import com.nhnacademy.frontend.domain.LoginResponseDto;
-import com.nhnacademy.frontend.domain.RefreshTokenRequestDto;
-import com.nhnacademy.frontend.domain.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.domain.RefreshTokenRequestDto;
+import com.nhnacademy.frontend.auth.domain.RefreshTokenResponseDto;
+import com.nhnacademy.frontend.auth.domain.TokenParseResponseDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -50,9 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // AuthAdapter(FeignClient)로 /auth/refresh 요청
             RefreshTokenRequestDto refreshRequest = new RefreshTokenRequestDto(refreshToken);
             try {
-                LoginResponseDto loginResponse = authAdapter.refresh(refreshRequest);
-                String newAccessToken = loginResponse.getAccessToken();
-                String newRefreshToken = loginResponse.getRefreshToken();
+                RefreshTokenResponseDto refresh = authAdapter.refresh(refreshRequest);
+                String newAccessToken = refresh.getAccessToken();
+                String newRefreshToken = refresh.getRefreshToken();
 
                 Cookie accessCookie = new Cookie("accessToken", newAccessToken);
                 accessCookie.setHttpOnly(true);

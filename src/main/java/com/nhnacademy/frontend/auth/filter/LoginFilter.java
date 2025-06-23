@@ -1,7 +1,7 @@
-package com.nhnacademy.frontend.filter;
+package com.nhnacademy.frontend.auth.filter;
 
-import com.nhnacademy.frontend.domain.LoginResponseDto;
-import com.nhnacademy.frontend.service.AuthService;
+import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
+import com.nhnacademy.frontend.auth.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
