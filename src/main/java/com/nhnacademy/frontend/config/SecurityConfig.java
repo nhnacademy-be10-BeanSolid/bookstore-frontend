@@ -1,6 +1,5 @@
 package com.nhnacademy.frontend.config;
 
-import com.nhnacademy.frontend.entrypoint.CustomAuthenticaitonEntryPoint;
 import com.nhnacademy.frontend.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.filter.LoginFilter;
 import com.nhnacademy.frontend.handler.CustomCookieClearingLogoutHandler;
@@ -9,6 +8,7 @@ import com.nhnacademy.frontend.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -21,17 +21,18 @@ public class SecurityConfig {
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    AuthService authService,
                                                    LoginSuccessHandler successHandler,
-                                                   CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler,
-                                                   CustomAuthenticaitonEntryPoint customAuthenticaitonEntryPoint) throws Exception {
+                                                   CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
         LoginFilter loginFilter = new LoginFilter("/auth/login", authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticaitonEntryPoint))
+                .formLogin(login -> login
+                        .loginPage("/auth/login")
+                        .loginProcessingUrl("/auth/login"))
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .addLogoutHandler(customCookieClearingLogoutHandler)
