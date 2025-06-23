@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.config;
 
+import com.nhnacademy.frontend.entrypoint.CustomAuthenticaitonEntryPoint;
 import com.nhnacademy.frontend.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.filter.LoginFilter;
 import com.nhnacademy.frontend.handler.CustomCookieClearingLogoutHandler;
@@ -20,7 +21,8 @@ public class SecurityConfig {
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    AuthService authService,
                                                    LoginSuccessHandler successHandler,
-                                                   CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
+                                                   CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler,
+                                                   CustomAuthenticaitonEntryPoint customAuthenticaitonEntryPoint) throws Exception {
         LoginFilter loginFilter = new LoginFilter("/auth/login", authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
         http
                 .authorizeHttpRequests(auth -> auth
@@ -28,10 +30,8 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/auth/login")
-                        .loginProcessingUrl("/auth/login")
-                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticaitonEntryPoint))
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .addLogoutHandler(customCookieClearingLogoutHandler)
