@@ -55,4 +55,9 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         log.warn("로그인 실패: username={}", username);
         throw new BadCredentialsException("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
+
+    @Override
+    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        return request.getMethod().equals("POST") && super.requiresAuthentication(request, response);
+    }
 }
