@@ -16,13 +16,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
+    private static final String LOGIN_URL = "/auth/login";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    AuthService authService,
                                                    LoginSuccessHandler successHandler,
                                                    CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
-        LoginFilter loginFilter = new LoginFilter("/auth/login", authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
+        LoginFilter loginFilter = new LoginFilter(LOGIN_URL, authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -31,8 +33,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
-                        .loginPage("/auth/login")
-                        .loginProcessingUrl("/auth/login"))
+                        .loginPage(LOGIN_URL)
+                        .loginProcessingUrl(LOGIN_URL))
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .addLogoutHandler(customCookieClearingLogoutHandler)

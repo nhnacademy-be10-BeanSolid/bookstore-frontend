@@ -34,7 +34,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        log.debug("로그인 시도: username={}, password={}", username, password);
+        log.debug("로그인 시도: username={}", username);
 
         // 1. AuthService로 인증 요청 및 토큰 수령
         LoginResponseDto loginResponse = authService.login(username, password);
