@@ -68,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.addCookie(refreshCookie);
 
                 authenticateAndContinue(newAccessToken, request, response, filterChain);
+                return;
             } catch (Exception e) {
                 // RefreshToken도 만료/무효이면 인증 실패 처리
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -104,17 +105,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 인증 처리 메서드
     private void authenticateAndContinue(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-        TokenParseResponseDto parsed = authService.parse(jwt);
-        String username = parsed.username();
-        List<String> authorities = parsed.authorities();
+        try {
+            TokenParseResponseDto parsed = authService.parse(jwt);
+            String username = parsed.username();
+            List<String> authorities = parsed.authorities();
 
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
+            List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+        }
         filterChain.doFilter(request, response);
     }
 }
