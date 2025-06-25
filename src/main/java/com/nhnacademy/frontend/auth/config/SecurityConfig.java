@@ -25,8 +25,6 @@ public class SecurityConfig {
                                                    LoginSuccessHandler successHandler,
                                                    CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
         LoginFilter loginFilter = new LoginFilter(LOGIN_URL, authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
-
-        LoginFilter loginFilter = new LoginFilter("/auth/login", authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
