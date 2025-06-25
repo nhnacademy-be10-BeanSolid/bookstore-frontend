@@ -1,9 +1,6 @@
 package com.nhnacademy.frontend.adapter;
 
-import com.nhnacademy.frontend.domain.LoginRequestDto;
-import com.nhnacademy.frontend.domain.LoginResponseDto;
-import com.nhnacademy.frontend.domain.RefreshTokenRequestDto;
-import com.nhnacademy.frontend.domain.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.domain.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +11,7 @@ public interface AuthAdapter {
     LoginResponseDto login(@RequestBody LoginRequestDto request);
 
     @PostMapping("/auth-service/auth/refresh")
-    LoginResponseDto refresh(@RequestBody RefreshTokenRequestDto request);
+    RefreshTokenResponseDto refresh(@RequestBody String request);
 
     @PostMapping("/auth-service/auth/validate")
     Boolean validate(@RequestBody String token);

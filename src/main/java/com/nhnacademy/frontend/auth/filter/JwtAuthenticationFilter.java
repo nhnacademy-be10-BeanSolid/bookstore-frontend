@@ -1,9 +1,8 @@
-package com.nhnacademy.frontend.filter;
+package com.nhnacademy.frontend.auth.filter;
 
-import com.nhnacademy.frontend.adapter.AuthAdapter;
-import com.nhnacademy.frontend.domain.LoginResponseDto;
-import com.nhnacademy.frontend.domain.RefreshTokenRequestDto;
-import com.nhnacademy.frontend.domain.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.domain.RefreshTokenResponseDto;
+import com.nhnacademy.frontend.auth.domain.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -25,7 +24,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final AuthAdapter authAdapter;
+    private final AuthService authService;
 
     @Value("${custom.security.jwt.access-token-expiration}")
     private int accessTokenExpiration;
@@ -38,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwt = extractJwtFromCookie(request);
 
-        if(jwt != null && authAdapter.validate(jwt)) {
+        if(jwt != null && authService.validate(jwt)) {
             // 1. AccessToken이 유효한 경우 기존 인증 처리
             authenticateAndContinue(jwt, request, response, filterChain);
             return;
@@ -48,11 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = extractRefreshTokenFromCookie(request);
         if(refreshToken != null) {
             // AuthAdapter(FeignClient)로 /auth/refresh 요청
-            RefreshTokenRequestDto refreshRequest = new RefreshTokenRequestDto(refreshToken);
             try {
-                LoginResponseDto loginResponse = authAdapter.refresh(refreshRequest);
-                String newAccessToken = loginResponse.getAccessToken();
-                String newRefreshToken = loginResponse.getRefreshToken();
+                RefreshTokenResponseDto refresh = authService.refresh(refreshToken);
+                String newAccessToken = refresh.getAccessToken();
+                String newRefreshToken = refresh.getRefreshToken();
 
                 Cookie accessCookie = new Cookie("accessToken", newAccessToken);
                 accessCookie.setHttpOnly(true);
@@ -70,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.addCookie(refreshCookie);
 
                 authenticateAndContinue(newAccessToken, request, response, filterChain);
+                return;
             } catch (Exception e) {
                 // RefreshToken도 만료/무효이면 인증 실패 처리
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -106,17 +105,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 인증 처리 메서드
     private void authenticateAndContinue(String jwt, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-        TokenParseResponseDto parsed = authAdapter.parse(jwt);
-        String username = parsed.username();
-        List<String> authorities = parsed.authorities();
+        try {
+            TokenParseResponseDto parsed = authService.parse(jwt);
+            String username = parsed.username();
+            List<String> authorities = parsed.authorities();
 
-        List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
+            List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
 
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+        }
         filterChain.doFilter(request, response);
     }
 }
