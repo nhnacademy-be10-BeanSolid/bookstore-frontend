@@ -1,13 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>메인 페이지</title>
+    <meta name="viewport" content="width=1200, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-Home
-<form th:action="@{/auth/logout}" method="post">
-    <button type="submit">로그아웃</button>
-</form>
+<body class="bg-white">
+
+<!-- 상단 네비게이션 바 -->
+<div class="bg-secondary text-white py-2">
+    <div class="container d-flex justify-content-end align-items-center" style="max-width:1200px;">
+        <a href="/auth/login" class="text-white text-decoration-none me-3">로그인</a>
+        <a href="/auth/select-signup" class="text-white text-decoration-none me-3">회원가입</a>
+        <a href="#" class="text-white text-decoration-none me-3">마이페이지</a>
+        <a href="#" class="text-white text-decoration-none me-3">장바구니</a>
+        <a href="#" class="text-white text-decoration-none">고객센터</a>
+    </div>
+</div>
+
+<!-- 로고 & 검색창 -->
+<div class="container d-flex align-items-center mt-4" style="max-width:1200px;">
+    <div class="border d-flex justify-content-center align-items-center" style="width:140px; height:120px;">
+        <span class="fs-4">로고</span>
+    </div>
+    <input type="text" class="form-control ms-4" style="height:48px; background:#888; color:#fff; max-width:600px;" placeholder="검색어를 입력해 주세요.">
+    <button class="btn btn-dark ms-2" style="height:48px; width:48px;">
+        <span class="visually-hidden">검색</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.106a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        </svg>
+    </button>
+</div>
+
+<!-- 본문 그리드 -->
+<div class="container mt-4" style="max-width:1200px;">
+    <div class="row">
+        <!-- 좌측 카테고리 -->
+        <div class="col-2">
+            <div class="d-flex flex-column gap-2">
+                <div class="bg-secondary text-white text-center py-2">국내도서</div>
+                <div class="bg-secondary text-white text-center py-2">서양도서</div>
+                <div class="bg-secondary text-white text-center py-2">일본도서</div>
+                <div class="bg-secondary text-white text-center py-2">중국도서</div>
+                <div class="bg-secondary text-white text-center py-2">eBook</div>
+                <div class="bg-secondary text-white text-center py-2">온라인중고</div>
+                <div class="bg-secondary text-white text-center py-2">etc</div>
+            </div>
+        </div>
+        <!-- 세로 메뉴 -->
+        <div class="col-2 d-flex flex-column align-items-center">
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:260px; writing-mode:vertical-rl; text-orientation: mixed; font-size:1.1rem;">
+                <span>분류<br>테마<br>추천<br>이벤트</span>
+            </div>
+        </div>
+        <!-- 책 2열 -->
+        <div class="col-8">
+            <div class="row row-cols-2 g-4">
+                <div class="col">
+                    <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                        책 1
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                        책 2
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                        책 3
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                        책 4
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 페이지네이션 -->
+    <div class="d-flex justify-content-center align-items-center mt-4">
+        <nav>
+            <ul class="pagination mb-0">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">&larr;</a>
+                </li>
+                <li class="page-item active"><span class="page-link">1</span></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">&rarr;</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- 하단 푸터 -->
+<div class="bg-secondary text-white mt-5 py-2">
+    <div class="container d-flex justify-content-center" style="max-width:1200px;">
+        <span class="mx-2">회사소개</span>
+        <span class="mx-2">이용약관</span>
+        <span class="mx-2">개인정보처리방침</span>
+        <span class="mx-2">대량구매 안내</span>
+        <span class="mx-2">출판사 공급사 안내</span>
+        <span class="mx-2">채용안내</span>
+    </div>
+</div>
 </body>
 </html>

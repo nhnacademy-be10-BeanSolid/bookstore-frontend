@@ -25,4 +25,14 @@ public class LoginController {
         }
         return "auth/login";
     }
+
+    @GetMapping("/normal-signup")
+    public String showNormalSignupForm() {
+        return "auth/normal-signup";
+    }
+
+    @GetMapping("/select-signup")
+    public String showSelectSignupForm() {
+        return "auth/select-signup";
+    }
 }
