@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>태그 생성</title>
+</head>
+<body>
+<h1>도서 태그 생성</h1>
+<form th:action="@{/book-tags}" method="post" th:object="${request}">
+
+    <label for="tagName">태그 이름:</label>
+    <input type="text" id="tagName" th:field="*{tagName}" placeholder="태그 이름 입력" required />
+
+    <button type="submit">등록</button>
+</form>
+<a href="/book-tags">태그 목록</a>
+</body>
+</html>

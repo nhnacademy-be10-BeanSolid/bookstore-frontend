@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -40,6 +41,7 @@ public class SecurityConfig {
                         .addLogoutHandler(customCookieClearingLogoutHandler)
                         .logoutSuccessUrl("/")
                 )
+                .addFilterBefore(new HiddenHttpMethodFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session ->
