@@ -45,5 +45,11 @@
     <a href="/auth/select-signup" class="btn btn-secondary w-100 mb-2">회원가입</a>
     <button class="btn btn-secondary w-100 mb-4">비회원 주문조회</button>
 </div>
+<!-- 회원가입 성공 시 alert 창 -->
+<div th:if="${signupSuccess}">
+    <script>
+        alert('회원가입이 완료되었습니다!');
+    </script>
+</div>
 </body>
 </html>

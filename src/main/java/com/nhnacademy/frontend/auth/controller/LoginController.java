@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.auth.controller;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,15 +20,5 @@ public class LoginController {
             return "redirect:/";
         }
         return "auth/login";
-    }
-
-    @GetMapping("/normal-signup")
-    public String showNormalSignupForm() {
-        return "auth/normal-signup";
-    }
-
-    @GetMapping("/select-signup")
-    public String showSelectSignupForm() {
-        return "auth/select-signup";
     }
 }

@@ -1,7 +1,7 @@
 <!-- layout.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title layout:fragment="title">페이지 제목</title>
@@ -13,8 +13,27 @@
 <!-- ✅ 상단 네비게이션 바 -->
 <div class="bg-secondary text-white py-2">
     <div class="container d-flex justify-content-end align-items-center" style="max-width:1200px;">
-        <a href="/auth/login" class="text-white text-decoration-none me-3">로그인</a>
-        <a href="/auth/select-signup" class="text-white text-decoration-none me-3">회원가입</a>
+
+        <!-- 로그인 안 된 상태 -->
+        <div th:if="${not isLoggedIn}">
+            <a href="/auth/login" class="text-white text-decoration-none me-3">로그인</a>
+            <a href="/auth/select-signup" class="text-white text-decoration-none me-3">회원가입</a>
+        </div>
+
+        <!-- 로그인 된 상태 -->
+        <div th:if="${isLoggedIn}" class="d-flex align-items-center me-3">
+            <!-- 왼쪽: 환영 메시지 -->
+            <span class="me-3 text-white" th:text="${loginUserId + ' 님 환영합니다!'}"></span>
+
+            <!-- 관리자만 보이는 버튼 -->
+            <a href="/admin" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-warning btn-sm me-3">관리자페이지</a>
+
+            <!-- 오른쪽: 로그아웃 버튼 (inline-block 설정) -->
+            <form th:action="@{/auth/logout}" method="post" class="mb-0 d-inline">
+                <button type="submit" class="btn btn-link text-white text-decoration-none p-0">로그아웃</button>
+            </form>
+        </div>
+
         <a href="#" class="text-white text-decoration-none me-3">마이페이지</a>
         <a href="#" class="text-white text-decoration-none me-3">장바구니</a>
         <a href="#" class="text-white text-decoration-none">고객센터</a>

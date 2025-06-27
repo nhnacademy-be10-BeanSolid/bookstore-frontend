@@ -1,5 +1,6 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.auth.controller;
 
+import com.nhnacademy.frontend.auth.controller.LoginController;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

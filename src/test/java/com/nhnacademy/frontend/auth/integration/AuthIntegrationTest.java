@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.integration;
+package com.nhnacademy.frontend.auth.integration;
 
 import com.nhnacademy.frontend.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
