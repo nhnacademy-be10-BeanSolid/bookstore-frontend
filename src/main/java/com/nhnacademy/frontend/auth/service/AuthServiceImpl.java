@@ -38,4 +38,9 @@ public class AuthServiceImpl implements AuthService {
     public RefreshTokenResponseDto refresh(String refreshToken) {
         return authAdapter.refresh(refreshToken);
     }
+
+    @Override
+    public LoginResponseDto oauth2Login(String provider, String code) {
+        return authAdapter.oauth2Login(new OAuth2LoginRequestDto(provider, code));
+    }
 }

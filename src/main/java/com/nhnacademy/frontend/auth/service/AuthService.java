@@ -12,4 +12,6 @@ public interface AuthService {
     TokenParseResponseDto parse(String token);
 
     RefreshTokenResponseDto refresh(String refreshToken);
+
+    LoginResponseDto oauth2Login(String provider, String code);
 }
