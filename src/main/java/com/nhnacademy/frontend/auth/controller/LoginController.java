@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.auth.controller;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
