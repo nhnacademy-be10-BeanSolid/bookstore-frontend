@@ -1,13 +1,77 @@
+<!-- main.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Home</title>
+    <title layout:fragment="title">메인 페이지</title>
 </head>
 <body>
-Home
-<form action="/auth/logout" method="post">
-    <button type="submit">로그아웃</button>
-</form>
+<!-- ✅ 본문 콘텐츠 fragment -->
+<div layout:fragment="content">
+    <div class="container mt-4" style="max-width:1200px;">
+        <div class="row">
+            <!-- 좌측 카테고리 -->
+            <div class="col-2">
+                <div class="d-flex flex-column gap-2">
+                    <div class="bg-secondary text-white text-center py-2">국내도서</div>
+                    <div class="bg-secondary text-white text-center py-2">서양도서</div>
+                    <div class="bg-secondary text-white text-center py-2">일본도서</div>
+                    <div class="bg-secondary text-white text-center py-2">중국도서</div>
+                    <div class="bg-secondary text-white text-center py-2">eBook</div>
+                    <div class="bg-secondary text-white text-center py-2">온라인중고</div>
+                    <div class="bg-secondary text-white text-center py-2">etc</div>
+                </div>
+            </div>
+            <!-- 세로 메뉴 -->
+            <div class="col-2 d-flex flex-column align-items-center">
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:260px; writing-mode:vertical-rl; text-orientation: mixed; font-size:1.1rem;">
+                    <span>분류<br>테마<br>추천<br>이벤트</span>
+                </div>
+            </div>
+            <!-- 책 2열 -->
+            <div class="col-8">
+                <div class="row row-cols-2 g-4">
+                    <div class="col">
+                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                            책 1
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                            책 2
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                            책 3
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
+                            책 4
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 페이지네이션 -->
+        <div class="d-flex justify-content-center align-items-center mt-4">
+            <nav>
+                <ul class="pagination mb-0">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">&larr;</a>
+                    </li>
+                    <li class="page-item active"><span class="page-link">1</span></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">&rarr;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
 </body>
 </html>
