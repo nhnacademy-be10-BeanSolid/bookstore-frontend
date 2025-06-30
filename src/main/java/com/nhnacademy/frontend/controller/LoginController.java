@@ -1,6 +1,9 @@
 package com.nhnacademy.frontend.controller;
 
-import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.domain.AdditionalSignupRequiredDto;
+import com.nhnacademy.frontend.auth.domain.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.domain.ResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.domain.PaycoCallbackResponseDto;
@@ -11,6 +14,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +23,19 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/auth/login")
 @RequiredArgsConstructor
 public class LoginController {
     private final AuthService authService;
     private final JwtCookieUtil jwtCookieUtil;
+    private final ObjectMapper objectMapper;
 
     @Value("${payco.client-id}")
     private String clientId;
     @Value("${payco.redirect-uri}")
     private String redirectUri;
 
-    @GetMapping("/login")
+    @GetMapping()
     public String showLoginForm() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null
@@ -41,7 +46,7 @@ public class LoginController {
         return "auth/login";
     }
 
-    @GetMapping("/login/payco")
+    @GetMapping("/payco")
     public void redirectToPaycoLogin(HttpServletResponse response) throws IOException {
         String state = UUID.randomUUID().toString();
 
@@ -64,17 +69,31 @@ public class LoginController {
         response.sendRedirect(paycoAuthUrl);
     }
 
-    @GetMapping("/login/payco/callback")
+    @GetMapping("/payco/callback")
     public String handlePaycoCallback(@ModelAttribute PaycoCallbackResponseDto responseDto,
-                                      HttpServletResponse response) {
+                                      HttpServletResponse response,
+                                      Model model) {
         String code = responseDto.code();
 
-        LoginResponseDto loginResponse = authService.oauth2Login("payco", code);
+        ResponseDto<?> result = authService.oauth2Login("payco", code);
 
-        String accessToken = loginResponse.getAccessToken();
-        String refreshToken = loginResponse.getRefreshToken();
-        jwtCookieUtil.addJwtCookie(response, accessToken, refreshToken);
-
-        return "redirect:/";
+        if(result.isSuccess()) {
+            OAuth2LoginResponseDto successData = objectMapper.convertValue(result.getData(), OAuth2LoginResponseDto.class);
+            jwtCookieUtil.addJwtCookie(response, successData.getAccessToken(), successData.getRefreshToken());
+            return "redirect:/";
+        } else {
+            AdditionalSignupRequiredDto signupData = objectMapper.convertValue(result.getData(), AdditionalSignupRequiredDto.class);
+            model.addAttribute("tempJwt", signupData.getTempJwt());
+            model.addAttribute("name", signupData.getName());
+            model.addAttribute("email", signupData.getEmail());
+            String mobile = signupData.getMobile();
+            if(mobile != null && mobile.length() >= 11 && mobile.contains("-")) {
+                String[] parts = mobile.split("-");
+                model.addAttribute("mobile1", parts[0]);
+                model.addAttribute("mobile2", parts[1]);
+                model.addAttribute("mobile3", parts[2]);
+            }
+            return "auth/oauth2-signup";
+        }
     }
 }

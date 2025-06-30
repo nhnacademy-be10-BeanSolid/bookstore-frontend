@@ -40,7 +40,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponseDto oauth2Login(String provider, String code) {
+    public ResponseDto<?> oauth2Login(String provider, String code) {
         return authAdapter.oauth2Login(new OAuth2LoginRequestDto(provider, code));
+    }
+
+    @Override
+    public OAuth2LoginResponseDto oauth2AdditionalSignup(OAuth2AdditionalSignupRequestDto request) {
+        return authAdapter.additionalSignup(request);
     }
 }

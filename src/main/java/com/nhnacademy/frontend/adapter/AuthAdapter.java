@@ -20,5 +20,8 @@ public interface AuthAdapter {
     TokenParseResponseDto parse(@RequestBody String token);
 
     @PostMapping("/auth-service/oauth2/login")
-    LoginResponseDto oauth2Login(@RequestBody OAuth2LoginRequestDto request);
+    ResponseDto<?> oauth2Login(@RequestBody OAuth2LoginRequestDto request);
+
+    @PostMapping("/auth-service/oauth2/signup")
+    OAuth2LoginResponseDto additionalSignup(@RequestBody OAuth2AdditionalSignupRequestDto request);
 }
