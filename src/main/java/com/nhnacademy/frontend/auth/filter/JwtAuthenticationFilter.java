@@ -3,13 +3,13 @@ package com.nhnacademy.frontend.auth.filter;
 import com.nhnacademy.frontend.auth.domain.RefreshTokenResponseDto;
 import com.nhnacademy.frontend.auth.domain.TokenParseResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
+import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -25,12 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthService authService;
-
-    @Value("${custom.security.jwt.access-token-expiration}")
-    private int accessTokenExpiration;
-
-    @Value("${custom.security.jwt.refresh-token-expiration}")
-    private int refreshTokenExpiration;
+    private final JwtCookieUtil jwtCookieUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -52,20 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String newAccessToken = refresh.getAccessToken();
                 String newRefreshToken = refresh.getRefreshToken();
 
-                Cookie accessCookie = new Cookie("accessToken", newAccessToken);
-                accessCookie.setHttpOnly(true);
-                accessCookie.setPath("/");
-                accessCookie.setSecure(true);
-                accessCookie.setMaxAge(accessTokenExpiration);
-
-                Cookie refreshCookie = new Cookie("refreshToken", newRefreshToken);
-                refreshCookie.setHttpOnly(true);
-                refreshCookie.setPath("/");
-                refreshCookie.setSecure(true);
-                refreshCookie.setMaxAge(refreshTokenExpiration);
-
-                response.addCookie(accessCookie);
-                response.addCookie(refreshCookie);
+                jwtCookieUtil.addJwtCookie(response, newAccessToken, newRefreshToken);
 
                 authenticateAndContinue(newAccessToken, request, response, filterChain);
                 return;
