@@ -78,34 +78,31 @@ class SignUpControllerTest {
     @DisplayName("회원가입 처리 - 중복확인 안함")
     @Test
     void registerUser_duplicateCheckNotPassed() throws Exception {
-        MockHttpSession session = new MockHttpSession(); // isAvailable 미설정
-
         mockMvc.perform(post("/auth/normal-signup/register")
-                        .session(session)
                         .param("userId", "user1")
-                        .param("password", "pw1234")
-                        .param("name", "홍길동"))
+                        .param("userPassword", "pw1234")
+                        .param("userName", "홍길동")
+                        .param("isAvailable", "false"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요."))
                 .andExpect(flash().attribute("userId", "user1"))
                 .andExpect(redirectedUrl("/auth/normal-signup"));
     }
 
+
     @DisplayName("회원가입 처리 - 정상 플로우")
     @Test
     void registerUser_success() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("isAvailable", true);
-
         doNothing().when(userService).register(ArgumentMatchers.any(UserCreateRequestDto.class));
 
         mockMvc.perform(post("/auth/normal-signup/register")
-                        .session(session)
                         .param("userId", "user2")
-                        .param("password", "pw1234")
-                        .param("name", "홍길동"))
+                        .param("userPassword", "pw1234")
+                        .param("userName", "홍길동")
+                        .param("isAvailable", "true"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("signupSuccess", true))
                 .andExpect(redirectedUrl("/auth/login"));
     }
+
 }
