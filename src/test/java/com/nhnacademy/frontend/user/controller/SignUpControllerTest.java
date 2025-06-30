@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
@@ -20,8 +20,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = SignUpController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class)
+@WebMvcTest(controllers = SignUpController.class,
+        excludeFilters = {@ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = JwtAuthenticationFilter.class)
 })
 @AutoConfigureMockMvc(addFilters = false)
 class SignUpControllerTest {
@@ -31,6 +33,9 @@ class SignUpControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private RedisConnectionFactory redisConnectionFactory;
 
     @DisplayName("회원가입 폼 GET - userIdCheckRequestDto 없는 경우")
     @Test
@@ -89,7 +94,6 @@ class SignUpControllerTest {
                 .andExpect(redirectedUrl("/auth/normal-signup"));
     }
 
-
     @DisplayName("회원가입 처리 - 정상 플로우")
     @Test
     void registerUser_success() throws Exception {
@@ -104,5 +108,4 @@ class SignUpControllerTest {
                 .andExpect(flash().attribute("signupSuccess", true))
                 .andExpect(redirectedUrl("/auth/login"));
     }
-
 }
