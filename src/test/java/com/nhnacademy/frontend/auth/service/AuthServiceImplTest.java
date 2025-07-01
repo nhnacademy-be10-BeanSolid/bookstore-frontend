@@ -5,6 +5,7 @@ import com.nhnacademy.frontend.auth.domain.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
 import com.nhnacademy.frontend.auth.domain.RefreshTokenResponseDto;
 import com.nhnacademy.frontend.auth.domain.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.service.impl.AuthServiceImpl;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
