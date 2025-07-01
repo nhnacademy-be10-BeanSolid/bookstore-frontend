@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.integration;
+package com.nhnacademy.frontend.auth.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.adapter.AuthAdapter;
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockCookie;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class AuthIntegrationTest {
 
     @Autowired

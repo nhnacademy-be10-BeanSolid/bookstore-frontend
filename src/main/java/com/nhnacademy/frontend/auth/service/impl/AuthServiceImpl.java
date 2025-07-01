@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.service;
+package com.nhnacademy.frontend.auth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.adapter.AuthAdapter;
@@ -6,6 +6,8 @@ import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.domain.*;
+import com.nhnacademy.frontend.auth.service.AuthService;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

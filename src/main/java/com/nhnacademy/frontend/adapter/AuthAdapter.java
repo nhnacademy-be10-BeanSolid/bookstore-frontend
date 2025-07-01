@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "gateway-service")
+@FeignClient(name = "gateway-service", contextId = "authAdapter")
 public interface AuthAdapter {
     @PostMapping("/auth-service/auth/login")
     LoginResponseDto login(@RequestBody LoginRequestDto request);

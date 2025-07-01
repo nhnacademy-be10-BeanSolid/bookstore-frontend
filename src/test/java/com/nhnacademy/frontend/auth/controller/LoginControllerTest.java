@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.auth.controller.LoginController;
@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
@@ -46,6 +47,9 @@ class LoginControllerTest {
 
     @MockBean
     ObjectMapper objectMapper;
+
+    @MockBean
+    private RedisConnectionFactory redisConnectionFactory;
 
     @Test
     void showLoginForm_anonymousUser_returnsLoginForm() throws Exception {
