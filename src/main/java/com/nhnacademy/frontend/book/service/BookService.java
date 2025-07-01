@@ -1,7 +1,6 @@
 package com.nhnacademy.frontend.book.service;
 
-import com.nhnacademy.frontend.book.domain.BookTagCreateRequestDto;
-import com.nhnacademy.frontend.book.domain.BookTagResponseDto;
+import com.nhnacademy.frontend.book.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,7 +11,25 @@ public interface BookService {
 
     Page<BookTagResponseDto> getAllBookTags(Pageable pageable);
 
-    BookTagResponseDto updateTag(Long tagId, BookTagCreateRequestDto request);
-
     void deleteBookTag(Long tagId);
+
+    BookCategoryResponseDto createCategory(BookCategoryCreateRequestDto request);
+
+    BookCategoryResponseDto getCategory(Long id);
+
+    Page<BookCategoryResponseDto> getAllBookCategories(Pageable pageable);
+
+    BookCategoryResponseDto updateCategory(Long id, BookCategoryUpdateRequestDto request);
+
+    void deleteCategory(Long id);
+
+    Page<BookResponseDto> getAllBooks(Pageable pageable);
+
+    BookDetailResponseDto getBookDetail(Long id);
+
+    BookResponseDto createBook(BookCreateRequestDto request);
+
+    BookDetailResponseDto updateBook(Long id, BookUpdateRequestDto request);
+
+    void deleteBook(Long id);
 }

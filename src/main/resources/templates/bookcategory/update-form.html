@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 수정</title>
+</head>
+<body>
+<h1>카테고리 수정</h1>
+<form th:action="@{/categories/{id}(id=${category.categoryId})}" method="post">
+    <input type="hidden" name="_method" value="put"/>
+
+    <div>
+        <label for="categoryName">카테고리 이름:</label>
+        <input type="text" id="categoryName" name="categoryName"
+               th:value="${category.categoryName}" required/>
+    </div>
+
+    <div>
+        <label for="parentId">부모 카테고리 ID:</label>
+        <input type="number" id="parentId" name="parentId"
+               th:value="${category.parentId}"/>
+    </div>
+
+    <button type="submit">수정</button>
+</form>
+</body>
+</html>

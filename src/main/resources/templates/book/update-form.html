@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'도서 수정 - ' + ${book.title}">도서 수정</title>
+</head>
+<body>
+<h1 th:text="'도서 수정: ' + ${book.title}">도서 수정</h1>
+
+<form th:action="@{/books/{id}(id=${bookId})}" method="post">
+    <input type="hidden" name="_method" value="put" />
+
+    <label>제목</label><br/>
+    <input type="text" name="title" th:value="${book.title}" required/><br/><br/>
+
+    <label>설명</label><br/>
+    <textarea name="description" rows="4" cols="50" th:text="${book.description}"></textarea><br/><br/>
+
+    <label>목차</label><br/>
+    <textarea name="toc" rows="4" cols="50" th:text="${book.toc}"></textarea><br/><br/>
+
+    <label>저자</label><br/>
+    <input type="text" name="author" th:value="${book.author}" required/><br/><br/>
+
+    <label>출판사</label><br/>
+    <input type="text" name="publisher" th:value="${book.publisher}" required/><br/><br/>
+
+    <label>출판일</label><br/>
+<!--    <input type="date" name="publishAt"-->
+<!--           th:value="${#temporals.format(book.publishAt, 'yyyy-MM-dd')}" />-->
+    <input type="date" name="publishAt"
+           th:value="${book.publishAt}"/><br/><br/>
+
+
+    <label>원가</label><br/>
+    <input type="number" name="originalPrice" th:value="${book.originalPrice}" min="0" required/><br/><br/>
+
+    <label>판매가</label><br/>
+    <input type="number" name="salePrice" th:value="${book.salePrice}" min="0" required/><br/><br/>
+
+    <label>포장 가능 여부</label><br/>
+    <select name="wrappable">
+        <option th:value="true" th:selected="${book.wrappable}">가능</option>
+        <option th:value="false" th:selected="${!book.wrappable}">불가능</option>
+    </select><br/><br/>
+
+    <label>재고</label><br/>
+    <input type="number" name="stock" th:value="${book.stock}" min="0"/><br/><br/>
+
+    <label>책 상태</label><br/>
+    <select name="status">
+        <option th:value="ON_SALE" th:selected="${book.status == 'ON_SALE'}">판매중</option>
+        <option th:value="SALE_END" th:selected="${book.status == 'SALE_END'}">판매종료</option>
+    </select><br/><br/>
+
+    <button type="submit">수정 완료</button>
+</form>
+
+<br/>
+<a href="/books" style="text-decoration:none;">← 도서 목록으로</a>
+
+</body>
+</html>

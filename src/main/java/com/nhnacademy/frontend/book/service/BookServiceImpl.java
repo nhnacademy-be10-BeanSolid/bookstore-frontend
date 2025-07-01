@@ -1,8 +1,7 @@
 package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.adapter.BookAdapter;
-import com.nhnacademy.frontend.book.domain.BookTagCreateRequestDto;
-import com.nhnacademy.frontend.book.domain.BookTagResponseDto;
+import com.nhnacademy.frontend.book.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,14 +31,69 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookTagResponseDto updateTag(Long tagId, BookTagCreateRequestDto request) {
-        log.info("Tag Update Start : {}", request.getTagName());
-        return bookAdapter.updateTag(tagId, request);
-    }
-
-    @Override
     public void deleteBookTag(Long tagId) {
         log.info("Tag Delete Start : {}", tagId);
         bookAdapter.deleteTag(tagId);
     }
+
+    @Override
+    public BookCategoryResponseDto createCategory(BookCategoryCreateRequestDto request) {
+        log.info("Category Create Start : {}", request.getCategoryName());
+        return bookAdapter.createCategory(request);
+    }
+
+    @Override
+    public BookCategoryResponseDto getCategory(Long id) {
+        log.info("Category Get Start : {}", id);
+        return bookAdapter.getBookCategory(id);
+    }
+
+    @Override
+    public Page<BookCategoryResponseDto> getAllBookCategories(Pageable pageable) {
+        log.info("CategoryListGet Start - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        return bookAdapter.getAllBookCategories(pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    @Override
+    public BookCategoryResponseDto updateCategory(Long id, BookCategoryUpdateRequestDto request) {
+        log.info("Category Update Start : {}", id);
+        return bookAdapter.updateCategory(id, request);
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+        log.debug("Category Delete Start : {}", id);
+        bookAdapter.deleteCategory(id);
+    }
+
+    @Override
+    public Page<BookResponseDto> getAllBooks(Pageable pageable) {
+        log.info("BookList Get Start - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        return bookAdapter.getBooks(pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    @Override
+    public BookDetailResponseDto getBookDetail(Long id) {
+        log.info("BookDetail Get Start : {}", id);
+        return bookAdapter.getBookDetail(id);
+    }
+
+    @Override
+    public BookResponseDto createBook(BookCreateRequestDto request) {
+        log.info("Book Create Start");
+        return bookAdapter.createBook(request);
+    }
+
+    @Override
+    public BookDetailResponseDto updateBook(Long id, BookUpdateRequestDto request) {
+        log.info("Book Update Start : {}", id);
+        return bookAdapter.updateBook(id, request);
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        log.debug("Book Delete Start : {}", id);
+        bookAdapter.deleteBook(id);
+    }
+
 }

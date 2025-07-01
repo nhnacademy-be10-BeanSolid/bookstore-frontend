@@ -28,15 +28,16 @@ public class BookTagController {
     @GetMapping
     public String getAllTags(Pageable pageable, Model model) {
         Page<BookTagResponseDto> tagList = bookService.getAllBookTags(pageable); // 모든 태그 조회
+        log.info("TagListGet Success- page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("tags", tagList.getContent()); // 실제 태그 데이터
         model.addAttribute("page", tagList);
         return "booktag/tag-list";
     }
 
     @PostMapping
-    public String createBookTag(@ModelAttribute BookTagCreateRequestDto dto) {
-        bookService.createTag(dto);
-        log.info("Tag Create Success : {}", dto.getTagName());
+    public String createBookTag(@ModelAttribute BookTagCreateRequestDto request) {
+        bookService.createTag(request);
+        log.info("Tag Create Success : {}", request.getTagName());
         return "redirect:/book-tags";
     }
 

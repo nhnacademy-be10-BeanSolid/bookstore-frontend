@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>도서 생성</title>
+</head>
+<body>
+<h1>도서 등록</h1>
+<form th:action="@{/books}" method="post" th:object="${book}">
+    <!-- 제목 -->
+    <div>
+        <label>제목</label>
+        <input type="text" th:field="*{title}" maxlength="255" required />
+    </div>
+
+    <!-- 설명 -->
+    <div>
+        <label>설명</label>
+        <textarea th:field="*{description}"></textarea>
+    </div>
+
+    <!-- 목차 -->
+    <div>
+        <label>목차</label>
+        <textarea th:field="*{toc}"></textarea>
+    </div>
+
+    <!-- 출판사 -->
+    <div>
+        <label>출판사</label>
+        <input type="text" th:field="*{publisher}" maxlength="255" required />
+    </div>
+
+    <!-- 저자 -->
+    <div>
+        <label>저자</label>
+        <input type="text" th:field="*{author}" maxlength="255" required />
+    </div>
+
+    <!-- 출판일 (문자열로 받음) -->
+    <div>
+        <label>출판일</label>
+        <input type="date" th:field="*{publishAt}" required />
+    </div>
+
+    <!-- ISBN -->
+    <div>
+        <label>ISBN (13자리)</label>
+        <input type="text" th:field="*{isbn}" pattern=".{13}" title="13자리 ISBN" required />
+    </div>
+
+    <!-- 정가 -->
+    <div>
+        <label>정가</label>
+        <input type="number" th:field="*{originalPrice}" min="1" required />
+    </div>
+
+    <!-- 판매가 -->
+    <div>
+        <label>판매가</label>
+        <input type="number" th:field="*{salePrice}" min="1" required />
+    </div>
+
+    <!-- 포장 가능 여부 -->
+    <div>
+        <label>포장 가능</label>
+        <input type="checkbox" th:field="*{wrappable}" />
+    </div>
+
+    <!-- 재고 -->
+    <div>
+        <label>재고</label>
+        <input type="number" th:field="*{stock}" min="0" required />
+    </div>
+
+    <!-- 카테고리 선택 -->
+    <div>
+        <label>카테고리 ID 입력</label>
+
+        <div id="categoryIdsContainer">
+            <input type="number" name="categoryIds" required />
+        </div>
+
+        <button type="button" onclick="addCategoryIdInput()">+ 추가</button>
+    </div>
+
+    <!-- 제출 -->
+    <div>
+        <button type="submit">도서 등록</button>
+    </div>
+</form>
+
+</body>
+</html>
+
+<script>
+    function addCategoryIdInput() {
+        const container = document.getElementById('categoryIdsContainer');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.name = 'categoryIds';  // 같은 name으로 여러 값 전송 가능
+        input.required = true;
+        container.appendChild(input);
+    }
+</script>

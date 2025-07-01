@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookTagUpdateRequest {
-    String tagName;
+public class BookCategoryCreateRequestDto {
+    String categoryName;
+    Long parentId;
 }
