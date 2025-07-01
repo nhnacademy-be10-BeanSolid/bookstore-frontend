@@ -1,14 +1,11 @@
 package com.nhnacademy.frontend.auth.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.response.*;
-import com.nhnacademy.frontend.auth.domain.LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
-import com.nhnacademy.frontend.auth.domain.RefreshTokenResponseDto;
-import com.nhnacademy.frontend.auth.domain.TokenParseResponseDto;
 import com.nhnacademy.frontend.auth.service.impl.AuthServiceImpl;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;

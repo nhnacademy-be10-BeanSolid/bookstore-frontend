@@ -1,7 +1,6 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.auth.controller.LoginController;
 import com.nhnacademy.frontend.auth.domain.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.domain.response.ResponseDto;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -45,7 +45,7 @@ class LoginControllerTest {
     @MockBean
     JwtCookieUtil jwtCookieUtil;
 
-    @MockBean
+    @SpyBean
     ObjectMapper objectMapper;
 
     @MockBean
@@ -88,7 +88,6 @@ class LoginControllerTest {
                 .data(successData)
                 .build();
         doReturn(successResponse).when(authService).oauth2Login("payco", "valid_code");
-        doReturn(successData).when(objectMapper).convertValue(successResponse.getData(), OAuth2LoginResponseDto.class);
 
         mockMvc.perform(get("/auth/login/payco/callback")
                 .params(params)
@@ -117,7 +116,6 @@ class LoginControllerTest {
                 .data(signupData)
                 .build();
         doReturn(failResponse).when(authService).oauth2Login("payco", "valid_code");
-        doReturn(signupData).when(objectMapper).convertValue(failResponse.getData(), AdditionalSignupRequiredDto.class);
 
         mockMvc.perform(get("/auth/login/payco/callback")
                 .params(params)
