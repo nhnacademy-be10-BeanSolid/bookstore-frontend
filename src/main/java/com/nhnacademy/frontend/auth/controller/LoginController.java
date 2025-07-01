@@ -104,7 +104,7 @@ public class LoginController {
             model.addAttribute("tempJwt", signupData.getTempJwt());
             model.addAttribute("name", signupData.getName());
             model.addAttribute("email", signupData.getEmail());
-            String mobile = signupData.getMobile();
+
             if(signupData.getMobileParts() != null) {
                 model.addAttribute("mobile1", signupData.getMobileParts()[0]);
                 model.addAttribute("mobile2", signupData.getMobileParts()[1]);
