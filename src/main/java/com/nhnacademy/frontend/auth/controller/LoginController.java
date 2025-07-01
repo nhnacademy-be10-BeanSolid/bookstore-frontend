@@ -1,12 +1,14 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.auth.domain.AdditionalSignupRequiredDto;
-import com.nhnacademy.frontend.auth.domain.OAuth2LoginResponseDto;
-import com.nhnacademy.frontend.auth.domain.ResponseDto;
+import com.nhnacademy.frontend.auth.domain.response.AdditionalSignupRequiredDto;
+import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.domain.response.PaycoCallbackResponseDto;
+import com.nhnacademy.frontend.auth.domain.response.ResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.domain.PaycoCallbackResponseDto;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -50,14 +53,13 @@ public class LoginController {
     public void redirectToPaycoLogin(HttpServletResponse response) throws IOException {
         String state = UUID.randomUUID().toString();
 
-//        Cookie stateCookie = new Cookie("payco_oauth_state", state);
-//        stateCookie.setHttpOnly(true);
-//        stateCookie.setSecure(true);
-//        stateCookie.setPath("/");
-//        stateCookie.setMaxAge(180);
-//        stateCookie.setSameSite("Strict");
+        Cookie stateCookie = new Cookie("payco_oauth_state", state);
+        stateCookie.setHttpOnly(true);
+        stateCookie.setSecure(true);
+        stateCookie.setPath("/");
+        stateCookie.setMaxAge(180);
 
-//        response.addCookie(stateCookie);
+        response.addCookie(stateCookie);
 
         String paycoAuthUrl = "https://id.payco.com/oauth2.0/authorize?response_type=code"
                 + "&client_id=" + clientId
@@ -71,8 +73,24 @@ public class LoginController {
 
     @GetMapping("/payco/callback")
     public String handlePaycoCallback(@ModelAttribute PaycoCallbackResponseDto responseDto,
+                                      HttpServletRequest request,
                                       HttpServletResponse response,
                                       Model model) {
+        String cookieState = null;
+        if(request.getCookies() != null) {
+            for(Cookie cookie : request.getCookies()) {
+                if("payco_oauth_state".equals(cookie.getName())) {
+                    cookieState = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        String stateParam = responseDto.state();
+        if(!Objects.equals(stateParam, cookieState) || cookieState == null) {
+            return "redirect:/auth/login";
+        }
+
         String code = responseDto.code();
 
         ResponseDto<?> result = authService.oauth2Login("payco", code);
@@ -87,11 +105,10 @@ public class LoginController {
             model.addAttribute("name", signupData.getName());
             model.addAttribute("email", signupData.getEmail());
             String mobile = signupData.getMobile();
-            if(mobile != null && mobile.length() >= 11 && mobile.contains("-")) {
-                String[] parts = mobile.split("-");
-                model.addAttribute("mobile1", parts[0]);
-                model.addAttribute("mobile2", parts[1]);
-                model.addAttribute("mobile3", parts[2]);
+            if(signupData.getMobileParts() != null) {
+                model.addAttribute("mobile1", signupData.getMobileParts()[0]);
+                model.addAttribute("mobile2", signupData.getMobileParts()[1]);
+                model.addAttribute("mobile3", signupData.getMobileParts()[2]);
             }
             return "auth/oauth2-signup";
         }

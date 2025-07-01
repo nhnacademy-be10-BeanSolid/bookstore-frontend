@@ -1,8 +1,8 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.auth.controller;
 
 
-import com.nhnacademy.frontend.auth.domain.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import jakarta.servlet.http.HttpServletResponse;

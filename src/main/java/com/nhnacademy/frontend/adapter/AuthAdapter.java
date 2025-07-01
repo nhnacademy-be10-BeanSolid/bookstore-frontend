@@ -1,6 +1,9 @@
 package com.nhnacademy.frontend.adapter;
 
-import com.nhnacademy.frontend.auth.domain.*;
+import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

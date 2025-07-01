@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.domain;
+package com.nhnacademy.frontend.auth.domain.request;
 
 import lombok.Data;
 

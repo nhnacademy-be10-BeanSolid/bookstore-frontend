@@ -1,10 +1,11 @@
 package com.nhnacademy.frontend.auth.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.adapter.AuthAdapter;
-import com.nhnacademy.frontend.auth.domain.LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.LoginResponseDto;
-import com.nhnacademy.frontend.auth.domain.RefreshTokenResponseDto;
-import com.nhnacademy.frontend.auth.domain.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.response.*;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -23,6 +26,9 @@ class AuthServiceImplTest {
 
     @Mock
     AuthAdapter authAdapter;
+
+    @Mock
+    ObjectMapper objectMapper;
 
     @InjectMocks
     AuthServiceImpl authService;
@@ -84,5 +90,64 @@ class AuthServiceImplTest {
         RefreshTokenResponseDto result = authService.refresh(refreshToken);
 
         assertThat(result).isEqualTo(responseDto);
+    }
+
+    @Test
+    void oauth2Login_shouldCallAuthAdapterAndReturnResponseDto() {
+        String provider = "payco";
+        String code = "testcode";
+        ResponseDto<?> expectResponse = ResponseDto.builder()
+                .success(true)
+                .message("Success")
+                .data(null)
+                .build();
+
+        doReturn(expectResponse).when(authAdapter).oauth2Login(any(OAuth2LoginRequestDto.class));
+
+        ResponseDto<?> actualResponse = authService.oauth2Login(provider, code);
+
+        verify(authAdapter, times(1)).oauth2Login(any(OAuth2LoginRequestDto.class));
+        assertEquals(expectResponse, actualResponse);
+    }
+
+    @Test
+    void oauth2Login_mobileParsing_shouldSplitMobileNumber() {
+        String provider = "provider";
+        String code = "code";
+        String mobile = "010-1234-5678";
+        AdditionalSignupRequiredDto signupData = AdditionalSignupRequiredDto.builder()
+                .tempJwt("tempJwt")
+                .name("name")
+                .email("email")
+                .mobile(mobile)
+                .build();
+        ResponseDto<?> response = ResponseDto.builder()
+                .success(false)
+                .message("추가 회원가입 필요")
+                .data(signupData)
+                .build();
+
+        doReturn(response).when(authAdapter).oauth2Login(any(OAuth2LoginRequestDto.class));
+        doReturn(signupData).when(objectMapper).convertValue(any(AdditionalSignupRequiredDto.class), eq(AdditionalSignupRequiredDto.class));
+
+        ResponseDto<?> result = authService.oauth2Login(provider, code);
+
+        AdditionalSignupRequiredDto resultData = (AdditionalSignupRequiredDto) result.getData();
+
+        assertThat(resultData.getMobileParts()).containsExactly("010", "1234", "5678");
+
+    }
+
+    @Test
+    void oauth2AdditionalSignup_shouldCallAuthAdapterAndReturnOAuth2LoginResponseDto() {
+        OAuth2AdditionalSignupRequestDto request = new OAuth2AdditionalSignupRequestDto();
+        OAuth2LoginResponseDto expectedResponse = new OAuth2LoginResponseDto("accessToken", "refreshToken");
+
+        when(authAdapter.additionalSignup(any(OAuth2AdditionalSignupRequestDto.class))).thenReturn(expectedResponse);
+
+        OAuth2LoginResponseDto actualResponse = authService.oauth2AdditionalSignup(request);
+
+        verify(authAdapter, times(1)).additionalSignup(any(OAuth2AdditionalSignupRequestDto.class));
+        assertEquals(expectedResponse, actualResponse);
     }
 }
