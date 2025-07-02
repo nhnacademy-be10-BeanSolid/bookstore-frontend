@@ -1,0 +1,34 @@
+package com.nhnacademy.frontend.adapter.interceptor;
+
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+@Component
+public class FeignJwtInterceptor implements RequestInterceptor {
+    @Override
+    public void apply(RequestTemplate requestTemplate) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if(attributes == null) return;
+
+        HttpServletRequest request = attributes.getRequest();
+
+        String jwtToken = null;
+        if(request.getCookies() != null) {
+            for(Cookie cookie : request.getCookies()) {
+                if("accessToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if(jwtToken != null) {
+            requestTemplate.header("Authorization", "Bearer " + jwtToken);
+        }
+    }
+}
