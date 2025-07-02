@@ -1,15 +1,13 @@
 package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.adapter.BookAdapter;
-import com.nhnacademy.frontend.book.domain.*;
+import com.nhnacademy.frontend.book.domain.requset.*;
+import com.nhnacademy.frontend.book.domain.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -85,6 +83,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookSearchResponseDto searchNaverBooks(String query, Integer start) {
+        log.info("Search Start - query: {}, start: {}", query, start);
+        return bookAdapter.searchBooks(query, start);
+    }
+
+    @Override
     public BookDetailResponseDto updateBook(Long id, BookUpdateRequestDto request) {
         log.info("Book Update Start : {}", id);
         return bookAdapter.updateBook(id, request);
@@ -96,4 +100,27 @@ public class BookServiceImpl implements BookService {
         bookAdapter.deleteBook(id);
     }
 
+    @Override
+    public void createBookTagMap(Long bookId, BookTagMapCreateRequestDto request) {
+        log.info("BookTagMap Create Start - bookId {}", bookId);
+        bookAdapter.createBookTagMap(bookId, request);
+    }
+
+    @Override
+    public void deleteBookTagMap(Long bookId, Long tagId) {
+        log.info("BookTagMap Delete Start - bookId: {}, tagId: {}", bookId, tagId);
+        bookAdapter.deleteBookTagMap(bookId, tagId);
+    }
+
+    @Override
+    public void createBookCategoryMap(Long bookId, BookCategoryMapCreateRequestDto request) {
+        log.info("BookCategoryMap Create Start - bookId {}", bookId);
+        bookAdapter.createBookCategoryMap(bookId, request);
+    }
+
+    @Override
+    public void deleteBookCategoryMap(Long bookId, Long tagId) {
+        log.info("BookCategoryMap Delete Start - bookId: {}, tagId: {}", bookId, tagId);
+        bookAdapter.deleteBookCategoryMap(bookId, tagId);
+    }
 }

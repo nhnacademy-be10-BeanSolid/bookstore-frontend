@@ -1,16 +1,19 @@
-package com.nhnacademy.frontend.book.domain;
+package com.nhnacademy.frontend.book.domain.requset;
 
-public record BookUpdateRequestDto (
+import java.util.Set;
+
+public record BookCreateRequestDto(
         String title,
         String description,
         String toc,
-        String author,
         String publisher,
+        String author,
         String publishAt,
+        String isbn,
         Integer originalPrice,
         Integer salePrice,
         Boolean wrappable,
         Integer stock,
-        String status
-){
-}
+        String image,
+        Set<Long> categoryIds
+) {}

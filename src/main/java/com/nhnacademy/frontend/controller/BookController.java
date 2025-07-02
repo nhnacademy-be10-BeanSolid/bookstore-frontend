@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.controller;
 
-import com.nhnacademy.frontend.book.domain.BookCreateRequestDto;
-import com.nhnacademy.frontend.book.domain.BookDetailResponseDto;
-import com.nhnacademy.frontend.book.domain.BookResponseDto;
-import com.nhnacademy.frontend.book.domain.BookUpdateRequestDto;
+import com.nhnacademy.frontend.book.domain.requset.BookCreateRequestDto;
+import com.nhnacademy.frontend.book.domain.response.BookDetailResponseDto;
+import com.nhnacademy.frontend.book.domain.response.BookResponseDto;
+import com.nhnacademy.frontend.book.domain.requset.BookUpdateRequestDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class BookController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         log.info("showCreateForm");
-        model.addAttribute("book", new BookCreateRequestDto(null, null, null, null, null, null, null, null, null, null, null, Set.of()));
+        model.addAttribute("book", new BookCreateRequestDto(null, null, null, null, null, null, null, null, null, null, null, null, Set.of()));
         return "book/create-form";
     }
 
@@ -58,11 +58,12 @@ public class BookController {
     public String getBookDetail(@PathVariable("bookId") Long bookId, Model model) {
         BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
         log.info("BookDetail Get Success : {}", bookId);
+        log.info("Image {}", bookDetail.image());
         model.addAttribute("book", bookDetail);
         return "book/detail";
     }
 
-    // 도서 생성
+    // 도서 등록
     @PostMapping
     public String createBook(@ModelAttribute BookCreateRequestDto request) {
         BookResponseDto book = bookService.createBook(request);

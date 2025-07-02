@@ -14,16 +14,22 @@
     <td th:text="${book.id}"></td>
   </tr>
   <tr>
+    <th>책 표지</th>
+    <td>
+      <img th:src="${book.image}" alt="책 표지" style="max-width: 200px; max-height: 300px;" />
+    </td>
+  </tr>
+  <tr>
     <th>제목</th>
     <td th:text="${book.title}"></td>
   </tr>
   <tr>
-    <th>설명</th>
-    <td th:text="${book.description}"></td>
-  </tr>
-  <tr>
     <th>목차</th>
     <td th:text="${book.toc}"></td>
+  </tr>
+  <tr>
+    <th>설명</th>
+    <td th:text="${book.description}"></td>
   </tr>
   <tr>
     <th>저자</th>
@@ -73,7 +79,7 @@
     <th>카테고리</th>
     <td>
       <ul>
-        <li th:each="category : ${book.bookCategories}" th:text="${category}" style="list-style-type:none;"></li>
+        <li th:each="category : ${book.bookCategories}" th:text="${category.categoryName}" style="list-style-type:none;"></li>
       </ul>
     </td>
   </tr>
@@ -81,17 +87,13 @@
     <th>태그</th>
     <td>
       <ul>
-        <li th:each="tag : ${book.bookTags}" th:text="${tag}" style="list-style-type:none"></li>
+        <li th:each="tag : ${book.bookTags}" th:text="${tag.tagName}" style="list-style-type:none"></li>
       </ul>
     </td>
   </tr>
   <tr>
-    <th>좋아요한 사용자</th>
-    <td>
-      <ul>
-        <li th:each="user : ${book.likedUsers}" th:text="${user}" style="list-style-type:none"></li>
-      </ul>
-    </td>
+    <th>좋아요 수</th>
+    <td th:text="${book.likeCount}"></td>
   </tr>
   </tbody>
 </table>

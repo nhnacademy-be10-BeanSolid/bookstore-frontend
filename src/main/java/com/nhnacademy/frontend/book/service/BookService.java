@@ -1,10 +1,9 @@
 package com.nhnacademy.frontend.book.service;
 
-import com.nhnacademy.frontend.book.domain.*;
+import com.nhnacademy.frontend.book.domain.requset.*;
+import com.nhnacademy.frontend.book.domain.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface BookService {
     BookTagResponseDto createTag(BookTagCreateRequestDto request);
@@ -29,7 +28,17 @@ public interface BookService {
 
     BookResponseDto createBook(BookCreateRequestDto request);
 
+    BookSearchResponseDto searchNaverBooks(String query, Integer start);
+
     BookDetailResponseDto updateBook(Long id, BookUpdateRequestDto request);
 
     void deleteBook(Long id);
+
+    void createBookTagMap(Long bookId, BookTagMapCreateRequestDto request);
+
+    void deleteBookTagMap(Long bookId, Long tagId);
+
+    void createBookCategoryMap(Long bookId, BookCategoryMapCreateRequestDto request);
+
+    void deleteBookCategoryMap(Long bookId, Long tagId);
 }

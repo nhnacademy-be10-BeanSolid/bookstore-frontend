@@ -7,6 +7,35 @@
 <body>
 <h1>도서 등록</h1>
 <form th:action="@{/books}" method="post" th:object="${book}">
+
+    <!-- 모달 트리거 -->
+    <button type="button" onclick="openModal()">도서 검색</button>
+
+    <!-- 모달 -->
+    <div id="bookSearchModal" style="
+        display: none;
+        position: fixed;
+        top: 10%;
+        left: 30%;
+        width: 40%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 20px;
+        z-index: 1000;">
+        <h3>도서 검색</h3>
+        <input type="text" id="searchKeyword" />
+        <button type="button" onclick="searchBook()">검색</button>
+        <div id="searchResults"></div>
+        <button type="button" onclick="closeModal()">닫기</button>
+        <div id="pagination" style="margin-top: 10px;">
+            <button type="button" id="prevPage" onclick="changePage(-1)" disabled>이전</button>
+            <span id="currentPage">1</span> 페이지
+            <button type="button" id="nextPage" onclick="changePage(1)">다음</button>
+        </div>
+    </div>
+
     <!-- 제목 -->
     <div>
         <label>제목</label>
@@ -84,6 +113,11 @@
         <button type="button" onclick="addCategoryIdInput()">+ 추가</button>
     </div>
 
+    <div>
+        <label>이미지 URL</label>
+        <input type="text" th:field="*{image}" name="image"/>
+    </div>
+
     <!-- 제출 -->
     <div>
         <button type="submit">도서 등록</button>
@@ -101,5 +135,67 @@
         input.name = 'categoryIds';  // 같은 name으로 여러 값 전송 가능
         input.required = true;
         container.appendChild(input);
+    }
+    function openModal() {
+        document.getElementById("bookSearchModal").style.display = "block";
+    }
+    function closeModal() {
+        document.getElementById("bookSearchModal").style.display = "none";
+    }
+    let currentPage = 1;
+    const itemsPerPage = 10;  // 보통 네이버 API 기본값
+
+    function searchBook(page = 1) {
+        const keyword = document.getElementById("searchKeyword").value;
+        if (!keyword) {
+            alert("검색어를 입력하세요.");
+            return;
+        }
+
+        const start = (page - 1) * itemsPerPage + 1;
+
+        fetch(`/books-search?query=${encodeURIComponent(keyword)}&start=${start}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById("searchResults");
+                resultsDiv.innerHTML = "";
+
+                currentPage = Math.floor((data.start - 1) / itemsPerPage) + 1;
+                document.getElementById("currentPage").innerText = currentPage;
+
+                document.getElementById("prevPage").disabled = currentPage <= 1;
+                const totalPages = Math.ceil(data.total / itemsPerPage);
+                document.getElementById("nextPage").disabled = currentPage >= totalPages;
+
+                data.items.forEach(item => {
+                    const div = document.createElement("div");
+                    div.style = "border:1px solid #ccc; margin:10px; padding:10px;";
+                    div.innerHTML = `
+                    <strong>${item.title}</strong> - ${item.author} / ${item.publisher}<br/>
+                    <img src="${item.image}" width="80"/><br/>
+                    <button type="button">이 책 선택</button>
+                `;
+                    div.querySelector("button").addEventListener("click", () => applyBookInfo(item));
+                    resultsDiv.appendChild(div);
+                });
+            });
+    }
+
+
+    function changePage(diff) {
+        const newPage = currentPage + diff;
+        if (newPage < 1) return;
+        searchBook(newPage);
+    }
+
+    function applyBookInfo(item) {
+        document.querySelector('[name="title"]').value = item.title;
+        document.querySelector('[name="description"]').value = item.description;
+        document.querySelector('[name="author"]').value = item.author;
+        document.querySelector('[name="publisher"]').value = item.publisher;
+        document.querySelector('[name="publishAt"]').value = item.pubdate;
+        document.querySelector('[name="isbn"]').value = item.isbn;
+        document.querySelector('[name="image"]').value = item.image;
+        closeModal();
     }
 </script>

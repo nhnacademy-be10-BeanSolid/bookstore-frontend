@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.controller;
 
-import com.nhnacademy.frontend.book.domain.BookTagCreateRequestDto;
-import com.nhnacademy.frontend.book.domain.BookTagResponseDto;
+import com.nhnacademy.frontend.book.domain.requset.BookTagCreateRequestDto;
+import com.nhnacademy.frontend.book.domain.response.BookTagResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +27,9 @@ public class BookTagController {
 
     @GetMapping
     public String getAllTags(Pageable pageable, Model model) {
-        Page<BookTagResponseDto> tagList = bookService.getAllBookTags(pageable); // 모든 태그 조회
+        Page<BookTagResponseDto> tagList = bookService.getAllBookTags(pageable);
         log.info("TagListGet Success- page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        model.addAttribute("tags", tagList.getContent()); // 실제 태그 데이터
+        model.addAttribute("tags", tagList.getContent());
         model.addAttribute("page", tagList);
         return "booktag/tag-list";
     }

@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.controller;
 
-import com.nhnacademy.frontend.book.domain.BookCategoryCreateRequestDto;
-import com.nhnacademy.frontend.book.domain.BookCategoryResponseDto;
-import com.nhnacademy.frontend.book.domain.BookCategoryUpdateRequestDto;
+import com.nhnacademy.frontend.book.domain.requset.BookCategoryCreateRequestDto;
+import com.nhnacademy.frontend.book.domain.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.book.domain.response.BookCategoryUpdateRequestDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +59,6 @@ public class BookCategoryController {
 
     @PutMapping("/{categoryId}")
     public String updateCategory(@PathVariable("categoryId") Long categoryId, @ModelAttribute BookCategoryUpdateRequestDto request) {
-//        BookCategoryResponseDto response = bookService.updateCategory(categoryId, request);
         log.info("Category Update Success : {}", categoryId);
         return "redirect:/categories/" + categoryId;
     }

@@ -13,8 +13,11 @@
     <label>제목</label><br/>
     <input type="text" name="title" th:value="${book.title}" required/><br/><br/>
 
+    <labe>이미지</labe><br/>
+    <input type="text" name="image" th:value="${book.image}" required/><br/><br/>
+
     <label>설명</label><br/>
-    <textarea name="description" rows="4" cols="50" th:text="${book.description}"></textarea><br/><br/>
+    <textarea name="description" rows="4" cols="50" th:text="${book.description}" required></textarea><br/><br/>
 
     <label>목차</label><br/>
     <textarea name="toc" rows="4" cols="50" th:text="${book.toc}"></textarea><br/><br/>
@@ -26,8 +29,6 @@
     <input type="text" name="publisher" th:value="${book.publisher}" required/><br/><br/>
 
     <label>출판일</label><br/>
-<!--    <input type="date" name="publishAt"-->
-<!--           th:value="${#temporals.format(book.publishAt, 'yyyy-MM-dd')}" />-->
     <input type="date" name="publishAt"
            th:value="${book.publishAt}"/><br/><br/>
 

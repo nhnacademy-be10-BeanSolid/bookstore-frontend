@@ -2,21 +2,22 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>관리자 책 목록</title>
+    <title>관리자 도서 목록</title>
 </head>
 <body>
-<h1>책 목록</h1>
+<h1>도서 목록</h1>
 
 <table border="1" cellpadding="8" cellspacing="0">
     <thead>
     <tr>
-        <th>책 ID</th>
+        <th>도서 ID</th>
         <th>제목</th>
         <th>저자</th>
         <th>출판사</th>
         <th>출판일</th>
         <th>상태</th>
         <th>상세 보기</th>
+        <th>관리</th>
         <th>삭제</th>
     </tr>
     </thead>
@@ -27,9 +28,13 @@
         <td th:text="${book.author}"></td>
         <td th:text="${book.publisher}"></td>
         <td th:text="${book.publishAt}"></td>
-        <td th:text="${book.status}">ON_SALE</td>
+        <td th:text="${book.status}"></td>
         <td>
             <a th:href="@{/books/{id}(id=${book.id})}">상세</a>
+        </td>
+        <td>
+            <a th:href="@{/books/{id}/tags(id=${book.id})}">태그 관리</a><br/>
+            <a th:href="@{/books/{id}/categories(id=${book.id})}">카테고리 관리</a>
         </td>
         <td>
             <form th:action="@{/books/{id}(id=${book.id})}" method="post">

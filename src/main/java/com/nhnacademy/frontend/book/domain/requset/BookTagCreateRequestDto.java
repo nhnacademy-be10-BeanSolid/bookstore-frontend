@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.book.domain;
+package com.nhnacademy.frontend.book.domain.requset;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

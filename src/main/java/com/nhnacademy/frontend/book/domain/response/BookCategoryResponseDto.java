@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.book.domain;
+package com.nhnacademy.frontend.book.domain.response;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
-package com.nhnacademy.frontend.book.domain;
+package com.nhnacademy.frontend.book.domain.response;
 
-import java.util.Set;
+import java.util.List;
 
 public record BookDetailResponseDto(
         Long id,
@@ -18,9 +18,11 @@ public record BookDetailResponseDto(
         String updateAt,
         String status,
         int stock,
+        String image,
 
-        Set<String> bookCategories,
-        Set<String> bookTags,
-        Set<String> likedUsers
+        List<BookCategoryResponseDto> bookCategories,
+        List<BookTagResponseDto> bookTags,
+
+        int likeCount
 ) {
 }

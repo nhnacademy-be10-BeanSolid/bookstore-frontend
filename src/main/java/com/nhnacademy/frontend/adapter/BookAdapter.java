@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.adapter;
 
-import com.nhnacademy.frontend.book.domain.*;
+import com.nhnacademy.frontend.book.domain.requset.*;
+import com.nhnacademy.frontend.book.domain.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,12 @@ public interface BookAdapter {
     @PostMapping("/books")
     BookResponseDto createBook(@RequestBody BookCreateRequestDto request);
 
+    // 외부 도서 검색
+    @GetMapping("/books-search")
+    BookSearchResponseDto searchBooks(
+            @RequestParam String query,
+            @RequestParam Integer start);
+
     // 도서 업데이트
     @PutMapping("/books/{bookId}")
     BookDetailResponseDto updateBook(@PathVariable Long bookId, @RequestBody BookUpdateRequestDto request);
@@ -59,4 +66,20 @@ public interface BookAdapter {
     // 도서 삭제
     @DeleteMapping("/books/{bookId}")
     void deleteBook(@PathVariable Long bookId);
+
+    // 도서에 태그 추가
+    @PostMapping("/books/{bookId}/tags")
+    void createBookTagMap(@PathVariable Long bookId, @RequestBody BookTagMapCreateRequestDto request);
+
+    // 도서에서 태그 삭제
+    @DeleteMapping("/books/{bookId}/tags/{tagId}")
+    void deleteBookTagMap(@PathVariable Long bookId, @PathVariable Long tagId);
+
+    // 도서에 카테고리 추가
+    @PostMapping("/books/{bookId}/categories")
+    void createBookCategoryMap(@PathVariable Long bookId, @RequestBody BookCategoryMapCreateRequestDto request);
+
+    // 도서에서 카테고리 삭제
+    @DeleteMapping("/books/{bookId}/categories/{categoryId}")
+    void deleteBookCategoryMap(@PathVariable Long bookId, @PathVariable Long categoryId);
 }

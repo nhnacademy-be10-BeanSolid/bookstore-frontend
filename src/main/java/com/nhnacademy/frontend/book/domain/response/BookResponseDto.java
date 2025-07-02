@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.book.domain;
+package com.nhnacademy.frontend.book.domain.response;
 
 import java.util.Set;
 
@@ -18,6 +18,7 @@ public record BookResponseDto(
         String updateAt,
         String status,
         int stock,
+        String image,
 
         Set<String> bookCategories,
         Set<String> bookTags

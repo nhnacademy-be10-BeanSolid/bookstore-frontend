@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.book.domain;
+package com.nhnacademy.frontend.book.domain.response;
 
 public record BookCategoryUpdateRequestDto(
         String categoryName,
