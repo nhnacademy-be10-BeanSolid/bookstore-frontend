@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+</head>
+<body>
+<h1>마이페이지</h1>
+
+<ul>
+    <li>
+        <a href="/mypage/address">회원주소 관리</a>
+    </li>
+    <li>
+        <a href="/mypage/grade">회원등급 확인</a>
+    </li>
+    <li>
+        <a href="/mypage/edit">회원정보 수정</a>
+    </li>
+</ul>
+
+<!-- 회원 탈퇴 버튼 -->
+<button type="button" id="withdraw-btn">회원 탈퇴</button>
+
+<!-- 비밀번호 입력 모달 (처음엔 숨김) -->
+<div id="withdraw-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+    <div style="background:#fff; margin:10% auto; padding:20px; width:300px; border-radius:8px;">
+        <h3>회원 탈퇴 확인</h3>
+        <p>정말로 탈퇴하시겠습니까? 비밀번호를 입력해 주세요.</p>
+        <form action="/mypage/withdraw" method="POST">
+            <input type="password" name="password" placeholder="비밀번호" required>
+            <div style="margin-top:10px;">
+                <button type="submit">탈퇴하기</button>
+                <button type="button" id="cancel-btn">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('withdraw-btn').onclick = function() {
+        document.getElementById('withdraw-modal').style.display = 'block';
+    };
+    document.getElementById('cancel-btn').onclick = function() {
+        document.getElementById('withdraw-modal').style.display = 'none';
+    };
+</script>
+
+</body>
+</html>

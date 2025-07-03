@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.adapter;
+package com.nhnacademy.frontend.adapter.auth;
 
 import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
@@ -27,4 +27,6 @@ public interface AuthAdapter {
 
     @PostMapping("/auth-service/oauth2/signup")
     OAuth2LoginResponseDto additionalSignup(@RequestBody OAuth2AdditionalSignupRequestDto request);
+
+
 }

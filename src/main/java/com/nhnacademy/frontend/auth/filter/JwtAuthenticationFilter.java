@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.auth.filter;
 
 import com.nhnacademy.frontend.auth.domain.response.RefreshTokenResponseDto;
 import com.nhnacademy.frontend.auth.domain.response.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import jakarta.servlet.FilterChain;
@@ -91,11 +92,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             TokenParseResponseDto parsed = authService.parse(jwt);
             String username = parsed.username();
             List<String> authorities = parsed.authorities();
+            String userType = parsed.userType();
 
             List<GrantedAuthority> grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
 
+            CustomPrincipal principal = new CustomPrincipal(username, userType);
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
+                    new UsernamePasswordAuthenticationToken(principal, null, grantedAuthorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception e) {

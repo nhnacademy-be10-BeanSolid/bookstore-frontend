@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.auth.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.adapter.AuthAdapter;
+import com.nhnacademy.frontend.adapter.auth.AuthAdapter;
 import com.nhnacademy.frontend.auth.domain.response.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

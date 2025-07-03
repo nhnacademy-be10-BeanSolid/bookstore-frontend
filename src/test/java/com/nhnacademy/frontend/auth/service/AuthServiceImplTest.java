@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.adapter.AuthAdapter;
+import com.nhnacademy.frontend.adapter.auth.AuthAdapter;
 import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
