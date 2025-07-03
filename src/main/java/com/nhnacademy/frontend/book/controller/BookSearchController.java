@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.controller;
+package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.book.domain.response.BookSearchResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;

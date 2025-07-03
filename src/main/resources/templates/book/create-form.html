@@ -74,7 +74,7 @@
 
     <!-- ISBN -->
     <div>
-        <label>ISBN (13자리)</label>
+        <label>ISBN</label>
         <input type="text" th:field="*{isbn}" pattern=".{13}" title="13자리 ISBN" required />
     </div>
 
@@ -143,7 +143,7 @@
         document.getElementById("bookSearchModal").style.display = "none";
     }
     let currentPage = 1;
-    const itemsPerPage = 10;  // 보통 네이버 API 기본값
+    const itemsPerPage = 10;
 
     function searchBook(page = 1) {
         const keyword = document.getElementById("searchKeyword").value;
@@ -180,7 +180,6 @@
                 });
             });
     }
-
 
     function changePage(diff) {
         const newPage = currentPage + diff;
