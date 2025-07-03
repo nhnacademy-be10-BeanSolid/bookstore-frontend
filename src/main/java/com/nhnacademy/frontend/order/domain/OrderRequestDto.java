@@ -1,25 +1,27 @@
 package com.nhnacademy.frontend.order.domain;
 
-import lombok.Data;
+import lombok.*;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 public class OrderRequestDto {
-    private String recipientName;
-    private String recipientPhone;
+
+    private String receiverName;
+    private String receiverPhoneNumber;
     private String shippingAddress;
     private String orderMessage;
-    private BigDecimal totalAmount;
+    private Long totalAmount;
     private List<OrderItemDto> orderItems;
-    
+
     @Data
     public static class OrderItemDto {
+
         private Long bookId;
         private String bookTitle;
         private Integer quantity;
-        private BigDecimal price;
-        private BigDecimal totalPrice;
+        private Long price;
+        private Long wrappingId;
     }
 }

@@ -15,7 +15,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Long createOrder(OrderRequestDto orderRequest) {
-        OrderResponseDto response = orderAdapter.createOrder(orderRequest);
+        OrderResponseDto response = orderAdapter.createOrder(orderRequest, "test");
         return response.getOrderId();
     }
 
