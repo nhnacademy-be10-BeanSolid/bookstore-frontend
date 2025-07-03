@@ -1,3 +1,5 @@
+package com.nhnacademy.frontend.common.adapter;
+
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.user.domain.response.UserResponseDto;
