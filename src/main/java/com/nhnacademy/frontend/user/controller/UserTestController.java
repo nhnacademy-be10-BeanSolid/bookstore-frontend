@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class UserTestController {
 
         UserResponseDto responseDto = userAdapter.getUser(userId).getBody();
 
-        model.addAttribute("userId", responseDto.getUserName());
+        model.addAttribute("userId", Objects.requireNonNull(responseDto).getUserName());
         return "user-test";
     }
 }
