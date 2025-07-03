@@ -1,6 +1,9 @@
 package com.nhnacademy.frontend.adapter;
 
-import com.nhnacademy.frontend.auth.domain.*;
+import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,4 +21,10 @@ public interface AuthAdapter {
 
     @PostMapping("/auth-service/auth/parse")
     TokenParseResponseDto parse(@RequestBody String token);
+
+    @PostMapping("/auth-service/oauth2/login")
+    ResponseDto<?> oauth2Login(@RequestBody OAuth2LoginRequestDto request);
+
+    @PostMapping("/auth-service/oauth2/signup")
+    OAuth2LoginResponseDto additionalSignup(@RequestBody OAuth2AdditionalSignupRequestDto request);
 }
