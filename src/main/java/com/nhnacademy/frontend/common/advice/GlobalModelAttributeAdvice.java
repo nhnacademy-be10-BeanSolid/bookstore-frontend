@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.advice;
+package com.nhnacademy.frontend.common.advice;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,8 +20,10 @@ public class GlobalModelAttributeAdvice {
     @ModelAttribute("loginUserId")
     public String loginUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            return auth.getName(); // 보통 username
+
+            return auth.getName();
         }
         return null;
     }

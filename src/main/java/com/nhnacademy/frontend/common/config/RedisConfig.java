@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.config;
+package com.nhnacademy.frontend.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

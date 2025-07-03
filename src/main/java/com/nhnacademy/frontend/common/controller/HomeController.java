@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend;
+package com.nhnacademy.frontend.common.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
