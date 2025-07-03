@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.user.service.impl;
 
-import com.nhnacademy.frontend.adapter.user.UserAdapter;
-import com.nhnacademy.frontend.user.domain.UserCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

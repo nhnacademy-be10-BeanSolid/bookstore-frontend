@@ -1,14 +1,17 @@
-package com.nhnacademy.frontend.adapter.user.domain.response;
+package com.nhnacademy.frontend.user.domain.response;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
-public class ResponseUser {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseDto {
+
     private Long userNo;
     private String userId;
     private String userPassword;

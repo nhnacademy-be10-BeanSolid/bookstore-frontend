@@ -33,7 +33,7 @@
             아이디 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
         </label>
         <div class="d-flex">
-            <form action="/auth/check-user-id" method="post" class="d-flex w-100">
+            <form action="/auth/signup/check-user-id" method="post" class="d-flex w-100">
                 <input type="text" name="userId"
                        class="form-control bg-secondary text-white border-0 me-2"
                        placeholder="아이디를 입력해 주세요."
@@ -49,7 +49,7 @@
     </div>
 
     <!-- 회원가입 form -->
-    <form class="w-100" action="/auth/normal-signup/register" method="post">
+    <form class="w-100" action="/auth/signup/normal-signup/register" method="post">
         <!-- hidden 아이디 (입력값 복원용) -->
         <input type="hidden" name="userId" th:value="${userId}">
         <!-- 중복체크 결과 hidden input -->
