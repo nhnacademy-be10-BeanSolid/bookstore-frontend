@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.adapter;
+package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;

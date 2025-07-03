@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.config;
+package com.nhnacademy.frontend.common.config;
 
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.filter.LoginFilter;

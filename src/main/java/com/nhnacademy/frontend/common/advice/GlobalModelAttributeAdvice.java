@@ -1,5 +1,6 @@
-package com.nhnacademy.frontend.advice;
+package com.nhnacademy.frontend.common.advice;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalModelAttributeAdvice {
 
     @ModelAttribute("isLoggedIn")
@@ -20,8 +22,10 @@ public class GlobalModelAttributeAdvice {
     @ModelAttribute("loginUserId")
     public String loginUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
-            return auth.getName(); // 보통 username
+
+            return auth.getName();
         }
         return null;
     }

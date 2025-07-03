@@ -1,5 +1,6 @@
-package com.nhnacademy.frontend.adapter.interceptor;
+package com.nhnacademy.frontend.common.interceptor;
 
+import com.nhnacademy.frontend.common.adapter.interceptor.FeignJwtInterceptor;
 import feign.RequestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
