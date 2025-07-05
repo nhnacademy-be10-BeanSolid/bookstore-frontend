@@ -17,6 +17,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
+        if (orderRequest == null) {
+            log.error("사전검증 에러 [orderRequest]: null");
+            throw new IllegalArgumentException("orderRequest cannot be null");
+        }
+
         log.info("주문 생성 요청 - 받는 사람: {}", orderRequest.getReceiverName());
 
         OrderResponse orderResponse = orderAdapter.createOrder(orderRequest); //TODO: feignclient 실패 처리 필요.
