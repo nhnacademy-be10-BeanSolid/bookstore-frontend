@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.adapter;
 
-import com.nhnacademy.frontend.order.domain.OrderRequestDto;
-import com.nhnacademy.frontend.order.domain.OrderResponseDto;
+import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,8 +9,5 @@ import org.springframework.web.bind.annotation.*;
 public interface OrderAdapter {
     
     @PostMapping("/order-api/orders")
-    OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequest, @RequestHeader("X-USER-ID") String xUserId);
-    
-    @GetMapping("/order-api/orders/{orderId}")
-    OrderResponseDto getOrder(@PathVariable("orderId") Long orderId);
+    OrderResponse createOrder(@RequestBody OrderRequest orderRequest);
 }

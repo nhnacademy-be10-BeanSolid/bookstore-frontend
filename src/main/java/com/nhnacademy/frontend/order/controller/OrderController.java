@@ -1,24 +1,25 @@
 package com.nhnacademy.frontend.order.controller;
 
-import com.nhnacademy.frontend.order.domain.OrderRequestDto;
+import com.nhnacademy.frontend.order.dto.CartItem;
+import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
+import com.nhnacademy.frontend.user.exception.ValidationFailedException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -27,99 +28,45 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public String showOrderPage(Model model) {
-        // 샘플 장바구니 아이템 생성 (실제로는 장바구니 서비스에서 가져올 예정)
-        List<OrderRequestDto.OrderItemDto> cartItems = createSampleCartItems();
-        
-        if (cartItems.isEmpty()) {
-            return "redirect:/cart";
-        }
+    public ModelAndView orderPage() {
+        //TODO: 장바구니 혹은 바로구매로 주문도서 정보 가져올 예정.
+        CartItem cartItem1 = new CartItem(1L, "빈틈없조1", 1, 5_000L);
+        CartItem cartItem2 = new CartItem(2L, "빈틈없조2", 1, 7_000L);
 
-        Long totalAmount = cartItems.stream()
-            .map(item -> item.getPrice() * item.getQuantity())
-            .reduce(0L, Long::sum);
+        ModelAndView mav = new ModelAndView("/order/order");
+        mav.addObject("items", List.of(cartItem1, cartItem2));
 
-        OrderRequestDto orderRequest = new OrderRequestDto();
-        orderRequest.setOrderItems(cartItems);
-        orderRequest.setTotalAmount(totalAmount);
-
-        model.addAttribute("orderRequest", orderRequest);
-        model.addAttribute("cartItems", cartItems);
-        model.addAttribute("totalAmount", totalAmount);
-
-        return "order/order";
+        return mav;
     }
 
     @PostMapping
-    public String processOrder(@ModelAttribute OrderRequestDto orderRequest,
-                               BindingResult bindingResult) {
-        
+    public String createOrder(@Valid @ModelAttribute OrderRequest orderRequest,
+                                    BindingResult bindingResult,
+                                    RedirectAttributes redirectAttributes) {
+        log.info("POST /orders - 주문 생성 요청 [받는 사람: {}]", orderRequest.getReceiverName());
+
         if (bindingResult.hasErrors()) {
+            throw new ValidationFailedException(bindingResult); //TODO: user꺼 가져다 썼는데 나중에 변경 예정.
+        }
+
+        try {
+            OrderResponse orderResponse = orderService.createOrder(orderRequest);
+            log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderNumber());
+
+            redirectAttributes.addFlashAttribute("orderResponse", orderResponse);
+
+            return "redirect:/orders/tempPay";
+        } catch (Exception e) {
+            log.warn("POST /orders - 실패 리다이렉트 [에러: {}]", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+
             return "redirect:/orders";
         }
-
-        try {
-            Long orderId = orderService.createOrder(orderRequest);
-
-            return "redirect:/orders/success";
-        } catch (Exception e) {
-            return "redirect:/orders/fail";
-        }
-    }
-    
-    @PostMapping(consumes = "application/json")
-    @ResponseBody
-    public Map<String, Object> processOrderJson(@RequestBody OrderRequestDto orderRequest) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Long orderId = orderService.createOrder(orderRequest);
-            
-            response.put("success", true);
-            response.put("orderId", orderId);
-            response.put("message", "주문이 성공적으로 처리되었습니다.");
-            
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "주문 처리 중 오류가 발생했습니다: " + e.getMessage());
-        }
-        
-        return response;
     }
 
-    @GetMapping("/complete")
-    public String showOrderComplete(Model model) {
-        return "order/complete";
-    }
-
-
-    private List<OrderRequestDto.OrderItemDto> createSampleCartItems() {
-        List<OrderRequestDto.OrderItemDto> items = new ArrayList<>();
-        
-        OrderRequestDto.OrderItemDto item1 = new OrderRequestDto.OrderItemDto();
-        item1.setBookId(1L);
-        item1.setBookTitle("Spring Boot 완벽 가이드");
-        item1.setQuantity(1);
-        item1.setPrice(25000L);
-        items.add(item1);
-        
-        OrderRequestDto.OrderItemDto item2 = new OrderRequestDto.OrderItemDto();
-        item2.setBookId(2L);
-        item2.setBookTitle("Java 프로그래밍 입문");
-        item2.setQuantity(2);
-        item2.setPrice(18000L);
-        items.add(item2);
-        
-        return items;
-    }
-
-    @GetMapping("/success")
-    public String successView() {
-        return "/order/success";
-    }
-
-    @GetMapping("/fail")
-    public String failView() {
-        return "/order/fail";
+    // 임시 결제 단계 페이지
+    @GetMapping("/tempPay")
+    public String payPage() {
+        return "/order/tempPay";
     }
 }

@@ -1,456 +1,100 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout}">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title layout:fragment="title">주문하기</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beansolid - 배송정보 입력</title>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="container mt-4" style="max-width: 1200px;">
-        <h2 class="mb-4">주문하기</h2>
-        
-        <!-- 주문 상품 정보 -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">주문 도서 정보</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th width="30%">도서 정보</th>
-                                <th width="10%">수량</th>
-                                <th width="15%">단가</th>
-                                <th width="20%">포장지 선택</th>
-                                <th width="25%">총 금액</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="item, itemStat : ${cartItems}">
-                                <td class="align-middle text-center">
-                                    <h6 class="mb-0" th:text="${item.bookTitle}">Spring Boot 완벽 가이드</h6>
-                                </td>
-                                <td class="align-middle">
-                                    <span class="badge bg-primary" th:text="${item.quantity} + '권'">1권</span>
-                                </td>
-                                <td class="align-middle">
-                                    <strong th:text="${#numbers.formatInteger(item.price, 3, 'COMMA')} + '원'">25,000원</strong>
-                                </td>
-                                <td class="align-middle">
-                                    <select class="form-select form-select-sm" th:id="'wrapping_' + ${itemStat.index}" 
-                                            th:name="'wrappingOption_' + ${itemStat.index}" onchange="updateItemWrappingFee(this)">
-                                        <option value="none" data-fee="0">포장 안함 (무료)</option>
-                                        <option value="basic" data-fee="1000">기본 포장지 (+1,000원)</option>
-                                        <option value="gift" data-fee="2500">선물용 포장지 (+2,500원)</option>
-                                        <option value="premium" data-fee="3500">프리미엄 포장지 (+3,500원)</option>
-                                    </select>
-                                </td>
-                                <td class="align-middle">
-                                    <div>
-                                        <strong class="text-primary" th:text="${#numbers.formatInteger(item.price * item.quantity, 3, 'COMMA')} + '원'">25,000원</strong>
-                                        <br>
-                                        <small class="text-muted">포장비: <span th:id="'wrappingCost_' + ${itemStat.index}" class="wrapping-cost">0원</span></small>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 주문 정보 입력 폼 -->
-        <form th:action="@{/orders}" th:object="${orderRequest}" method="post">
-            <!-- 숨겨진 주문 상품 정보 -->
-            <div th:each="item, itemStat : ${cartItems}">
-                <input type="hidden" th:name="|orderItems[${itemStat.index}].bookId|" th:value="${item.bookId}"/>
-                <input type="hidden" th:name="|orderItems[${itemStat.index}].bookTitle|" th:value="${item.bookTitle}"/>
-                <input type="hidden" th:name="|orderItems[${itemStat.index}].quantity|" th:value="${item.quantity}"/>
-                <input type="hidden" th:name="|orderItems[${itemStat.index}].price|" th:value="${item.price}"/>
-                <input type="hidden" th:name="|orderItems[${itemStat.index}].wrappingId|" class="wrapping-id-input" th:id="'wrappingId_' + ${itemStat.index}" value=""/>
-            </div>
-            <input type="hidden" th:field="*{totalAmount}" th:value="${totalAmount}"/>
-            
-            
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">배송 정보</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="receiverName" class="form-label">받는 사람 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="receiverName"
-                                   th:field="*{receiverName}" placeholder="받으실 분의 성함을 입력해주세요" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="receiverPhoneNumber" class="form-label">연락처 <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="receiverPhoneNumber"
-                                   th:field="*{receiverPhoneNumber}" placeholder="01012345678"
-                                   pattern="[0-9]{10,11}" maxlength="11" 
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                            <div class="form-text">숫자만 입력해주세요 (10-11자리)</div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="shippingAddress" class="form-label">배송 주소 <span class="text-danger">*</span></label>
-                        <div class="input-group mb-2">
-                            <input type="text" class="form-control" id="zipCode" name="zipCode" placeholder="우편번호" readonly>
-                            <button type="button" class="btn btn-outline-secondary" onclick="findAddress()">주소 검색</button>
-                        </div>
-                        <input type="text" class="form-control mb-2" id="roadAddress" name="roadAddress" placeholder="도로명 주소" readonly>
-                        <input type="text" class="form-control" id="detailAddress" name="detailAddress" placeholder="상세 주소를 입력해주세요">
-                        <input type="hidden" th:field="*{shippingAddress}" id="shippingAddress">
-                    </div>
-                    <div class="mb-3">
-                        <label for="deliveryType" class="form-label">배송 방법</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="deliveryType" id="standardDelivery" value="standard" checked>
-                                    <label class="form-check-label" for="standardDelivery">
-                                        <strong>일반 배송</strong> <span class="text-muted">(무료)</span>
-                                        <br><small class="text-muted">2-3일 소요</small>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="deliveryType" id="expressDelivery" value="express">
-                                    <label class="form-check-label" for="expressDelivery">
-                                        <strong>익일 배송</strong> <span class="text-muted">(+3,000원)</span>
-                                        <br><small class="text-muted">다음날 도착</small>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="orderMessage" class="form-label">배송 요청사항</label>
-                        <select class="form-select mb-2" id="deliveryRequest" onchange="toggleCustomMessage()">
-                            <option value="">배송 요청사항을 선택해주세요</option>
-                            <option value="door">문 앞에 놓아주세요</option>
-                            <option value="security">경비실에 맡겨주세요</option>
-                            <option value="call">배송 전 연락주세요</option>
-                            <option value="fragile">파손 주의</option>
-                            <option value="custom">직접 입력</option>
+    <div>
+        <h3>주문 상품</h3>
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>도서명</th>
+                    <th>수량</th>
+                    <th>가격</th>
+                    <th>포장 옵션</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.title}"></td>
+                    <td th:text="${item.quantity}"></td>
+                    <td th:text="${item.price} + '원'"></td>
+                    <td>
+                        <select th:name="|wrapping_${itemStat.index}|" th:onchange="|updateWrappingId(${itemStat.index}, this.value)|">
+                            <option value="" selected>포장 안함</option>
+                            <option value="1">일반 포장</option>
+                            <option value="2">선물 포장</option>
+                            <option value="3">고급 포장</option>
                         </select>
-                        <textarea class="form-control" id="orderMessage" rows="3" 
-                                  th:field="*{orderMessage}" placeholder="직접 입력 선택 시 요청사항을 입력해주세요" 
-                                  style="display: none;"></textarea>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 주문 요약 -->
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">주문 요약</h5>
-                </div>
-                <div class="card-body">
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>도서 금액:</span>
-                                <span id="bookAmount" th:text="${#numbers.formatInteger(totalAmount, 3, 'COMMA')} + '원'">58,000원</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>포장비:</span>
-                                <span id="totalWrappingFee">0원</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>배송비:</span>
-                                <span id="deliveryFee">0원</span>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between">
-                                <strong>총 주문 금액:</strong>
-                                <strong class="text-primary fs-5" id="finalAmount" th:text="${#numbers.formatInteger(totalAmount, 3, 'COMMA')} + '원'">61,000원</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 주문 버튼 -->
-            <div class="d-flex justify-content-between mt-4">
-                <a href="/cart" class="btn btn-secondary">장바구니로 돌아가기</a>
-                <button type="submit" class="btn btn-primary btn-lg">주문하기</button>
-            </div>
-        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-</div>
+    <form th:action="@{/orders}" method="post">
+        <th:block th:each="item : ${items}">
+            <input type="hidden" th:name="|orderItems[${itemStat.index}].bookId|" th:value="${item.bookId}">
+            <input type="hidden" th:name="|orderItems[${itemStat.index}].quantity|" th:value="${item.quantity}">
+            <input type="hidden" th:name="|orderItems[${itemStat.index}].price|" th:value="${item.price}">
+            <input type="hidden" th:name="|orderItems[${itemStat.index}].wrappingId|" value="">
+        </th:block>
 
-<div layout:fragment="scripts">
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script type="text/javascript">
-    // DOM에서 총 주문 금액 읽어오기
-    let baseAmount = 0;
-    let totalWrappingFee = 0;
-    let deliveryFee = 0;
-    
-    // 페이지 로드 후 실제 금액 추출
-    document.addEventListener('DOMContentLoaded', function() {
-        const bookAmountElement = document.getElementById('bookAmount');
-        if (bookAmountElement) {
-            // "58,000원" 형태에서 숫자만 추출
-            const bookAmountText = bookAmountElement.textContent || bookAmountElement.innerText;
-            baseAmount = parseInt(bookAmountText.replace(/[^\d]/g, '')) || 50000;
-            console.log('실제 도서 금액:', baseAmount);
-        }
-        
-        // 배송 옵션 이벤트 리스너 등록
-        const deliveryOptions = document.querySelectorAll('input[name="deliveryType"]');
-        deliveryOptions.forEach(option => {
-            option.addEventListener('change', function() {
-                updateDeliveryFee();
-                updateTotalAmount();
-            });
-        });
-        
-        // 상세 주소 입력 이벤트 리스너
-        const detailAddressInput = document.getElementById('detailAddress');
-        if (detailAddressInput) {
-            detailAddressInput.addEventListener('input', updateShippingAddress);
-        }
-        
-        // 폼 제출 시 유효성 검사
-        const orderForm = document.querySelector('form');
-        if (orderForm) {
-            orderForm.addEventListener('submit', function(e) {
-                console.log('폼 제출 시도됨');
-                if (!validateForm()) {
-                    console.log('폼 검증 실패');
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
+
+        <div>
+            <label for="receiverName">받는 분</label>
+            <input type="text" id="receiverName" name="receiverName" placeholder="이름을 입력하세요" required>
+        </div>
+
+        <div>
+            <label for="receiverPhoneNumber">휴대폰번호</label>
+            <input type="text" id="receiverPhoneNumber" name="receiverPhoneNumber" placeholder="연락처를 입력하세요" required>
+        </div>
+
+        <div>
+            <label for="zipCode">우편번호</label>
+            <input type="text" id="zipCode" name="zipCode" placeholder="우편번호를 선택하세요" readonly required>
+            <button type="button" onclick="searchAddress()">우편번호 찾기</button>
+        </div>
+
+        <div>
+            <label for="baseAddress">주소</label>
+            <input type="text" id="baseAddress" name="baseAddress" placeholder="주소를 선택하세요" readonly required>
+        </div>
+
+        <div>
+            <label for="detailAddress">상세주소</label>
+            <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소를 입력하세요">
+        </div>
+
+        <div>
+            <label for="requestedDeliveryDate">배송 희망일</label>
+            <input type="date" id="requestedDeliveryDate" name="requestedDeliveryDate">
+        </div>
+
+        <button type="submit">다음 단계</button>
+    </form>
+    <script>
+        function searchAddress() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('zipCode').value = data.zonecode;
+                    document.getElementById('baseAddress').value = data.address;
+
+                    document.getElementById('detailAddress').focus();
                 }
-                console.log('폼 검증 성공');
-            });
-        }
-        
-        // 초기 금액 설정
-        updateDeliveryFee();
-        updateTotalAmount();
-    });
-    
-    // 각 도서별 포장지 선택 변경 시 호출
-    function updateItemWrappingFee(selectElement) {
-        const index = selectElement.id.split('_')[1];
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const fee = parseInt(selectedOption.getAttribute('data-fee')) || 0;
-        const wrappingType = selectedOption.value;
-        
-        // 해당 도서의 포장비 표시 업데이트
-        const wrappingCostElement = document.getElementById('wrappingCost_' + index);
-        if (wrappingCostElement) {
-            wrappingCostElement.textContent = fee.toLocaleString() + '원';
-        }
-        
-        // 숨겨진 wrappingId input 업데이트
-        const wrappingIdInput = document.getElementById('wrappingId_' + index);
-        if (wrappingIdInput) {
-            wrappingIdInput.value = getWrappingId(wrappingType);
-        }
-        
-        // 전체 포장비 재계산
-        calculateTotalWrappingFee();
-        updateTotalAmount();
-    }
-    
-    // 전체 포장비 계산
-    function calculateTotalWrappingFee() {
-        totalWrappingFee = 0;
-        const wrappingSelects = document.querySelectorAll('select[name^="wrappingOption_"]');
-        
-        wrappingSelects.forEach(select => {
-            const selectedOption = select.options[select.selectedIndex];
-            const fee = parseInt(selectedOption.getAttribute('data-fee')) || 0;
-            totalWrappingFee += fee;
-        });
-        
-        // 전체 포장비 표시 업데이트
-        const totalWrappingFeeElement = document.getElementById('totalWrappingFee');
-        if (totalWrappingFeeElement) {
-            totalWrappingFeeElement.textContent = totalWrappingFee.toLocaleString() + '원';
-        }
-    }
-    
-    function updateDeliveryFee() {
-        const selectedDelivery = document.querySelector('input[name="deliveryType"]:checked');
-        
-        if (!selectedDelivery) {
-            deliveryFee = 0;
-            document.getElementById('deliveryFee').textContent = '0원';
-            return;
-        }
-        
-        deliveryFee = selectedDelivery.value === 'express' ? 3000 : 0;
-        document.getElementById('deliveryFee').textContent = deliveryFee.toLocaleString() + '원';
-    }
-    
-    function updateTotalAmount() {
-        const totalAmount = baseAmount + totalWrappingFee + deliveryFee;
-        document.getElementById('finalAmount').textContent = totalAmount.toLocaleString() + '원';
-        
-        // hidden input 필드에도 총 금액 업데이트
-        const totalAmountInput = document.querySelector('input[name="totalAmount"]');
-        if (totalAmountInput) {
-            totalAmountInput.value = totalAmount;
-        }
-    }
-    
-    function toggleCustomMessage() {
-        const select = document.getElementById('deliveryRequest');
-        const textarea = document.getElementById('orderMessage');
-        
-        if (select.value === 'custom') {
-            textarea.style.display = 'block';
-            textarea.value = '';
-        } else {
-            textarea.style.display = 'none';
-            textarea.value = select.options[select.selectedIndex].text;
-        }
-    }
-    
-    function findAddress() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var addr = '';
-                var extraAddr = '';
-                
-                if (data.userSelectedType === 'R') {
-                    addr = data.roadAddress;
-                } else {
-                    addr = data.jibunAddress;
-                }
-                
-                if(data.userSelectedType === 'R'){
-                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                        extraAddr += data.bname;
-                    }
-                    if(data.buildingName !== '' && data.apartment === 'Y'){
-                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                    }
-                    if(extraAddr !== ''){
-                        extraAddr = ' (' + extraAddr + ')';
-                    }
-                    addr += extraAddr;
-                }
-                
-                document.getElementById('zipCode').value = data.zonecode;
-                document.getElementById('roadAddress').value = addr;
-                
-                // 주소 입력 시 전체 주소를 shippingAddress 필드에 설정
-                updateShippingAddress();
-                
-                document.getElementById('detailAddress').focus();
-            },
-            width: '100%',
-            height: '100%'
-        }).open();
-    }
-    
-    // 상세 주소 입력 시 전체 주소 업데이트
-    function updateShippingAddress() {
-        const zipCode = document.getElementById('zipCode').value;
-        const roadAddress = document.getElementById('roadAddress').value;
-        const detailAddress = document.getElementById('detailAddress').value;
-
-        if (zipCode && roadAddress) {
-            const fullAddress = detailAddress ? 
-                `(${zipCode}) ${roadAddress} ${detailAddress}` : 
-                `(${zipCode}) ${roadAddress}`;
-            document.getElementById('shippingAddress').value = fullAddress;
-        }
-    }
-    
-    // 전체 폼 유효성 검사
-    function validateForm() {
-        // 받는 사람 검사
-        const receiverName = document.getElementById('receiverName').value;
-        if (!receiverName.trim()) {
-            alert('받는 사람을 입력해주세요.');
-            document.getElementById('receiverName').focus();
-            return false;
+            }).open();
         }
 
-        // 연락처 검사
-        const receiverPhone = document.getElementById('receiverPhoneNumber').value;
-        if (!receiverPhone.trim()) {
-            alert('연락처를 입력해주세요.');
-            document.getElementById('receiverPhoneNumber').focus();
-            return false;
+        function updateWrappingId(index, wrappingId) {
+            const hiddenInput = document.querySelector(`input[name="orderItems[${index}].wrappingId"]`);
+            if (hiddenInput) {
+                hiddenInput.value = wrappingId;
+            }
         }
-        
-        if (!/^[0-9]{10,11}$/.test(receiverPhone)) {
-            alert('연락처는 10-11자리 숫자로 입력해주세요.');
-            document.getElementById('receiverPhoneNumber').focus();
-            return false;
-        }
-
-        // 주소 검사
-        if (!validateAddress()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // 주소 유효성 검사
-    function validateAddress() {
-        const zipCode = document.getElementById('zipCode').value;
-        const roadAddress = document.getElementById('roadAddress').value;
-        const detailAddress = document.getElementById('detailAddress').value;
-
-        if (!zipCode || !roadAddress) {
-            alert('주소 검색 버튼을 눌러 우편번호와 도로명 주소를 선택해주세요.');
-            return false;
-        }
-
-        if (!detailAddress.trim()) {
-            alert('상세 주소를 입력해주세요.');
-            document.getElementById('detailAddress').focus();
-            return false;
-        }
-
-        // 전체 주소를 hidden 필드에 설정
-        updateShippingAddress();
-
-        return true;
-    }
-    
-    // 포장지 타입을 wrappingId로 변환
-    function getWrappingId(wrappingType) {
-        switch(wrappingType) {
-            case 'basic': return 1;
-            case 'gift': return 2;  
-            case 'premium': return 3;
-            case 'none':
-            default: return null;
-        }
-    }
-    
-    // 각 도서별 포장지 정보 수집
-    function getWrappingFeesData() {
-        const wrappingData = [];
-        const wrappingSelects = document.querySelectorAll('select[name^="wrappingOption_"]');
-        
-        wrappingSelects.forEach((select, index) => {
-            const selectedOption = select.options[select.selectedIndex];
-            wrappingData.push({
-                bookIndex: index,
-                wrappingType: selectedOption.value,
-                fee: parseInt(selectedOption.getAttribute('data-fee')) || 0
-            });
-        });
-        
-        return wrappingData;
-    }
     </script>
-</div>
 </body>
+</html>
