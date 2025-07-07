@@ -3,10 +3,8 @@ package com.nhnacademy.frontend.mypage.controller;
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
-import com.nhnacademy.frontend.mypage.service.MypageService;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
-import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-
+import com.nhnacademy.frontend.mypage.service.MypageService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
