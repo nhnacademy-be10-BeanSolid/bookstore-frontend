@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.order.controller;
 
+import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
-import com.nhnacademy.frontend.user.exception.ValidationFailedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,8 @@ import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -90,7 +91,7 @@ class OrderControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
 
         // when & then
-        assertThrows(ValidationFailedException.class, () -> 
+        assertThrows(ValidationFailedException.class, () ->
             orderController.createOrder(orderRequest, bindingResult, redirectAttributes)
         );
         
