@@ -30,26 +30,20 @@
                 </div>
             </div>
             <!-- 책 2열 -->
-            <div class="col-8">
-                <div class="row row-cols-2 g-4">
-                    <div class="col">
-                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
-                            책 1
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
-                            책 2
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
-                            책 3
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="bg-secondary text-white d-flex justify-content-center align-items-center" style="width:100%; height:180px;">
-                            책 4
+            <div class="row row-cols-2 g-4">
+                <div class="col" th:each="book : ${books}">
+                    <div class="card h-100">
+                        <a th:href="@{/books/{id}(id=${book.id})}">
+                            <img th:src="${book.image}" class="card-img-top" alt="Book Image" style="height:180px; object-fit:cover;">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${book.title}">도서 제목</h5>
+                            <p class="card-text">
+                                저자: <span th:text="${book.author}">저자</span><br>
+                                ISBN: <span th:text="${book.isbn}">ISBN</span><br>
+                                가격: <span th:text="${book.salePrice}">0</span>원<br>
+                                재고: <span th:text="${book.stock}">0</span>권
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -59,14 +53,21 @@
         <div class="d-flex justify-content-center align-items-center mt-4">
             <nav>
                 <ul class="pagination mb-0">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">&larr;</a>
+                    <!-- 이전 버튼 -->
+                    <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{/?page={p}(p=${(page.number - 1)})}" aria-label="Previous">&larr;</a>
                     </li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">&rarr;</a>
+
+                    <!-- 페이지 번호 -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                        th:classappend="${i == page.number} ? 'active'">
+                        <a class="page-link" th:href="@{/?page={p}(p=${(i)})}" th:text="${i + 1}">1</a>
+                    </li>
+
+                    <!-- 다음 버튼 -->
+                    <li class="page-item" th:classappend="${page.number == page.totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{/?page={p}(p=${(page.number + 1)})}" aria-label="Next">&rarr;</a>
                     </li>
                 </ul>
             </nav>

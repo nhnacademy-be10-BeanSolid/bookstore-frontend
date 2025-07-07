@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>카테고리 생성</title>
+</head>
+<body>
+  <h1>카테고리 생성</h1>
+  <form th:action="@{/admin/categories}" th:object="${request}" method="post">
+    <div>
+      <label for="categoryName">카테고리 이름:</label>
+      <input type="text" th:field="*{categoryName}" id="categoryName" required />
+    </div>
+
+    <div>
+      <label for="parentId">부모 카테고리 ID :</label>
+      <input type="number" th:field="*{parentId}" id="parentId" />
+    </div>
+
+    <div>
+      <button type="submit">생성</button>
+    </div>
+  </form>
+
+  <a href="/admin/categories">카테고리 목록</a>
+</body>
+</html>
