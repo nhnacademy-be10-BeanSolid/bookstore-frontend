@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.user.domain.request;
+package com.nhnacademy.frontend.mypage.domain.request;
 
 import jakarta.validation.constraints.Email;
 import org.springframework.data.annotation.CreatedDate;

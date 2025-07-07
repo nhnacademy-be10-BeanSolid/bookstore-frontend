@@ -4,8 +4,9 @@ package com.nhnacademy.frontend.mypage.controller;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.service.MypageService;
-import com.nhnacademy.frontend.user.domain.request.UserUpdateRequestDto;
-import com.nhnacademy.frontend.user.service.UserService;
+import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MypageController {
     private final MypageService mypageService;
-    private final UserService userService;
     private final JwtCookieUtil jwtCookieUtil;
 
 
@@ -56,7 +56,7 @@ public class MypageController {
 
     @GetMapping("/edit")
     public String mypageEditForm(Model model) {
-        ResponseUser user = userService.getMyInfo();
+        ResponseUser user = mypageService.getMyInfo();
         model.addAttribute("user", user);
         return "mypage/edit";
     }
@@ -64,7 +64,7 @@ public class MypageController {
     @PutMapping("/edit")
     @ResponseBody
     public ResponseEntity<Void> mypageEdit(@RequestBody UserUpdateRequestDto userUpdateRequestDto) {
-        userService.updatePersonalInformation(userUpdateRequestDto);
+        mypageService.updatePersonalInformation(userUpdateRequestDto);
         return ResponseEntity.ok().build();
     }
 }

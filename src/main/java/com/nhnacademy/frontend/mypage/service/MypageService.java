@@ -1,7 +1,14 @@
 package com.nhnacademy.frontend.mypage.service;
 
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
+import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
+
 public interface MypageService {
     boolean withdrawUser(String password);
 
     boolean withdrawOAuth2User();
+
+    void updatePersonalInformation(UserUpdateRequestDto request);
+
+    ResponseUser getMyInfo();
 }
