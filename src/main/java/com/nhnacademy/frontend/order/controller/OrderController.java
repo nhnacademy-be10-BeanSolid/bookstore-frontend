@@ -3,18 +3,17 @@ package com.nhnacademy.frontend.order.controller;
 import com.nhnacademy.frontend.order.dto.CartItem;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
 import com.nhnacademy.frontend.user.exception.ValidationFailedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -28,15 +27,13 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ModelAndView orderPage() {
+    public String orderPage(Model model) {
         //TODO: 장바구니 혹은 바로구매로 주문도서 정보 가져올 예정.
         CartItem cartItem1 = new CartItem(1L, "빈틈없조1", 1, 5_000L);
         CartItem cartItem2 = new CartItem(2L, "빈틈없조2", 1, 7_000L);
+        model.addAttribute(List.of(cartItem1, cartItem2));
 
-        ModelAndView mav = new ModelAndView("order/order");
-        mav.addObject("items", List.of(cartItem1, cartItem2));
-
-        return mav;
+        return "order/order";
     }
 
     @PostMapping
@@ -51,7 +48,7 @@ public class OrderController {
 
         try {
             OrderResponse orderResponse = orderService.createOrder(orderRequest);
-            log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderNumber());
+            log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
 
             redirectAttributes.addFlashAttribute("orderResponse", orderResponse);
 
@@ -64,9 +61,27 @@ public class OrderController {
         }
     }
 
+    // 주문 전체 조회 페이지
+    @GetMapping("/list")
+    public String orderList(Model model) {
+        Page<OrderSummaryResponse> orders = orderService.getAllOrders();
+        model.addAttribute("orders", orders);
+
+        return "order/list";
+    }
+
+    // 주문 상세 조회 페이지
+    @GetMapping("/{orderId}")
+    public String getOrderDetail(@PathVariable String orderId, Model model) {
+        OrderResponse orderDetail = orderService.getOrder(orderId);
+        model.addAttribute("order", orderDetail);
+
+        return "order/detail";
+    }
+
     // 임시 결제 단계 페이지
     @GetMapping("/tempPay")
     public String payPage() {
-        return "/order/tempPay";
+        return "order/tempPay";
     }
 }

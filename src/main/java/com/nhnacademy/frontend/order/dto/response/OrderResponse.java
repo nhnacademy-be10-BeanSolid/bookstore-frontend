@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public record OrderResponse(
         Long id,
-        String orderNumber,
+        String orderId,
         String status,
         LocalDate orderDate,
         String receiverName,

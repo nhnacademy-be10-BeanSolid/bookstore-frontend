@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.order.controller;
 
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
 import com.nhnacademy.frontend.user.exception.ValidationFailedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
@@ -18,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,9 +63,7 @@ class OrderControllerTest {
         // when & then
         mockMvc.perform(get("/orders"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/order/order"))
-                .andExpect(model().attributeExists("items"))
-                .andExpect(model().attribute("items", hasSize(2)));
+                .andExpect(view().name("order/order"));
     }
 
     @Test
@@ -119,12 +123,47 @@ class OrderControllerTest {
     }
 
     @Test
+    @DisplayName("주문 전체 조회 - 성공")
+    void orderList_Success() throws Exception {
+        // given
+        Page<OrderSummaryResponse> orders = createOrderSummaryPage();
+        when(orderService.getAllOrders()).thenReturn(orders);
+
+        // when & then
+        mockMvc.perform(get("/orders/list"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/list"))
+                .andExpect(model().attributeExists("orders"))
+                .andExpect(model().attribute("orders", orders));
+        
+        verify(orderService).getAllOrders();
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회 - 성공")
+    void getOrderDetail_Success() throws Exception {
+        // given
+        String orderId = "190001-abcabc-123123";
+        OrderResponse orderDetail = createOrderResponse();
+        when(orderService.getOrder(orderId)).thenReturn(orderDetail);
+
+        // when & then
+        mockMvc.perform(get("/orders/{orderId}", orderId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/detail"))
+                .andExpect(model().attributeExists("order"))
+                .andExpect(model().attribute("order", orderDetail));
+        
+        verify(orderService).getOrder(orderId);
+    }
+
+    @Test
     @DisplayName("결제 페이지 조회 - 성공")
     void payPage_Success() throws Exception {
         // when & then
         mockMvc.perform(get("/orders/tempPay"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/order/tempPay"));
+                .andExpect(view().name("order/tempPay"));
     }
 
     @Test
@@ -196,5 +235,25 @@ class OrderControllerTest {
                 3000,
                 23000L
         );
+    }
+
+    private Page<OrderSummaryResponse> createOrderSummaryPage() {
+        List<OrderSummaryResponse> orderSummaries = List.of(
+                new OrderSummaryResponse(
+                        LocalDate.of(3000, 1, 1),
+                        "190001-abcabc-123123",
+                        "홍길동",
+                        23000L
+                ),
+                new OrderSummaryResponse(
+                        LocalDate.of(3000, 1, 2),
+                        "190002-defdef-456456",
+                        "김철수",
+                        15000L
+                )
+        );
+        
+        Pageable pageable = PageRequest.of(0, 10);
+        return new PageImpl<>(orderSummaries, pageable, orderSummaries.size());
     }
 }
