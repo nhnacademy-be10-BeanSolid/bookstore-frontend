@@ -4,6 +4,8 @@ package com.nhnacademy.frontend.mypage.service;
 import com.nhnacademy.frontend.auth.domain.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.common.adapter.AuthAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
+import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +42,16 @@ public class MypageServiceImpl implements MypageService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+
+    @Override
+    public void updatePersonalInformation(UserUpdateRequestDto request) {
+        userAdapter.updatePersonalInformation(request);
+    }
+
+    @Override
+    public ResponseUser getMyInfo() {
+        return userAdapter.getUserInfo().getBody();
     }
 }
