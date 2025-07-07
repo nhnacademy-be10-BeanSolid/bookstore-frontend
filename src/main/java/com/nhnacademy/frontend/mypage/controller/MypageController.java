@@ -1,8 +1,11 @@
 package com.nhnacademy.frontend.mypage.controller;
 
+import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.mypage.service.MypageService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class MypageController {
     private final MypageService mypageService;
+    private final JwtCookieUtil jwtCookieUtil;
 
     @GetMapping
     public String mypageForm() {
@@ -20,9 +24,26 @@ public class MypageController {
     }
 
     @PostMapping("/withdraw")
-    public String mypageWithdraw(@RequestParam("password") String password) {
-        boolean result = mypageService.withdrawUser(password);
+    public String mypageWithdraw(@RequestParam(value = "password", required = false) String password,
+                                 HttpServletResponse response,
+                                 Model model) {
+        String userType = (String) model.getAttribute("userType");
+
+        boolean result;
+
+        if("OAUTH2".equals(userType)) {
+            result = mypageService.withdrawOAuth2User();
+        } else if ("LOCAL".equals(userType)) {
+            if(password == null || password.isEmpty()) {
+                return "redirect:/mypage?error=password_required";
+            }
+            result = mypageService.withdrawUser(password);
+        } else {
+            return "redirect:/mypage?error=invalid_user_type";
+        }
+
         if(result) {
+            jwtCookieUtil.removeJwtCookie(response);
             return "redirect:/";
         } else {
             return "redirect:/mypage";
