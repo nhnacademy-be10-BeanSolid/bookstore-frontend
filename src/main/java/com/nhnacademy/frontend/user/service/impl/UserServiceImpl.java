@@ -1,7 +1,9 @@
 package com.nhnacademy.frontend.user.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.user.domain.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isExistUser(String userId) {
         return userAdapter.isExistUser(userId);
+    }
+
+    @Override
+    public void updatePersonalInformation(UserUpdateRequestDto request) {
+        userAdapter.updatePersonalInformation(request);
+    }
+
+    @Override
+    public ResponseUser getMyInfo() {
+        return userAdapter.getUserInfo().getBody();
     }
 
 }
