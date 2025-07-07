@@ -67,6 +67,6 @@ public class OrderController {
     // 임시 결제 단계 페이지
     @GetMapping("/tempPay")
     public String payPage() {
-        return "/order/tempPay";
+        return "order/tempPay";
     }
 }

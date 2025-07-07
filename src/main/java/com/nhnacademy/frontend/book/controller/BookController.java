@@ -23,6 +23,6 @@ public class BookController {
         BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
         log.info(bookDetail.toString());
         model.addAttribute("book", bookDetail);
-        return "/book/book-detail";
+        return "book/book-detail";
     }
 }

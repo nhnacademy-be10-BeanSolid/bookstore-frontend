@@ -29,7 +29,7 @@ public class AdminBookController {
     public String showCreateForm(Model model) {
         log.info("showCreateForm");
         model.addAttribute("book", new BookCreateRequestDto(null, null, null, null, null, null, null, null, null, null, null, null, Set.of()));
-        return "/admin/book/create-form";
+        return "admin/book/create-form";
     }
 
     // 업데이트 폼
