@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.mypage.service;
 
-import com.nhnacademy.frontend.adapter.user.UserAdapter;
+
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

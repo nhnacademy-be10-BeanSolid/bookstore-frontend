@@ -19,32 +19,65 @@
     </li>
 </ul>
 
-<!-- 회원 탈퇴 버튼 -->
-<button type="button" id="withdraw-btn">회원 탈퇴</button>
+<!-- 탈퇴 버튼 -->
+<button
+        th:if="${userType == 'OAUTH2'}"
+        type="button"
+        onclick="confirmOAuth2Withdrawal()">
+    회원 탈퇴
+</button>
 
-<!-- 비밀번호 입력 모달 (처음엔 숨김) -->
-<div id="withdraw-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
-    <div style="background:#fff; margin:10% auto; padding:20px; width:300px; border-radius:8px;">
-        <h3>회원 탈퇴 확인</h3>
-        <p>정말로 탈퇴하시겠습니까? 비밀번호를 입력해 주세요.</p>
-        <form action="/mypage/withdraw" method="POST">
-            <input type="password" name="password" placeholder="비밀번호" required>
-            <div style="margin-top:10px;">
-                <button type="submit">탈퇴하기</button>
-                <button type="button" id="cancel-btn">취소</button>
-            </div>
-        </form>
-    </div>
+<button
+        th:if="${userType == 'LOCAL'}"
+        type="button"
+        onclick="showPasswordModal()">
+    회원 탈퇴
+</button>
+
+<!-- OAuth2 단순 확인 -->
+<script>
+    function confirmOAuth2Withdrawal() {
+        if (confirm('OAuth2 계정은 비밀번호 없이 즉시 탈퇴됩니다.\n정말로 탈퇴하시겠습니까?')) {
+            document.getElementById('withdrawalForm').submit();
+        }
+    }
+</script>
+
+<!-- 일반 사용자 비밀번호 확인 모달 -->
+<div id="passwordModal" style="display:none;">
+    <p>정말로 탈퇴하시겠습니까? 비밀번호를 입력해 주세요.</p>
+    <input type="password" id="confirmPassword" placeholder="비밀번호 입력" />
+    <button onclick="submitWithPassword()">탈퇴하기</button>
+    <button onclick="closePasswordModal()">취소</button>
 </div>
 
 <script>
-    document.getElementById('withdraw-btn').onclick = function() {
-        document.getElementById('withdraw-modal').style.display = 'block';
-    };
-    document.getElementById('cancel-btn').onclick = function() {
-        document.getElementById('withdraw-modal').style.display = 'none';
-    };
+    function showPasswordModal() {
+        document.getElementById('passwordModal').style.display = 'block';
+    }
+
+    function closePasswordModal() {
+        document.getElementById('passwordModal').style.display = 'none';
+    }
+
+    function submitWithPassword() {
+        const pwd = document.getElementById('confirmPassword').value;
+        const form = document.getElementById('withdrawalForm');
+        // 비밀번호를 hidden input에 담아 전송
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'password';
+        input.value = pwd;
+        form.appendChild(input);
+        form.submit();
+    }
 </script>
+
+<!-- 탈퇴 처리 폼 -->
+<form id="withdrawalForm" th:action="@{/mypage/withdraw}" method="post">
+    <!-- CSRF 토큰 등 -->
+</form>
+
 
 </body>
 </html>
