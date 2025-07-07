@@ -95,4 +95,8 @@ public interface BookAdapter {
     // 좋아요 삭제
     @DeleteMapping("/book-api/books/{bookId}/bookLikes")
     void deleteBookLike(@PathVariable Long bookId, @RequestHeader String userId);
+
+    // 엘라스틱 서치
+    @GetMapping("/book-api/search")
+    void searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
 }

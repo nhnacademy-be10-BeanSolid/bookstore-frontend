@@ -32,11 +32,11 @@
       <p>재고: <span th:text="${book.stock}">0</span>권</p>
       <p>포장 가능 여부: <span th:text="${book.wrappable} ? '가능' : '불가'"></span></p>
 
-      <p th:if="${book.description != null}">
-        설명: <span th:text="${book.description}"></span>
-      </p>
-      <p th:if="${book.toc != null}">
+      <p th:if="${book.toc}">
         목차: <span th:text="${book.toc}"></span>
+      </p>
+      <p th:if="${book.description}">
+        설명: <span th:text="${book.description}"></span>
       </p>
 
       <p>좋아요 수: <span th:text="${book.likeCount}"></span>개</p>

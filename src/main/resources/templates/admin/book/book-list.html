@@ -13,9 +13,6 @@
         <th>도서 ID</th>
         <th>제목</th>
         <th>저자</th>
-        <th>출판사</th>
-        <th>출판일</th>
-        <th>상태</th>
         <th>상세 보기</th>
         <th>관리</th>
         <th>삭제</th>
@@ -26,9 +23,6 @@
         <td th:text="${book.id}"></td>
         <td th:text="${book.title}"></td>
         <td th:text="${book.author}"></td>
-        <td th:text="${book.publisher}"></td>
-        <td th:text="${book.publishAt}"></td>
-        <td th:text="${book.status}"></td>
         <td>
             <a th:href="@{/admin/books/{id}(id=${book.id})}">상세</a>
         </td>

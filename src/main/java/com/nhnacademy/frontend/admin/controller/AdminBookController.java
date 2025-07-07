@@ -27,7 +27,7 @@ public class AdminBookController {
     // 등록 폼
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        log.debug("showCreateForm");
+        log.info("showCreateForm");
         model.addAttribute("book", new BookCreateRequestDto(null, null, null, null, null, null, null, null, null, null, null, null, Set.of()));
         return "/admin/book/create-form";
     }
@@ -35,7 +35,7 @@ public class AdminBookController {
     // 업데이트 폼
     @GetMapping("/{bookId}/edit")
     public String showUpdateForm(@PathVariable("bookId") Long bookId, Model model) {
-        log.debug("Show update form");
+        log.info("Show update form");
         BookDetailResponseDto book = bookService.getBookDetail(bookId);
 
         model.addAttribute("book", book);
@@ -48,7 +48,7 @@ public class AdminBookController {
     @GetMapping
     public String getBookList(Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
-        log.debug("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("page", bookList);
         return "admin/book/book-list";
@@ -58,7 +58,7 @@ public class AdminBookController {
     @GetMapping("/{bookId}")
     public String getBookDetail(@PathVariable("bookId") Long bookId, Model model) {
         BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
-        log.debug("BookDetail Get Success : {}", bookId);
+        log.info("BookDetail Get Success : {}", bookId);
         model.addAttribute("book", bookDetail);
         return "admin/book/detail";
     }
@@ -66,8 +66,9 @@ public class AdminBookController {
     // 도서 등록
     @PostMapping
     public String createBook(@ModelAttribute BookCreateRequestDto request) {
+        log.info("createBook : {}", request);
         BookResponseDto book = bookService.createBook(request);
-        log.debug("Book Create Success : {}", book.id());
+        log.info("Book Create Success : {}", book.id());
         return "redirect:/admin/books/" + book.id();
     }
 
@@ -75,7 +76,7 @@ public class AdminBookController {
     @PutMapping("/{bookId}")
     public String updateBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookUpdateRequestDto request) {
         bookService.updateBook(bookId, request);
-        log.debug("Book Update Success : {}", bookId);
+        log.info("Book Update Success : {}", bookId);
         return "redirect:/admin/books/" + bookId;
     }
 
@@ -83,7 +84,7 @@ public class AdminBookController {
     @DeleteMapping("/{bookId}")
     public String deleteBook(@PathVariable("bookId") Long bookId) {
         bookService.deleteBook(bookId);
-        log.debug("Book Delete Success : {}", bookId);
+        log.info("Book Delete Success : {}", bookId);
         return "redirect:/admin/books";
     }
 }

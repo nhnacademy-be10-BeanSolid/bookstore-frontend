@@ -1,7 +1,6 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
-import com.nhnacademy.frontend.admin.domain.response.BookLikeResponse;
 import com.nhnacademy.frontend.admin.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +21,7 @@ public class BookController {
     @GetMapping("/{bookId}")
     public String bookDetail(@PathVariable("bookId") Long bookId,  Model model) {
         BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
+        log.info(bookDetail.toString());
         model.addAttribute("book", bookDetail);
         return "/book/book-detail";
     }
