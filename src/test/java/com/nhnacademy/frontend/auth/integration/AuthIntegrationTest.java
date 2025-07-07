@@ -41,7 +41,7 @@ class AuthIntegrationTest {
     @Test
     void login_success_setsCookiesAndRedirects() throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto("access-token", "refresh-token");
-        TokenParseResponseDto parseResponseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"));
+        TokenParseResponseDto parseResponseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"), "LOCAL");
         when(authAdapter.login(any())).thenReturn(loginResponseDto);
         when(authAdapter.parse(any())).thenReturn(parseResponseDto);
 

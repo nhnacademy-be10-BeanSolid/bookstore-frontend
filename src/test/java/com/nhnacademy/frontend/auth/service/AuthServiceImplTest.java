@@ -74,7 +74,7 @@ class AuthServiceImplTest {
     @Test
     void parse_success_returnsTokenParseResponseDto() {
         String token = "token";
-        TokenParseResponseDto responseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"));
+        TokenParseResponseDto responseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"), "LOCAL");
         when(authAdapter.parse(token)).thenReturn(responseDto);
 
         TokenParseResponseDto result = authService.parse(token);
