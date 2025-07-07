@@ -31,7 +31,7 @@ public class OrderController {
         //TODO: 장바구니 혹은 바로구매로 주문도서 정보 가져올 예정.
         CartItem cartItem1 = new CartItem(1L, "빈틈없조1", 1, 5_000L);
         CartItem cartItem2 = new CartItem(2L, "빈틈없조2", 1, 7_000L);
-        model.addAttribute(List.of(cartItem1, cartItem2));
+        model.addAttribute("items", List.of(cartItem1, cartItem2));
 
         return "order/order";
     }
