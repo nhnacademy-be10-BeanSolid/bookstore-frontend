@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.common.adapter;
 import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.auth.domain.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,5 +29,6 @@ public interface AuthAdapter {
     @PostMapping("/auth-service/oauth2/signup")
     OAuth2LoginResponseDto additionalSignup(@RequestBody OAuth2AdditionalSignupRequestDto request);
 
-
+    @PostMapping("/auth-service/auth/verify-password")
+    Boolean verifyPassword(@RequestBody PasswordVerificationRequestDto request);
 }

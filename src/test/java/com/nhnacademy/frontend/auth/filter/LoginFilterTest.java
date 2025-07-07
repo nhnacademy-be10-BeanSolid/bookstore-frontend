@@ -60,7 +60,7 @@ class LoginFilterTest {
         when(authService.login(username, password))
                 .thenReturn(new LoginResponseDto(accessToken, refreshToken));
         when(authService.parse(accessToken))
-                .thenReturn(new TokenParseResponseDto(username, authorities));
+                .thenReturn(new TokenParseResponseDto(username, authorities, "LOCAL"));
 
         Authentication authentication = loginFilter.attemptAuthentication(request, response);
 
