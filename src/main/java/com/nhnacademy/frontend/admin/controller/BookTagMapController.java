@@ -21,7 +21,7 @@ public class BookTagMapController {
     public String tagManage(@PathVariable("bookId") Long bookId, Model model) {
         BookDetailResponseDto response = bookService.getBookDetail(bookId);
         model.addAttribute("book", response);
-        return "/admin/book/tag-manage";
+        return "admin/book/tag-manage";
     }
 
     @PostMapping

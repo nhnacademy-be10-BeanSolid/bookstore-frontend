@@ -124,7 +124,7 @@ class OrderControllerTest {
         // when & then
         mockMvc.perform(get("/orders/tempPay"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/order/tempPay"));
+                .andExpect(view().name("order/tempPay"));
     }
 
     @Test

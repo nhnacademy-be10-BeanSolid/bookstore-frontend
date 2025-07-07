@@ -21,7 +21,7 @@ public class BookCategoryMapController {
     public String categoryManage(@PathVariable("bookId") Long bookId, Model model) {
         BookDetailResponseDto response = bookService.getBookDetail(bookId);
         model.addAttribute("book", response);
-        return "/admin/book/category-manage";
+        return "admin/book/category-manage";
     }
 
     @PostMapping

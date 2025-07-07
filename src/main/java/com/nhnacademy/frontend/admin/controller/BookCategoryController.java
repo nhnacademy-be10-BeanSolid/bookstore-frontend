@@ -23,7 +23,7 @@ public class BookCategoryController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("request", new BookCategoryCreateRequestDto(null, null));
-        return "/admin/category/create-form";
+        return "admin/category/create-form";
     }
 
     @GetMapping("/{categoryId}/edit")
@@ -31,7 +31,7 @@ public class BookCategoryController {
         BookCategoryResponseDto category = bookService.getCategory(categoryId);
         model.addAttribute("category", category);
         model.addAttribute("request", new BookCategoryUpdateRequestDto(category.categoryName(), category.parentId()));
-        return "/admin/category/update-form";
+        return "admin/category/update-form";
     }
 
     @GetMapping("/{categoryId}")
@@ -39,7 +39,7 @@ public class BookCategoryController {
         BookCategoryResponseDto category = bookService.getCategory(categoryId);
         log.debug("Category Get Success : {}", category);
         model.addAttribute("category", category);;
-        return "/admin/category/detail";
+        return "admin/category/detail";
     }
 
     @GetMapping
@@ -48,7 +48,7 @@ public class BookCategoryController {
         log.debug("CategoryListGet Success- page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("categories", categoryList.getContent());
         model.addAttribute("page", categoryList);
-        return "/admin/category/category-list";
+        return "admin/category/category-list";
     }
 
     @PostMapping
