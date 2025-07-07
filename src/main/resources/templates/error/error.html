@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>에러페이지</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            min-height: 100vh;
+            width: 100vw;
+        }
+        .error-outer {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .error-inner {
+            background: #fff;
+            width: 90vw;
+            max-width: 800px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+            padding-bottom: 40px;
+        }
+        .error-icon {
+            margin-top: 48px;
+            margin-bottom: 18px;
+        }
+        .error-title {
+            font-size: 2.3rem;
+            font-weight: 400;
+            color: #111;
+            margin-bottom: 0;
+        }
+        .error-title b {
+            font-weight: 500;
+        }
+        .error-desc {
+            color: #f44336;
+            font-size: 1.15rem;
+            margin-top: 18px;
+            margin-bottom: 38px;
+            font-weight: 400;
+        }
+
+        .error-details span {
+            font-weight: 500;
+            color: #000;
+        }
+        .home-btn {
+            background: #888;
+            color: #fff;
+            border: none;
+            padding: 7px 30px;
+            border-radius: 0;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 0;
+        }
+        .home-btn:hover {
+            background: #555;
+        }
+        .error-details-message {
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            .error-inner { width: 100vw; }
+        }
+    </style>
+</head>
+<body>
+<div class="error-outer">
+    <div class="error-inner">
+        <!-- 상단 경고 아이콘 (SVG) -->
+        <div class="error-icon">
+            <svg width="80" height="80" viewBox="0 0 48 48">
+                <polygon points="24,6 4,42 44,42" fill="#f44336"/>
+                <rect x="22" y="18" width="4" height="14" rx="2" fill="#fff"/>
+                <rect x="22" y="35" width="4" height="4" rx="2" fill="#fff"/>
+            </svg>
+        </div>
+        <!-- 타이틀 -->
+        <div class="error-title">
+            <b>오류</b> Error
+        </div>
+        <!-- 안내문 -->
+        <div class="error-desc">
+            오류가 발생하였습니다.
+        </div>
+        <!-- 에러 상세 내용 -->
+        <div class="error-details-message">
+            <span th:text="${statusCode}"></span><br><br>
+            <span th:text="${userFriendlyMessage}"></span><br><br><br>
+            <span>입력하신 주소를 다시 한번 확인해주세요.</span>
+        </div>
+        <!-- 홈 버튼 -->
+        <a th:href="@{/}" class="home-btn">홈으로 돌아가기</a><br>
+        <button type="button" class="home-btn" onclick="history.back()">이전 페이지로 돌아가기</button>
+    </div>
+</div>
+</body>
+</html>
