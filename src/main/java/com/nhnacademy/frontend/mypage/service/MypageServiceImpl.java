@@ -4,10 +4,14 @@ package com.nhnacademy.frontend.mypage.service;
 import com.nhnacademy.frontend.auth.domain.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.common.adapter.AuthAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
+import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +57,20 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public ResponseUser getMyInfo() {
         return userAdapter.getUserInfo().getBody();
+    }
+
+    @Override
+    public List<ResponseAddress> getAllAddresses() {
+        return userAdapter.getAllAddresses().getBody();
+    }
+
+    @Override
+    public void deleteAddress(long addressId) {
+        userAdapter.deleteAddress(addressId);
+    }
+
+    @Override
+    public void addAddress(AddressCreateRequest address) {
+        userAdapter.addAddress(address);
     }
 }
