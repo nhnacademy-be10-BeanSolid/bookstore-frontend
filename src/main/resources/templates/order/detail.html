@@ -1,0 +1,61 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beansolid - 주문 상세 조회</title>
+</head>
+<body>
+    <h1>주문 상세 정보</h1>
+    
+    <div th:object="${order}">
+        <h2>기본 정보</h2>
+        <table border="1">
+            <tr>
+                <td>주문 번호</td>
+                <td th:text="*{orderId}"></td>
+            </tr>
+            <tr>
+                <td>주문 날짜</td>
+                <td th:text="*{orderDate}"></td>
+            </tr>
+            <tr>
+                <td>주문 상태</td>
+                <td th:text="*{status}"></td>
+            </tr>
+            <tr>
+                <td>총 결제 금액</td>
+                <td th:text="*{totalAmount}"></td>
+            </tr>
+            <tr>
+                <td>배송비</td>
+                <td th:text="*{deliveryFee}"></td>
+            </tr>
+        </table>
+        
+        <h2>배송 정보</h2>
+        <table border="1">
+            <tr>
+                <td>수령인</td>
+                <td th:text="*{receiverName}"></td>
+            </tr>
+            <tr>
+                <td>연락처</td>
+                <td th:text="*{receiverPhoneNumber}"></td>
+            </tr>
+            <tr>
+                <td>배송 주소</td>
+                <td th:text="*{address}"></td>
+            </tr>
+            <tr>
+                <td>희망 배송일</td>
+                <td th:text="*{requestedDeliveryDate}"></td>
+            </tr>
+        </table>
+    </div>
+    
+    <div>
+        <a href="/orders/list">주문 목록으로 돌아가기</a>
+    </div>
+</body>
+</html>
