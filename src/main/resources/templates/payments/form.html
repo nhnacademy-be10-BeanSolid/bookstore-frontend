@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8"/>
+    <title>결제 요청</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: { DEFAULT: '#2563eb', light: '#3b82f6' } }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="min-h-screen bg-gray-50 py-14 px-6">
+
+<header class="max-w-7xl mx-auto flex justify-end text-sm space-x-4 mb-8">
+    <a sec:authorize="isAnonymous()" th:href="@{/auth/login}" class="text-gray-600 hover:text-primary">로그인</a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/auth/logout}" class="text-gray-600 hover:text-primary">로그아웃</a>
+</header>
+
+<main class="w-full max-w-7xl mx-auto bg-white rounded-3xl shadow-2xl p-12 ring-1 ring-gray-100">
+    <h1 class="text-3xl font-bold text-gray-800 mb-12">결제 요청</h1>
+
+    <form th:action="@{/payments}" method="post" th:object="${paymentRequest}" class="grid gap-12 lg:grid-cols-[1fr_340px]">
+
+        <!-- 숨겨진 필수 값들 -->
+        <input type="hidden" th:field="*{orderId}"/>
+        <input type="hidden" th:field="*{successUrl}"/>
+        <input type="hidden" th:field="*{failUrl}"/>
+
+        <!-- ① 입력 영역 -->
+        <section class="space-y-8">
+            <div>
+                <label for="payName" class="block mb-2 text-sm font-medium text-gray-700">상품명</label>
+                <input id="payName" th:field="*{payName}" required
+                       class="w-full h-11 px-4 rounded-lg border-gray-300 shadow-sm
+                              focus:border-primary focus:ring-primary/40"/>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="payAmount" class="block mb-2 text-sm font-medium text-gray-700">결제 금액(원)</label>
+                    <input id="payAmount" type="number" min="100" th:field="*{payAmount}" required
+                           class="w-full h-11 px-4 rounded-lg border-gray-300 shadow-sm
+                                  focus:border-primary focus:ring-primary/40"/>
+                </div>
+                <div>
+                    <label for="payType" class="block mb-2 text-sm font-medium text-gray-700">결제 수단</label>
+                    <select id="payType" th:field="*{payType}"
+                            class="w-full h-11 px-3 rounded-lg border-gray-300 shadow-sm
+                                   focus:border-primary focus:ring-primary/40">
+                        <option value="CARD">신용카드</option>
+                        <option value="ACCOUNT">가상계좌</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- ② 요약 카드 -->
+        <section class="relative">
+            <div class="sticky top-6">
+                <div class="w-full max-w-xs mx-auto lg:mx-0 bg-gray-50 border border-gray-200
+                            rounded-2xl p-7 space-y-4 shadow-sm text-sm">
+                    <dl class="space-y-2">
+                        <div class="flex justify-between">
+                            <dt class="text-gray-600">상품 금액</dt>
+                            <dd><span id="sumProduct" th:text="${productTotal != null ? productTotal : 0}">0</span>원</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-600">배송비</dt>
+                            <dd><span id="sumShip" th:text="${shippingFee != null ? shippingFee : 0}">0</span>원</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-600">상품 할인</dt>
+                            <dd class="text-primary">- <span id="sumProdDc" th:text="${productDiscount != null ? productDiscount : 0}">0</span>원</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-600">쿠폰 할인</dt>
+                            <dd><span id="sumCoupon" th:text="${couponDiscount != null ? couponDiscount : 0}">0</span>원</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-gray-600">포인트 사용</dt>
+                            <dd><span id="sumPoints">0</span>원</dd>
+                        </div>
+                    </dl>
+                    <hr>
+                    <p class="flex justify-between items-center font-semibold text-lg">
+                        <span>최종 결제 금액</span>
+                        <span id="finalAmt" class="text-primary" th:text="${finalAmount != null ? finalAmount + '원' : '0원'}">0원</span>
+                    </p>
+                    <p class="flex justify-between text-xs text-gray-500">
+                        <span>적립 예정 포인트</span>
+                        <span id="expPoint" class="font-medium text-gray-700" th:text="${expectedPoints != null ? expectedPoints + 'P' : '0P'}">0P</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ⅲ. 추가 할인 / 포인트 -->
+        <section class="lg:col-span-2 pt-8 space-y-4">
+            <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-1">
+                <span class="w-2 h-2 bg-primary rounded-full"></span> 추가 할인 / 포인트
+            </h2>
+
+            <!-- 표 헤더 -->
+            <div class="grid grid-cols-5 text-center text-sm font-semibold bg-sky-50 ring-1 ring-gray-200 rounded-t-lg">
+                <div class="py-2">쿠폰</div>
+                <div class="py-2">몰별 적립금</div>
+                <div class="py-2">적립금</div>
+                <div class="py-2">예치금</div>
+                <div class="py-2 rounded-tr-lg">상품권/캐시</div>
+            </div>
+
+            <!-- 표 내용 -->
+            <div class="grid grid-cols-5 ring-1 ring-gray-200 divide-x divide-gray-200 rounded-b-lg text-sm">
+
+                <!-- 쿠폰 -->
+                <div class="flex flex-col items-center gap-2 bg-yellow-50 py-6">
+                    <p>보유 쿠폰 : <span class="font-semibold text-primary" th:text="${couponCnt != null ? couponCnt : 0}">0</span>장</p>
+                    <button type="button" class="px-4 py-1 rounded border border-primary text-primary text-xs hover:bg-primary/10">
+                        쿠폰 조회/적용
+                    </button>
+                    <p class="text-xs text-gray-500">할인 : <span id="couponDiscount" th:text="${couponDiscount != null ? couponDiscount : 0}">0</span>원</p>
+                </div>
+
+                <!-- 몰별 적립금(없음) -->
+                <div class="flex flex-col items-center justify-center text-xs py-6">
+                    <p class="text-gray-500 text-center leading-relaxed">사용 가능한 몰별<br/>전용 적립금이 없습니다.</p>
+                </div>
+
+                <!-- 일반 적립금 -->
+                <div class="flex flex-col items-center gap-2 py-6">
+                    <p class="text-xs text-gray-500">
+                        회원 보유액 :
+                        <span class="font-semibold" th:text="${pointBalance != null ? pointBalance : 0}">0</span>원
+                    </p>
+                    <input name="pointUse" type="number" min="0"
+                           th:attr="max=${pointBalance != null ? pointBalance : 0}"
+                           class="w-24 rounded border-gray-300 text-center focus:ring-primary/40"
+                           oninput="clampAndUpdate(this)">
+                    <div class="flex gap-1 text-xs text-primary">
+                        <button type="button" onclick="resetPrev(this)">초기화</button>
+                        <button type="button" class="ml-1" onclick="maxPrev(this)">전액</button>
+                    </div>
+                </div>
+
+                <!-- 예치금 -->
+                <div class="flex flex-col items-center gap-2 py-6">
+                    <p class="text-xs text-gray-500">
+                        예치금 보유액 :
+                        <span class="font-semibold" th:text="${depositBalance != null ? depositBalance : 0}">0</span>원
+                    </p>
+                    <input name="depositUse" type="number" min="0"
+                           th:attr="max=${depositBalance != null ? depositBalance : 0}"
+                           class="w-24 rounded border-gray-300 text-center focus:ring-primary/40"
+                           oninput="clampAndUpdate(this)">
+                    <div class="flex gap-1 text-xs text-primary">
+                        <button type="button" onclick="resetPrev(this)">초기화</button>
+                        <button type="button" class="ml-1" onclick="maxPrev(this)">전액</button>
+                    </div>
+                </div>
+
+                <!-- 상품권/캐시 -->
+                <div class="flex flex-col items-center gap-2 py-6">
+                    <p class="text-xs text-gray-500">
+                        상품권/캐시 보유액 :
+                        <span class="font-semibold" th:text="${giftBalance != null ? giftBalance : 0}">0</span>원
+                    </p>
+                    <input name="giftCashUse" type="number" min="0"
+                           th:attr="max=${giftBalance != null ? giftBalance : 0}"
+                           class="w-24 rounded border-gray-300 text-center focus:ring-primary/40"
+                           oninput="clampAndUpdate(this)">
+                    <div class="flex gap-1 text-xs text-primary">
+                        <button type="button" onclick="resetPrev(this)">초기화</button>
+                        <button type="button" class="ml-1" onclick="maxPrev(this)">전액</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 제출 버튼 -->
+        <div class="lg:col-span-2 text-center pt-12">
+            <button type="submit"
+                    class="w-full lg:w-auto inline-flex justify-center rounded-xl bg-primary
+                     px-16 py-5 font-semibold text-white shadow-lg hover:bg-primary-light
+                     focus:ring-4 focus:ring-primary/30 transition">
+                결제하기
+            </button>
+        </div>
+    </form>
+</main>
+
+<footer class="mt-16 text-center text-sm text-gray-400">© 2025 Beansolid Bookstore</footer>
+
+<script>
+    // 숫자 → ‘#,###’ 문자열
+    const toKR = n => (+n || 0).toLocaleString();
+
+    // 요약 카드 내 span → 숫자
+    const num  = id => +document.getElementById(id).textContent.replace(/,/g, '');
+
+    // name=xxx 인풋들의 합계
+    const sumBy = name =>
+        [...document.getElementsByName(name)].reduce((t, e) => t + (+e.value || 0), 0);
+
+    const priceEl = document.getElementById('payAmount');
+
+    // 인풋 값 한도 클램프 + 요약 업데이트
+    function clampAndUpdate(el) {
+        const max = +(el.getAttribute('max') || 0);
+        let v     = +el.value || 0;
+        if (v > max) v = max;
+        if (v < 0)  v = 0;
+        el.value = v;
+        updateSummary();
+    }
+
+    // ‘초기화 / 전액’ 버튼
+    const resetPrev = btn => {
+        btn.parentNode.previousElementSibling.value = 0;
+        updateSummary();
+    };
+    const maxPrev   = btn => {
+        btn.parentNode.previousElementSibling.value = btn.parentNode.previousElementSibling.getAttribute('max') || 0;
+        updateSummary();
+    };
+
+    // 요약 카드 계산
+    function updateSummary() {
+        document.getElementById('sumProduct').textContent = toKR(priceEl.value);
+
+        const final =
+            (+priceEl.value || 0)
+            + num('sumShip')
+            - num('sumProdDc')
+            - num('sumCoupon')
+            - sumBy('pointUse')
+            - sumBy('depositUse')
+            - sumBy('giftCashUse');
+
+        document.getElementById('sumPoints').textContent = toKR(sumBy('pointUse'));
+        document.getElementById('finalAmt').textContent  = toKR(final) + '원';
+        document.getElementById('expPoint').textContent  = toKR(Math.floor(final * 0.05)) + 'P';
+    }
+
+    priceEl.addEventListener('input', updateSummary);
+    updateSummary();
+</script>
+
+</body>
+</html>
