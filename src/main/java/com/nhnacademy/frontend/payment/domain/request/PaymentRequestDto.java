@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.payment.domain.request;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nhnacademy.frontend.payment.domain.PayType;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class PaymentRequestDto {
-    @NotNull
+    @JsonAlias({"order_id","orderId"})
     private String orderId;
 
     @NotNull(message = "결제 금액(payAmount)는 필수입니다.")

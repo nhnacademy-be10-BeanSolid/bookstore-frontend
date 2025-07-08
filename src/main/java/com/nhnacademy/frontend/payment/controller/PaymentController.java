@@ -44,7 +44,11 @@ public class PaymentController {
     public RedirectView requestPayment(@Valid @ModelAttribute("paymentRequest") PaymentRequestDto dto) {
         log.debug("POST /payments dto={}", dto);
         PaymentResponseDto resp = paymentService.requestPayment(dto);
-        return new RedirectView(resp.getRedirectUrl());   // Toss 결제창으로 이동
+        String url = resp.getRedirectUrl();
+        if(url == null || url.isBlank())
+            throw new IllegalArgumentException("결제 URL을 받지 못했습니다. 서버 로그 확인");
+
+        return new RedirectView(url, false);   // Toss 결제창으로 이동
     }
 
     @GetMapping("/success")
