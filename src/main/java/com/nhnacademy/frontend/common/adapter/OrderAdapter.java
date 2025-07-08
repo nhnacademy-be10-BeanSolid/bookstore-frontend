@@ -1,11 +1,10 @@
-package com.nhnacademy.frontend.adapter;
+package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "gateway-service", contextId = "orderAdapter")
