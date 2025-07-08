@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.payment.adapter;
+package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
