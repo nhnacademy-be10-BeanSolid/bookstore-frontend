@@ -80,7 +80,7 @@ class OrderControllerTest {
         String result = orderController.createOrder(orderRequest, bindingResult, redirectAttributes);
 
         // then
-        assertEquals("redirect:/payments/form?" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount(), result);
+        assertEquals("redirect:/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount(), result);
         verify(orderService).createOrder(orderRequest);
         verify(redirectAttributes, never()).addFlashAttribute(eq("errorMessage"), any());
     }
@@ -176,7 +176,7 @@ class OrderControllerTest {
                 .param("orderItems[0].price", "10000")
                 .param("orderItems[0].wrappingId", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/payments/form?" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount()));
+                .andExpect(redirectedUrl("/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount()));
     }
 
     @Test
