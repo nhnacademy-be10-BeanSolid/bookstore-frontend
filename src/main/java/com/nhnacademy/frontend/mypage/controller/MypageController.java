@@ -3,14 +3,17 @@ package com.nhnacademy.frontend.mypage.controller;
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
+import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.mypage.service.MypageService;
+import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/mypage")
@@ -64,5 +67,34 @@ public class MypageController {
     public ResponseEntity<Void> mypageEdit(@RequestBody UserUpdateRequestDto userUpdateRequestDto) {
         mypageService.updatePersonalInformation(userUpdateRequestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/address")
+    public String mypageAddressForm(Model model) {
+        model.addAttribute("addresses", mypageService.getAllAddresses());
+        return "mypage/address";
+    }
+
+    @DeleteMapping("/address/{addressId}")
+    public ResponseEntity<Void> mypageDeleteAddress(@PathVariable Long addressId) {
+        mypageService.deleteAddress(addressId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/address/register")
+    public String mypageAddAddress(@ModelAttribute AddressCreateRequest addressCreateRequest, RedirectAttributes redirectAttributes) {
+        try {
+            mypageService.addAddress(addressCreateRequest);
+        } catch (FeignException.BadRequest e) {
+            // 10개 초과로 등록 시
+            redirectAttributes.addFlashAttribute("errorMessage", "주소는 10개까지 등록 가능합니다.");
+            return "redirect:/mypage/address"; // 주소 목록 페이지로 리다이렉트
+        }
+        return "redirect:/mypage/address";
+    }
+
+    @GetMapping("/address/register")
+    public String mypageAddressRegisterForm() {
+        return "mypage/address_register";
     }
 }
