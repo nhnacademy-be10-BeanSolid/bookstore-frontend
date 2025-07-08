@@ -29,8 +29,8 @@ public class OrderController {
     @GetMapping
     public String orderPage(Model model) {
         //TODO: 장바구니 혹은 바로구매로 주문도서 정보 가져올 예정.
-        CartItem cartItem1 = new CartItem(1L, "빈틈없조1", 1, 5_000L);
-        CartItem cartItem2 = new CartItem(2L, "빈틈없조2", 1, 7_000L);
+        CartItem cartItem1 = new CartItem(99L, "빈틈없조1", 1, 5_000L);
+        CartItem cartItem2 = new CartItem(100L, "빈틈없조2", 1, 7_000L);
         model.addAttribute("items", List.of(cartItem1, cartItem2));
 
         return "order/order";
@@ -50,9 +50,7 @@ public class OrderController {
             OrderResponse orderResponse = orderService.createOrder(orderRequest);
             log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
 
-            redirectAttributes.addFlashAttribute("orderResponse", orderResponse);
-
-            return "redirect:/orders/tempPay";
+            return "redirect:/payments/form?" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount();
         } catch (Exception e) {
             log.warn("POST /orders - 실패 리다이렉트 [에러: {}]", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -77,11 +75,5 @@ public class OrderController {
         model.addAttribute("order", orderDetail);
 
         return "order/detail";
-    }
-
-    // 임시 결제 단계 페이지
-    @GetMapping("/tempPay")
-    public String payPage() {
-        return "order/tempPay";
     }
 }
