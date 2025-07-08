@@ -80,9 +80,8 @@ class OrderControllerTest {
         String result = orderController.createOrder(orderRequest, bindingResult, redirectAttributes);
 
         // then
-        assertEquals("redirect:/orders/tempPay", result);
+        assertEquals("redirect:/payments/form?" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount(), result);
         verify(orderService).createOrder(orderRequest);
-        verify(redirectAttributes).addFlashAttribute("orderResponse", orderResponse);
         verify(redirectAttributes, never()).addFlashAttribute(eq("errorMessage"), any());
     }
 
@@ -158,15 +157,6 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("결제 페이지 조회 - 성공")
-    void payPage_Success() throws Exception {
-        // when & then
-        mockMvc.perform(get("/orders/tempPay"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("order/tempPay"));
-    }
-
-    @Test
     @DisplayName("주문 생성 요청 - POST 매핑 테스트 (Validation 성공)")
     void createOrder_PostMapping() throws Exception {
         // given
@@ -186,7 +176,7 @@ class OrderControllerTest {
                 .param("orderItems[0].price", "10000")
                 .param("orderItems[0].wrappingId", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/orders/tempPay"));
+                .andExpect(redirectedUrl("/payments/form?" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount()));
     }
 
     @Test
