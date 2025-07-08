@@ -24,11 +24,8 @@ public class PaymentSecurityConfig {
                                 "/payments/success",
                                 "/payments/fail")
                         .permitAll()
-                        // POST /payments(실제 결제 요청)만 인증 필요
-                        .requestMatchers(HttpMethod.POST, "/payments")
-                        .authenticated()
-                        // 그 외에도 혹시 있을 수 있는 /payments/** 는 인증
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/payments").permitAll()
+                        .anyRequest().permitAll()
                 )
                 // CSRF 꺼두기 (API 호출 시 편의)
                 .csrf(csrf -> csrf.disable());

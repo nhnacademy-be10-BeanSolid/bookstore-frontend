@@ -4,8 +4,10 @@ import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +41,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public RedirectView requestPayment(@ModelAttribute("paymentRequest") PaymentRequestDto dto) {
+    public RedirectView requestPayment(@Valid @ModelAttribute("paymentRequest") PaymentRequestDto dto) {
         log.debug("POST /payments dto={}", dto);
         PaymentResponseDto resp = paymentService.requestPayment(dto);
         return new RedirectView(resp.getRedirectUrl());   // Toss 결제창으로 이동

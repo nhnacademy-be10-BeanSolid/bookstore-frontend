@@ -10,5 +10,5 @@ public enum PayType {
     CARD("카드"),
     ACCOUNT("계좌");
 
-    private String description;
+    private final String description;
 }
