@@ -7,30 +7,22 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
         name      = "gateway-service",
-        contextId = "paymentsAdapter",
-        path      = "/order-api/api/v1/payments"
+        contextId = "paymentsAdapter"
 )
 public interface PaymentAdapter {
 
+    /** 결제 준비(redirect URL 받기) */
+    @PostMapping("/order-api/api/v1/payments/toss/{orderId}")
+    PaymentResponseDto ready(@PathVariable("orderId") String orderId,
+                             @RequestBody PaymentRequestDto dto);
 
-    @PostMapping("/toss/{orderId}")
-    PaymentResponseDto ready(
-            @PathVariable("orderId") String orderId,
-            @RequestBody              PaymentRequestDto dto
-    );
+    /** 결제 성공 콜백 → 최종 confirm */
+    @PostMapping("/order-api/api/v1/payments/toss/success")
+    void confirmSuccess(@RequestParam("paymentKey") String paymentKey,
+                        @RequestParam("orderId")    String orderId);
 
-
-    @GetMapping("/success")
-    void confirmSuccess(
-            @RequestParam("paymentKey") String paymentKey,
-            @RequestParam("orderId")    String orderId,
-            @RequestParam("amount")     Long amount
-    );
-
-
-    @GetMapping("/fail")
-    void confirmFail(
-            @RequestParam("paymentKey") String paymentKey,
-            @RequestParam("orderId")    String orderId
-    );
+    /** 결제 실패 콜백 → 실패 처리 */
+    @PostMapping("/order-api/api/v1/payments/toss/fail")
+    void confirmFail(@RequestParam("paymentKey") String paymentKey,
+                     @RequestParam("orderId")    String orderId);
 }

@@ -25,9 +25,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public void confirmSuccess(String paymentKey, String orderId,Long amount) {
+    public void confirmSuccess(String paymentKey, String orderId, Long amount) {
         log.info("[Payment] confirmSuccess paymentKey={}, orderId={}", paymentKey, orderId);
-        paymentAdapter.confirmSuccess(paymentKey, orderId , amount);
+        paymentAdapter.confirmSuccess(paymentKey, orderId);
     }
 
     @Override
@@ -36,3 +36,4 @@ public class PaymentServiceImpl implements PaymentService {
         paymentAdapter.confirmFail(paymentKey, orderId);
     }
 }
+
