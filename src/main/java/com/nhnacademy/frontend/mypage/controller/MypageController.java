@@ -121,9 +121,13 @@ public class MypageController {
 
     @GetMapping("/myinfo")
     public String mypageInfo(HttpSession session, Model model) {
-        Boolean verified = (Boolean) session.getAttribute("mypage_verified");
-        if (verified == null || !verified) {
-            return "redirect:/mypage/verify";
+        String userType = (String) model.getAttribute("userType");
+
+        if("LOCAL".equals(userType)) {
+            Boolean verified = (Boolean) session.getAttribute("mypage_verified");
+            if (verified == null || !verified) {
+                return "redirect:/mypage/verify";
+            }
         }
 
         // 1회성 인증으로 사용 후 플래그 제거
