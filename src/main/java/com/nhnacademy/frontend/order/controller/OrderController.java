@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -28,11 +29,19 @@ public class OrderController {
 
     @GetMapping
     public String orderPage(Model model) {
-        //TODO: 장바구니 혹은 바로구매로 주문도서 정보 가져올 예정.
-        CartItem cartItem1 = new CartItem(99L, "빈틈없조1", 1, 5_000L);
-        CartItem cartItem2 = new CartItem(101L, "빈틈없조2", 1, 7_000L);
-        model.addAttribute("items", List.of(cartItem1, cartItem2));
+        Long bookId = (Long) model.getAttribute("bookId");
+        String title = (String) model.getAttribute("title");
+        Integer salePrice = (Integer) model.getAttribute("salePrice");
+        Boolean wrappable = (Boolean) model.getAttribute("wrappable");
+        Integer quantity = (Integer) model.getAttribute("quantity");
 
+        List<CartItem> items = new ArrayList<>();
+        if (bookId != null && title != null && salePrice != null && quantity != null) {
+            CartItem item = new CartItem(bookId, title, quantity, salePrice.longValue(), wrappable);
+            items.add(item);
+        }
+
+        model.addAttribute("items", items);
         return "order/order";
     }
 
