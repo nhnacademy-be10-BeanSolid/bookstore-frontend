@@ -82,8 +82,8 @@ public class PaymentController {
         String base = req.getScheme() + "://" + req.getServerName()
                 + (req.getServerPort() == 80 || req.getServerPort() == 443
                 ? "" : ":" + req.getServerPort());
-        dto.setSuccessUrl(base + "/payments/success");
-        dto.setFailUrl(base    + "/payments/fail");
+        dto.setSuccessUrl("https://bookstore-beansolid.store/api/v1/payments/success");
+        dto.setFailUrl("https://bookstore-beansolid.store/api/v1/payments/fail");
 
         model.addAttribute("paymentRequest", dto);
         return "payments/form";
