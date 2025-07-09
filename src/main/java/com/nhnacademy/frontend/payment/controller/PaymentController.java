@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,9 +22,8 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-
     @GetMapping("/form")
-    public String showFormQuery(@RequestParam (required = false)String orderId,
+    public String showFormQuery(@RequestParam(required = false) String orderId,
                                 @RequestParam(required = false) Long amount,
                                 HttpServletRequest req,
                                 Model model) {
@@ -42,13 +40,12 @@ public class PaymentController {
 
     @PostMapping
     public RedirectView requestPayment(@Valid @ModelAttribute("paymentRequest") PaymentRequestDto dto) {
-        log.debug("POST /payments dto={}", dto);
         PaymentResponseDto resp = paymentService.requestPayment(dto);
         String url = resp.getRedirectUrl();
-        if(url == null || url.isBlank())
+        if (url == null || url.isBlank()) {
             throw new IllegalArgumentException("결제 URL을 받지 못했습니다. 서버 로그 확인");
-
-        return new RedirectView(url, false);   // Toss 결제창으로 이동
+        }
+        return new RedirectView(url, false);
     }
 
     @GetMapping("/success")
@@ -70,20 +67,18 @@ public class PaymentController {
                              HttpServletRequest req,
                              Model model) {
 
-        if (amount == null || amount <= 0)
+        if (amount == null || amount <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "amount 파라미터가 필요합니다");
-
+        }
 
         PaymentRequestDto dto = new PaymentRequestDto();
         dto.setOrderId(orderId);
-        dto.setPayName("도서");            // ★ 상품명 고정
+        dto.setPayName("도서");
         dto.setPayAmount(amount);
 
-        String base = req.getScheme() + "://" + req.getServerName()
-                + (req.getServerPort() == 80 || req.getServerPort() == 443
-                ? "" : ":" + req.getServerPort());
+        // ★ 콜백 URL을 백엔드 고정 HTTPS 주소로
         dto.setSuccessUrl("https://bookstore-beansolid.store/api/v1/payments/success");
-        dto.setFailUrl("https://bookstore-beansolid.store/api/v1/payments/fail");
+        dto.setFailUrl   ("https://bookstore-beansolid.store/api/v1/payments/fail");
 
         model.addAttribute("paymentRequest", dto);
         return "payments/form";
