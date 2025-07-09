@@ -22,4 +22,6 @@ public interface MypageService {
 
     void addAddress(AddressCreateRequest address);
 
+    boolean updatePersonalInformationWithPassword(String password);
+
 }

@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
@@ -62,11 +64,29 @@ public class MypageController {
         return "mypage/edit";
     }
 
-    @PutMapping("/edit")
-    @ResponseBody
-    public ResponseEntity<Void> mypageEdit(@RequestBody UserUpdateRequestDto userUpdateRequestDto) {
-        mypageService.updatePersonalInformation(userUpdateRequestDto);
-        return ResponseEntity.ok().build();
+    @PostMapping("/edit")
+    public String editMyPage(@RequestParam String password,
+                             @RequestParam(required = false) String userPassword,
+                             @RequestParam(required = false) String userPasswordConfirm,
+                             @ModelAttribute UserUpdateRequestDto request,
+                             RedirectAttributes redirectAttributes,
+                             @RequestHeader(value = "Referer", required = false) String referer) {
+        if (userPassword != null || userPasswordConfirm != null) {
+            if (!Objects.equals(userPassword, userPasswordConfirm)) {
+                redirectAttributes.addFlashAttribute("error", "수정할 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                return "redirect:" + (referer != null ? referer : "/mypage/edit");
+            }
+        }
+        boolean isPasswordCorrect = mypageService.updatePersonalInformationWithPassword(password);
+
+        if (!isPasswordCorrect) {
+            redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+            return "redirect:" + (referer != null ? referer : "/mypage/myinfo");
+        }
+
+        mypageService.updatePersonalInformation(request);
+        redirectAttributes.addFlashAttribute("message", "정보가 성공적으로 수정되었습니다.");
+        return "redirect:/mypage/myinfo";
     }
 
     @GetMapping("/address")
@@ -96,5 +116,19 @@ public class MypageController {
     @GetMapping("/address/register")
     public String mypageAddressRegisterForm() {
         return "mypage/address_register";
+    }
+
+    @GetMapping("/myinfo")
+    public String mypageInfo(Model model) {
+        ResponseUser user = mypageService.getMyInfo();
+        model.addAttribute("user", user);
+        return "mypage/myinfo";
+    }
+
+    @GetMapping("/editpassword")
+    public String mypageEditPasswordForm(Model model) {
+        ResponseUser user = mypageService.getMyInfo();
+        model.addAttribute("user", user);
+        return "mypage/editpassword";
     }
 }
