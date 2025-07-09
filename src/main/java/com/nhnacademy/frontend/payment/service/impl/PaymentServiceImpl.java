@@ -15,6 +15,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentAdapter paymentAdapter;
 
+
     @Override
     public PaymentResponseDto requestPayment(PaymentRequestDto req) {
         log.info("[Payment] requestPayment orderId={}, amount={}",
@@ -22,11 +23,11 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentAdapter.ready(req.getOrderId(), req);
     }
 
+
     @Override
-    public void confirmSuccess(String paymentKey, String orderId, Long amount) {
-        log.info("[Payment] confirmSuccess paymentKey={}, orderId={}, amount={}",
-                paymentKey, orderId, amount);
-        paymentAdapter.confirmSuccess(paymentKey, orderId, amount);
+    public void confirmSuccess(String paymentKey, String orderId,Long amount) {
+        log.info("[Payment] confirmSuccess paymentKey={}, orderId={}", paymentKey, orderId);
+        paymentAdapter.confirmSuccess(paymentKey, orderId , amount);
     }
 
     @Override
