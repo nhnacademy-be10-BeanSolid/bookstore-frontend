@@ -52,7 +52,7 @@
         <button type="submit" class="btn btn-secondary">좋아요 취소</button>
       </form>
 
-      <form th:action="@{/orders}" method="post" class="mt-3">
+      <form th:action="@{/books}" method="post" class="mt-3">
         <input type="hidden" name="bookId" th:value="${book.id}" />
         <input type="hidden" name="title" th:value="${book.title}" />
         <input type="hidden" name="salePrice" th:value="${book.salePrice}" />
