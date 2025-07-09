@@ -3,9 +3,12 @@ package com.nhnacademy.frontend.book.adapter;
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.cart.dto.response.BookResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @FeignClient(name = "gateway-service", contextId = "bookAdapter")
 public interface BookAdapter {
@@ -107,4 +110,7 @@ public interface BookAdapter {
     // 엘라스틱 서치
     @GetMapping("/book-api/search")
     void searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
+
+    @GetMapping("/book-api/books/ids")
+    List<BookResponse> getBooks(@RequestParam List<Long> ids);
 }

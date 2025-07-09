@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.cart.service.impl;
 
+import com.nhnacademy.frontend.book.adapter.BookAdapter;
 import com.nhnacademy.frontend.cart.adapter.CartAdapter;
 import com.nhnacademy.frontend.cart.domain.OwnerType;
 import com.nhnacademy.frontend.cart.dto.request.CartAddItemRequest;
@@ -9,7 +10,6 @@ import com.nhnacademy.frontend.cart.dto.response.CartItemDto;
 import com.nhnacademy.frontend.cart.dto.response.CartResponse;
 import com.nhnacademy.frontend.cart.dto.view.CartItemViewModel;
 import com.nhnacademy.frontend.cart.service.CartService;
-import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import feign.FeignException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
