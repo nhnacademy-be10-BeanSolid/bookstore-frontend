@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>태그 관리</title>
+</head>
+<body>
+    <h1>태그 관리</h1>
+    <h2 th:text="'도서 ID: ' + ${book.bookId}">도서 ID</h2>
+
+    <h2>현재 태그 목록</h2>
+    <ul id="tag-list">
+      <li th:each="tag : ${book.tags}">
+        <span th:text="${tag.tagName}"></span>
+        <form th:action="@{/admin/books/{id}/tags/{tagId}(id=${book.bookId}, tagId=${tag.tagId})}" method="post">
+          <input type="hidden" name="_method" value="delete" />
+          <button type="submit">삭제</button>
+        </form>
+      </li>
+    </ul>
+
+    <h3>태그 추가</h3>
+    <form th:action="@{/admin/books/{id}/tags(id=${book.bookId})}" method="post">
+      <input type="text" name="tagId" placeholder="태그 ID 입력" required />
+      <button type="submit">추가</button>
+    </form>
+    <a th:href="@{/admin/books/{bookId}(bookId=${book.bookId})}">이전 페이지</a><br>
+    <a href="/admin/books">도서 목록으로</a>
+</body>
+</html>
