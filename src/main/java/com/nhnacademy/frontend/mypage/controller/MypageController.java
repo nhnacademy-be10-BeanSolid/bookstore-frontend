@@ -2,7 +2,7 @@ package com.nhnacademy.frontend.mypage.controller;
 
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePoint;
+import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;

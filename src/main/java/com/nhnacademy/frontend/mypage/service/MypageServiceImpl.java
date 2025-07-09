@@ -2,10 +2,10 @@ package com.nhnacademy.frontend.mypage.service;
 
 
 import com.nhnacademy.frontend.auth.domain.request.PasswordVerificationRequestDto;
-import com.nhnacademy.frontend.common.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePoint;
+import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;

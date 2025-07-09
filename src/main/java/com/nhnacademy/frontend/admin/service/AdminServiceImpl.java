@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.admin.service;
 
 import com.nhnacademy.frontend.admin.domain.request.PointTypeCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.admin.adapter.AdminAdapter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,24 @@ public class AdminServiceImpl implements AdminService {
     public void deletePointType(Long typeId) {
 
         adminAdapter.deletePointType(typeId);
+    }
+
+    @Override
+    public void changeActive(Long pointTypeId) {
+
+        adminAdapter.changeIsActivePointType(pointTypeId);
+    }
+
+    @Override
+    public void updatePointType(Long pointTypeId, PointTypeUpdateRequestDto requestDto) {
+
+        adminAdapter.editPointType(requestDto, pointTypeId);
+    }
+
+    @Override
+    public ResponsePointType getPointType(Long pointTypeId) {
+
+        return adminAdapter.getPointType(pointTypeId).getBody();
     }
 
 

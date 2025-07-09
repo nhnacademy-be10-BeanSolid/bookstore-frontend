@@ -1,9 +1,8 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.admin.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePoint;
+import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;

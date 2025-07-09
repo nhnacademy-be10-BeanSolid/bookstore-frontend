@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.admin.controller;
 
 import com.nhnacademy.frontend.admin.domain.request.PointTypeCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.admin.service.AdminService;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
@@ -21,6 +22,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminController {
 
     private final AdminService adminService;
+
+    @GetMapping("/main")
+    public String mainPage() {
+
+        return "admin/main";
+    }
 
     @GetMapping("/pointtype")
     public String PointTypeForm(Pageable pageable, Model model){
@@ -69,4 +76,33 @@ public class AdminController {
         return "redirect:/admin/pointtype";
     }
 
+    @PutMapping("/pointtype/{typeId}/isactive")
+    public String changeActive(@PathVariable Long typeId, RedirectAttributes redirectAttributes){
+
+        adminService.changeActive(typeId);
+
+        redirectAttributes.addFlashAttribute("changeSuccess", "변경 성공!");
+
+        return "redirect:/admin/pointtype";
+    }
+
+    @PutMapping("/pointtype/{typeId}/edit")
+    public String editPointType(@Valid @ModelAttribute PointTypeUpdateRequestDto requestDto, @PathVariable Long typeId, RedirectAttributes redirectAttributes){
+
+        adminService.updatePointType(typeId, requestDto);
+
+        redirectAttributes.addFlashAttribute("editSuccess", "수정 성공!");
+
+        return "redirect:/admin/pointtype";
+    }
+
+    @GetMapping("/pointtype/{typeId}/edit")
+    public String editPointType(@PathVariable Long typeId, Model model){
+
+        ResponsePointType responsePointType = adminService.getPointType(typeId);
+
+        model.addAttribute("responsePointType", responsePointType);
+
+        return "admin/pointType-edit";
+    }
 }

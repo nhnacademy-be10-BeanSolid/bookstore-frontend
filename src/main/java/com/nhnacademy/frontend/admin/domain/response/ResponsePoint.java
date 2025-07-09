@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.common.adapter.domain.response;
+package com.nhnacademy.frontend.admin.domain.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
