@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>포인트타입 등록</title>
+</head>
+<body>
+<h2>포인트타입 등록</h2>
+<form th:action="@{/admin/pointtype/register}" method="post">
+    <input type="text" id="typeName" name="typeName" maxlength="20" placeholder="적립 유형명" required>
+    <small>최대 20자, 필수 입력</small>
+    <br>
+
+    <input type="number" id="earningPoint" name="earningPoint" min="0" placeholder="적립 포인트" required>
+    <small>0 이상 정수, 필수 입력</small>
+    <br>
+
+    <input type="number" id="earningRate" name="earningRate" min="0" placeholder="적립률" required>
+    <small>0 이상 정수, 필수 입력</small>
+    <br>
+
+    <input type="text" id="gradeName" name="gradeName" maxlength="10" placeholder="등급명">
+    <small>최대 10자</small>
+    <br>
+
+    <select id="isActive" name="isActive" required>
+        <option value="">활성화 여부 선택</option>
+        <option value="true">활성화</option>
+        <option value="false">비활성화</option>
+    </select>
+    <small>필수 선택</small>
+    <br>
+
+    <button type="submit">등록</button>
+</form>
+</body>
+</html>

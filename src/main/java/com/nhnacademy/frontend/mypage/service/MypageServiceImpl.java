@@ -5,13 +5,17 @@ import com.nhnacademy.frontend.auth.domain.request.PasswordVerificationRequestDt
 import com.nhnacademy.frontend.common.adapter.AuthAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -73,4 +77,20 @@ public class MypageServiceImpl implements MypageService {
     public void addAddress(AddressCreateRequest address) {
         userAdapter.addAddress(address);
     }
+
+    @Override
+    public Page<ResponsePoint> getAllPoints(Pageable pageable) {
+
+        return userAdapter.getAllPoints(pageable.getPageNumber(), pageable.getPageSize()).getBody();
+    }
+
+    @Override
+    public int getUserPoint() {
+
+        ResponseUser responseUser = userAdapter.getUserInfo().getBody();
+
+        return Objects.requireNonNull(responseUser).getUserPoint();
+    }
+
+
 }
