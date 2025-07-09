@@ -1,4 +1,3 @@
-// src/main/java/com/nhnacademy/frontend/payment/controller/PaymentController.java
 package com.nhnacademy.frontend.payment.controller;
 
 import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
@@ -60,8 +59,8 @@ public class PaymentController {
                           Model model) {
         paymentService.confirmSuccess(paymentKey, orderId, amount);
         model.addAttribute("paymentKey", paymentKey);
-        model.addAttribute("orderId", orderId);
-        model.addAttribute("amount", amount);
+        model.addAttribute("orderId",    orderId);
+        model.addAttribute("amount",     amount);
         return "payments/success";
     }
 
@@ -71,7 +70,7 @@ public class PaymentController {
                        Model model) {
         paymentService.confirmFail(paymentKey, orderId);
         model.addAttribute("paymentKey", paymentKey);
-        model.addAttribute("orderId", orderId);
+        model.addAttribute("orderId",    orderId);
         return "payments/fail";
     }
 
