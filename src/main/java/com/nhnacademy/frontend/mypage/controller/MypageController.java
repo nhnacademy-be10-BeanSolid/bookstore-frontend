@@ -8,6 +8,7 @@ import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.mypage.service.MypageService;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -119,7 +120,15 @@ public class MypageController {
     }
 
     @GetMapping("/myinfo")
-    public String mypageInfo(Model model) {
+    public String mypageInfo(HttpSession session, Model model) {
+        Boolean verified = (Boolean) session.getAttribute("mypage_verified");
+        if (verified == null || !verified) {
+            return "redirect:/mypage/verify";
+        }
+
+        // 1회성 인증으로 사용 후 플래그 제거
+        session.removeAttribute("mypage_verified");
+
         ResponseUser user = mypageService.getMyInfo();
         model.addAttribute("user", user);
         return "mypage/myinfo";
@@ -130,5 +139,23 @@ public class MypageController {
         ResponseUser user = mypageService.getMyInfo();
         model.addAttribute("user", user);
         return "mypage/editpassword";
+    }
+
+    @PostMapping("/verify")
+    public String verifyPassword(@RequestParam String password,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes) {
+        if (!mypageService.updatePersonalInformationWithPassword(password)) {
+            redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/mypage/verify";
+        }
+        // 인증 성공 시 세션에 인증 플래그 설정
+        session.setAttribute("mypage_verified", true);
+        return "redirect:/mypage/myinfo";
+    }
+
+    @GetMapping("/verify")
+    public String mypageVerifyForm() {
+        return "mypage/verify";
     }
 }
