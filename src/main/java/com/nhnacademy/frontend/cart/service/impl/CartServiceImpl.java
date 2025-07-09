@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.cart.service.impl;
 
-import com.nhnacademy.frontend.book.adapter.BookAdapter;
+import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.cart.adapter.CartAdapter;
 import com.nhnacademy.frontend.cart.domain.OwnerType;
 import com.nhnacademy.frontend.cart.dto.request.CartAddItemRequest;

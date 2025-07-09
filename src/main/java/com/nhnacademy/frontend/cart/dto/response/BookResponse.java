@@ -24,5 +24,4 @@ public record BookResponse(
         String status,
         int stock
 )
-{
-}
+{}
