@@ -25,7 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public void confirmSuccess(String paymentKey, String orderId) {
+    public void confirmSuccess(String paymentKey, String orderId, Long amount) {
         log.info("[Payment] confirmSuccess paymentKey={}, orderId={}", paymentKey, orderId);
         paymentAdapter.confirmSuccess(paymentKey, orderId);
     }

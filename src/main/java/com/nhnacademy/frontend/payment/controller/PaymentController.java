@@ -3,10 +3,10 @@ package com.nhnacademy.frontend.payment.controller;
 import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,20 +22,24 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    @Value("${payment.toss.success-url}")
+    private String successCallback;
+
+    @Value("${payment.toss.fail-url}")
+    private String failCallback;
+
     @GetMapping("/form")
     public String showFormQuery(@RequestParam(required = false) String orderId,
                                 @RequestParam(required = false) Long amount,
-                                HttpServletRequest req,
                                 Model model) {
-        return buildForm(orderId, amount, req, model);
+        return buildForm(orderId, amount, model);
     }
 
     @GetMapping("/form/{orderId}")
     public String showFormPath(@PathVariable String orderId,
                                @RequestParam(required = false) Long amount,
-                               HttpServletRequest req,
                                Model model) {
-        return buildForm(orderId, amount, req, model);
+        return buildForm(orderId, amount, model);
     }
 
     @PostMapping
@@ -50,36 +54,38 @@ public class PaymentController {
 
     @GetMapping("/success")
     public String success(@RequestParam String paymentKey,
-                          @RequestParam String orderId) {
-        paymentService.confirmSuccess(paymentKey, orderId);
+                          @RequestParam String orderId,
+                          @RequestParam Long amount,
+                          Model model) {
+        paymentService.confirmSuccess(paymentKey, orderId, amount);
+        model.addAttribute("paymentKey", paymentKey);
+        model.addAttribute("orderId",    orderId);
+        model.addAttribute("amount",     amount);
         return "payments/success";
     }
 
     @GetMapping("/fail")
     public String fail(@RequestParam String paymentKey,
-                       @RequestParam String orderId) {
+                       @RequestParam String orderId,
+                       Model model) {
         paymentService.confirmFail(paymentKey, orderId);
+        model.addAttribute("paymentKey", paymentKey);
+        model.addAttribute("orderId",    orderId);
         return "payments/fail";
     }
 
     private String buildForm(String orderId,
                              Long amount,
-                             HttpServletRequest req,
                              Model model) {
-
         if (amount == null || amount <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "amount 파라미터가 필요합니다");
         }
-
         PaymentRequestDto dto = new PaymentRequestDto();
         dto.setOrderId(orderId);
         dto.setPayName("도서");
         dto.setPayAmount(amount);
-
-        // ★ 콜백 URL을 백엔드 고정 HTTPS 주소로
-        dto.setSuccessUrl("https://bookstore-beansolid.store/api/v1/payments/success");
-        dto.setFailUrl   ("https://bookstore-beansolid.store/api/v1/payments/fail");
-
+        dto.setSuccessUrl(successCallback);
+        dto.setFailUrl(failCallback);
         model.addAttribute("paymentRequest", dto);
         return "payments/form";
     }

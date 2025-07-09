@@ -7,7 +7,10 @@ public interface PaymentService {
 
     PaymentResponseDto requestPayment(PaymentRequestDto req);
 
-    void confirmSuccess(String paymentKey, String orderId);
+    void confirmSuccess(String paymentKey, String orderId, Long amount);
 
     void confirmFail(String paymentKey, String orderId);
+
+
+
 }
