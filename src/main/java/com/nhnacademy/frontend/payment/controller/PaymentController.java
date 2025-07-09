@@ -51,14 +51,20 @@ public class PaymentController {
         return new RedirectView(url, false);   // Toss 결제창으로 이동
     }
 
-    @GetMapping("/success")
-    public String success(@RequestParam String paymentKey,
-                          @RequestParam String orderId,
-                          @RequestParam Long amount) {
+    @GetMapping("/payments/success")
+    public String success(
+            @RequestParam String paymentKey,
+            @RequestParam String orderId,
+            @RequestParam Long amount,
+            Model model) {
+        // 프론트 → 백엔드(order-api)에 최종 승인(confirm) 요청
         paymentService.confirmSuccess(paymentKey, orderId, amount);
+
+        model.addAttribute("paymentKey", paymentKey);
+        model.addAttribute("orderId",    orderId);
+        model.addAttribute("amount",     amount);
         return "payments/success";
     }
-
     @GetMapping("/fail")
     public String fail(@RequestParam String paymentKey,
                        @RequestParam String orderId) {
