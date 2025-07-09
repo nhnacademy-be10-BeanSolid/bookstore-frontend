@@ -1,11 +1,13 @@
 package com.nhnacademy.frontend.order.service.impl;
 
-import com.nhnacademy.frontend.adapter.OrderAdapter;
+import com.nhnacademy.frontend.common.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -21,8 +23,18 @@ public class OrderServiceImpl implements OrderService {
 
         OrderResponse orderResponse = orderAdapter.createOrder(orderRequest); //TODO: feignclient 실패 처리 필요.
 
-        log.info("주문 생성 성공 - 주문번호: {}", orderResponse.orderNumber());
+        log.info("주문 생성 성공 - 주문번호: {}", orderResponse.orderId());
 
         return orderResponse;
+    }
+
+    @Override
+    public Page<OrderSummaryResponse> getAllOrders() {
+        return orderAdapter.getAllOrdersByUserId();
+    }
+
+    @Override
+    public OrderResponse getOrder(String orderId) {
+        return orderAdapter.getOrder(orderId);
     }
 }
