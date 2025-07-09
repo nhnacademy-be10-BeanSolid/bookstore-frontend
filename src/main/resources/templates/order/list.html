@@ -1,0 +1,36 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beansolid - 전체 주문 목록</title>
+</head>
+<body>
+    <h1>주문 목록</h1>
+    
+    <div th:if="${orders.content.size() > 0}">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>주문 번호</th>
+                    <th>주문 날짜</th>
+                    <th>수령인</th>
+                    <th>총 금액</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order : ${orders.content}">
+                    <td><a th:href="@{/orders/{orderId}(orderId=${order.orderId})}" th:text="${order.orderId}"></a></td>
+                    <td th:text="${order.orderDate}"></td>
+                    <td th:text="${order.receiverName}"></td>
+                    <td th:text="${order.totalPrice}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div th:if="${orders.content.size() == 0}">
+        <p>주문 내역이 없습니다.</p>
+    </div>
+</body>
+</html>

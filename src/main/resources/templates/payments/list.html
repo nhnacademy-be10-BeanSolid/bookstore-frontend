@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>결제 목록</title>
+</head>
+<body>
+<h1>결제 목록</h1>
+<ul>
+  <li th:each="p : ${payments}">
+    [[${p.orderId}]] – [[${p.amount}]]원
+  </li>
+</ul>
+</body>
+</html>
