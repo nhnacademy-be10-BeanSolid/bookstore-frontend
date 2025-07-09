@@ -73,4 +73,14 @@ public class MypageServiceImpl implements MypageService {
     public void addAddress(AddressCreateRequest address) {
         userAdapter.addAddress(address);
     }
+
+    @Override
+    public boolean updatePersonalInformationWithPassword(String password) {
+        try {
+            PasswordVerificationRequestDto verificationRequest = new PasswordVerificationRequestDto(password);
+            return authAdapter.verifyPassword(verificationRequest);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
