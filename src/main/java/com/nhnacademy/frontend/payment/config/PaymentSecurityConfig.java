@@ -8,16 +8,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@Order(2)   // 전역(SecurityConfig)의 다음 순서로 적용
+@Order(1)   // 전역 설정보다 먼저 적용되도록 순서 변경
 public class PaymentSecurityConfig {
-
     @Bean
     public SecurityFilterChain paymentSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 이 체인은 /payments/** 에만 적용
                 .securityMatcher("/payments/**")
-                .authorizeHttpRequests(authorize -> authorize
-                        // GET 요청들은 모두 허용
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
                                 "/payments",
                                 "/payments/form",
@@ -27,7 +24,6 @@ public class PaymentSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/payments").permitAll()
                         .anyRequest().permitAll()
                 )
-                // CSRF 꺼두기 (API 호출 시 편의)
                 .csrf(csrf -> csrf.disable());
         return http.build();
     }
