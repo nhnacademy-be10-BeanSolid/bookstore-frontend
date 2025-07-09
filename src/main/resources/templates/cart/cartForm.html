@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>장바구니</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>장바구니</h1>
+
+    <!-- 장바구니 목록 -->
+    <form th:action="@{/cart/delete}" method="post">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll"/></th>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>가격</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cartItems}">
+                <td><input type="checkbox" name="bookId" th:value="${item.bookId}"/></td>
+                <td th:text="${item.bookTitle}">상품명</td>
+                <td th:text="${item.quantity}">1</td>
+                <td th:text="${item.price}">10000</td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-danger">선택 삭제</button>
+    </form>
+
+    <hr/>
+
+    <!-- 상품 추가 -->
+    <h2>상품 추가</h2>
+    <form th:action="@{/cart/add}" method="post">
+        <div>
+            <label for="bookId">Book ID:</label>
+            <input type="text" id="bookId" name="bookId" required>
+        </div>
+        <div>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" value="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary">장바구니에 추가</button>
+    </form>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script>
+        document.getElementById('selectAll').addEventListener('click', function(event) {
+            let checkboxes = document.getElementsByName('bookId');
+            for (let checkbox of checkboxes) {
+                checkbox.checked = event.target.checked;
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

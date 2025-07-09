@@ -1,0 +1,28 @@
+package com.nhnacademy.frontend.cart.dto.response;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+public record BookResponse(
+        Long id,
+        String title,
+        String description,
+        String toc,
+        String author,
+        String publisher,
+        LocalDate publishAt,
+        String isbn,
+        int originalPrice,
+        int salePrice,
+        boolean wrappable,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime createAt,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime updateAt,
+        String status,
+        int stock
+)
+{
+}
