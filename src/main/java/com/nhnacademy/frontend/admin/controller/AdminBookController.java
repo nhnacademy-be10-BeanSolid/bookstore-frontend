@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.requset.BookCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.BookCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.admin.domain.response.BookResponseDto;
-import com.nhnacademy.frontend.admin.domain.requset.BookUpdateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.BookUpdateRequestDto;
 import com.nhnacademy.frontend.admin.service.BookService;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class AdminBookController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         log.info("showCreateForm");
-        model.addAttribute("book", new BookCreateRequestDto(null, null, null, null, null, null, null, null, null, null, null, null, Set.of()));
+        model.addAttribute("book", new BookCreateRequestDto());
         return "admin/book/create-form";
     }
 

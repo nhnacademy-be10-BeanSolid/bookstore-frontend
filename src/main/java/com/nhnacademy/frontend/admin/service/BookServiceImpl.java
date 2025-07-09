@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.admin.service;
 
-import com.nhnacademy.frontend.adapter.BookAdapter;
-import com.nhnacademy.frontend.admin.domain.requset.*;
+import com.nhnacademy.frontend.book.adapter.BookAdapter;
+import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookTagResponseDto createTag(BookTagCreateRequestDto request) {
-        log.info("Tag Create Start : {}", request.tagName());
+        log.info("Tag Create Start : {}", request.getTagName());
         return bookAdapter.createTag(request);
     }
 
@@ -37,14 +37,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookCategoryResponseDto createCategory(BookCategoryCreateRequestDto request) {
-        log.info("Category Create Start : {}", request.categoryName());
+        log.info("Category Create Start : {}", request.getCategoryName());
         return bookAdapter.createCategory(request);
     }
 
     @Override
-    public BookCategoryResponseDto getCategory(Long id) {
-        log.info("Category Get Start : {}", id);
-        return bookAdapter.getBookCategory(id);
+    public BookCategoryResponseDto getCategory(Long categoryId) {
+        log.info("Category Get Start : {}", categoryId);
+        return bookAdapter.getBookCategory(categoryId);
     }
 
     @Override
@@ -54,17 +54,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookCategoryResponseDto updateCategory(Long id, BookCategoryUpdateRequestDto request) {
-        log.info("Category Update Start : {}", id);
-        return bookAdapter.updateCategory(id, request);
+    public BookCategoryResponseDto updateCategory(Long categoryId, BookCategoryUpdateRequestDto request) {
+        log.info("Category Update Start : {}", categoryId);
+        return bookAdapter.updateCategory(categoryId, request);
     }
 
     @Override
-    public void deleteCategory(Long id) {
-        log.debug("Category Delete Start : {}", id);
-        bookAdapter.deleteCategory(id);
+    public void deleteCategory(Long categoryId) {
+        log.debug("Category Delete Start : {}", categoryId);
+        bookAdapter.deleteCategory(categoryId);
     }
 
+    // 여기서 시작
     @Override
     public Page<SimpleBookResponseDto> getAllBooks(Pageable pageable) {
         log.info("BookList Get Start - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
@@ -72,9 +73,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDetailResponseDto getBookDetail(Long id) {
-        log.info("BookDetail Get Start : {}", id);
-        return bookAdapter.getBookDetail(id);
+    public BookDetailResponseDto getBookDetail(Long bookId) {
+        log.info("BookDetail Get Start : {}", bookId);
+        return bookAdapter.getBookDetail(bookId);
     }
 
     @Override
@@ -90,15 +91,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDetailResponseDto updateBook(Long id, BookUpdateRequestDto request) {
-        log.info("Book Update Start : {}", id);
-        return bookAdapter.updateBook(id, request);
+    public BookDetailResponseDto updateBook(Long bookId, BookUpdateRequestDto request) {
+        log.info("Book Update Start : {}", bookId);
+        return bookAdapter.updateBook(bookId, request);
     }
 
     @Override
-    public void deleteBook(Long id) {
-        log.debug("Book Delete Start : {}", id);
-        bookAdapter.deleteBook(id);
+    public void deleteBook(Long bookId) {
+        log.debug("Book Delete Start : {}", bookId);
+        bookAdapter.deleteBook(bookId);
     }
 
     @Override
@@ -108,15 +109,28 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookTagMapResponseDto getBookTagMap(Long bookId) {
+        log.info("BookTagMap Get Start - bookId {}", bookId);
+        return bookAdapter.getBookTagMap(bookId);
+    }
+
+    @Override
     public void deleteBookTagMap(Long bookId, Long tagId) {
         log.info("BookTagMap Delete Start - bookId: {}, tagId: {}", bookId, tagId);
         bookAdapter.deleteBookTagMap(bookId, tagId);
     }
 
+    // 시작
     @Override
     public void createBookCategoryMap(Long bookId, BookCategoryMapCreateRequestDto request) {
         log.info("BookCategoryMap Create Start - bookId {}", bookId);
         bookAdapter.createBookCategoryMap(bookId, request);
+    }
+
+    @Override
+    public BookCategoryMapResponseDto getBookCategoryMap(Long bookId) {
+        log.info("BookCategoryMap Get Start - bookId {}", bookId);
+        return bookAdapter.getBookCategoryMap(bookId);
     }
 
     @Override

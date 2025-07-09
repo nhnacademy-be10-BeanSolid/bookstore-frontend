@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.admin.service;
 
-import com.nhnacademy.frontend.admin.domain.requset.*;
+import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import org.springframework.data.domain.Page;
@@ -15,31 +15,35 @@ public interface BookService {
 
     BookCategoryResponseDto createCategory(BookCategoryCreateRequestDto request);
 
-    BookCategoryResponseDto getCategory(Long id);
+    BookCategoryResponseDto getCategory(Long categoryId);
 
     Page<BookCategoryResponseDto> getAllBookCategories(Pageable pageable);
 
-    BookCategoryResponseDto updateCategory(Long id, BookCategoryUpdateRequestDto request);
+    BookCategoryResponseDto updateCategory(Long categoryId, BookCategoryUpdateRequestDto request);
 
     void deleteCategory(Long id);
 
     Page<SimpleBookResponseDto> getAllBooks(Pageable pageable);
 
-    BookDetailResponseDto getBookDetail(Long id);
+    BookDetailResponseDto getBookDetail(Long bookId);
 
     BookResponseDto createBook(BookCreateRequestDto request);
 
     BookSearchResponseDto searchNaverBooks(String query, Integer start);
 
-    BookDetailResponseDto updateBook(Long id, BookUpdateRequestDto request);
+    BookDetailResponseDto updateBook(Long bookId, BookUpdateRequestDto request);
 
-    void deleteBook(Long id);
+    void deleteBook(Long bookId);
 
     void createBookTagMap(Long bookId, BookTagMapCreateRequestDto request);
+
+    BookTagMapResponseDto getBookTagMap(Long bookId);
 
     void deleteBookTagMap(Long bookId, Long tagId);
 
     void createBookCategoryMap(Long bookId, BookCategoryMapCreateRequestDto request);
+
+    BookCategoryMapResponseDto getBookCategoryMap(Long bookId);
 
     void deleteBookCategoryMap(Long bookId, Long tagId);
 

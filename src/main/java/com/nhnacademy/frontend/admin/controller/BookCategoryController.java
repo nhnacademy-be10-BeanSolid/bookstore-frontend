@@ -1,15 +1,18 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.requset.BookCategoryCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.BookCategoryCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
-import com.nhnacademy.frontend.admin.domain.response.BookCategoryUpdateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.BookCategoryUpdateRequestDto;
 import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.user.exception.ValidationFailedException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -22,7 +25,7 @@ public class BookCategoryController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("request", new BookCategoryCreateRequestDto(null, null));
+        model.addAttribute("request", new BookCategoryCreateRequestDto());
         return "admin/category/create-form";
     }
 
@@ -30,7 +33,7 @@ public class BookCategoryController {
     public String showUpdateForm(@PathVariable("categoryId") Long categoryId, Model model) {
         BookCategoryResponseDto category = bookService.getCategory(categoryId);
         model.addAttribute("category", category);
-        model.addAttribute("request", new BookCategoryUpdateRequestDto(category.categoryName(), category.parentId()));
+        model.addAttribute("request", new BookCategoryUpdateRequestDto());
         return "admin/category/update-form";
     }
 
@@ -43,7 +46,7 @@ public class BookCategoryController {
     }
 
     @GetMapping
-    public String getAllBookCategories(Pageable pageable, Model model) {
+    public String getAllCategories(Pageable pageable, Model model) {
         Page<BookCategoryResponseDto> categoryList = bookService.getAllBookCategories(pageable);
         log.debug("CategoryListGet Success- page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("categories", categoryList.getContent());
@@ -52,14 +55,23 @@ public class BookCategoryController {
     }
 
     @PostMapping
-    public String createCategory(@ModelAttribute BookCategoryCreateRequestDto request) {
+    public String createCategory(@Valid @ModelAttribute BookCategoryCreateRequestDto request,
+                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationFailedException(bindingResult);
+        }
         BookCategoryResponseDto response = bookService.createCategory(request);
-        log.debug("Category Create Success : {}", request.categoryName());
+        log.debug("Category Create Success : {}", request.getCategoryName());
         return "redirect:/admin/categories/" + response.categoryId();
     }
 
     @PutMapping("/{categoryId}")
-    public String updateCategory(@PathVariable("categoryId") Long categoryId, @ModelAttribute BookCategoryUpdateRequestDto request) {
+    public String updateCategory(@PathVariable("categoryId") Long categoryId,
+                                 @Valid @ModelAttribute BookCategoryUpdateRequestDto request,
+                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationFailedException(bindingResult);
+        }
         bookService.updateCategory(categoryId, request);
         log.debug("Category Update Success : {}", categoryId);
         return "redirect:/admin/categories/" + categoryId;

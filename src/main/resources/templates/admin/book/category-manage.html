@@ -2,16 +2,17 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${book.title} + ' - 카테고리 관리'">카테고리 관리</title>
+    <title>카테고리 관리</title>
 </head>
 <body>
-    <h1 th:text="${book.title} + ' - 카테고리 관리'">카테고리 관리</h1>
+    <h1>카테고리 관리</h1>
+    <h2 th:text="'도서 ID: ' + ${book.bookId}">도서 ID</h2>
 
     <h2>현재 카테고리 목록</h2>
     <ul>
-        <li th:each="category : ${book.bookCategories}">
+        <li th:each="category : ${book.categories}">
             <span th:text="${category.categoryName}"></span>
-            <form th:action="@{/admin/books/{id}/categories/{categoryId}(id=${book.id}, categoryId=${category.categoryId})}" method="post">
+            <form th:action="@{/admin/books/{id}/categories/{categoryId}(id=${book.bookId}, categoryId=${category.categoryId})}" method="post">
                 <input type="hidden" name="_method" value="delete" />
                 <button type="submit">삭제</button>
             </form>
@@ -19,10 +20,11 @@
     </ul>
 
     <h3>카테고리 추가</h3>
-    <form th:action="@{/admin/books/{id}/categories(id=${book.id})}" method="post">
+    <form th:action="@{/admin/books/{id}/categories(id=${book.bookId})}" method="post">
         <input type="text" name="categoryId" placeholder="카테고리 아이디 입력" required />
         <button type="submit">추가</button>
     </form>
+    <a th:href="@{/admin/books/{bookId}(bookId=${book.bookId})}">이전 페이지</a><br>
     <a href="/admin/books">도서 목록으로</a>
 </body>
 </html>

@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.requset.BookCategoryMapCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
+import com.nhnacademy.frontend.admin.domain.request.BookCategoryMapCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.response.BookCategoryMapResponseDto;
 import com.nhnacademy.frontend.admin.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +19,15 @@ public class BookCategoryMapController {
 
     @GetMapping
     public String categoryManage(@PathVariable("bookId") Long bookId, Model model) {
-        BookDetailResponseDto response = bookService.getBookDetail(bookId);
+        BookCategoryMapResponseDto response = bookService.getBookCategoryMap(bookId);
         model.addAttribute("book", response);
         return "admin/book/category-manage";
     }
 
     @PostMapping
-    public String createCategoryFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookCategoryMapCreateRequestDto request) {
+    public String addCategoryFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookCategoryMapCreateRequestDto request) {
         bookService.createBookCategoryMap(bookId, request);
-        log.debug("Create category from book success - bookId {}, categoryId {}" , bookId, request.categoryId());
+        log.debug("Create category from book success - bookId {}, categoryId {}" , bookId, request.getCategoryId());
         return "redirect:/admin/books/" + bookId + "/categories";
     }
 

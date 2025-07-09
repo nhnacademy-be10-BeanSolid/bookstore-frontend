@@ -23,7 +23,7 @@ public class HomeController {
     @GetMapping
     public String home(@PageableDefault(size = 4) Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
-        log.debug("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("BookListGet Success - page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("page", bookList);
         return "home";

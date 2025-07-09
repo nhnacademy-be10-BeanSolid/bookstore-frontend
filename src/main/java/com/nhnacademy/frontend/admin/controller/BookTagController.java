@@ -1,14 +1,17 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.requset.BookTagCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.BookTagCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookTagResponseDto;
 import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.user.exception.ValidationFailedException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -21,7 +24,7 @@ public class BookTagController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("request", new BookTagCreateRequestDto(null));
+        model.addAttribute("request", new BookTagCreateRequestDto());
         return "admin/tag/create-form";
     }
 
@@ -35,9 +38,13 @@ public class BookTagController {
     }
 
     @PostMapping
-    public String createBookTag(@ModelAttribute BookTagCreateRequestDto request) {
-        bookService.createTag(request);
-        log.debug("Tag Create Success : {}", request.tagName());
+    public String createBookTag(@Valid @ModelAttribute BookTagCreateRequestDto request,
+                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationFailedException(bindingResult);
+        }
+        BookTagResponseDto tag = bookService.createTag(request);
+        log.debug("Tag Create Success : {}", tag.toString());
         return "redirect:/admin/tags";
     }
 

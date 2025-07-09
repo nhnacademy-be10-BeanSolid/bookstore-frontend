@@ -1,8 +1,10 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.requset.BookTagMapCreateRequestDto;
+import com.nhnacademy.frontend.admin.domain.request.BookTagMapCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
+import com.nhnacademy.frontend.admin.domain.response.BookTagMapResponseDto;
 import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -19,15 +21,15 @@ public class BookTagMapController {
 
     @GetMapping
     public String tagManage(@PathVariable("bookId") Long bookId, Model model) {
-        BookDetailResponseDto response = bookService.getBookDetail(bookId);
+        BookTagMapResponseDto response = bookService.getBookTagMap(bookId);
         model.addAttribute("book", response);
         return "admin/book/tag-manage";
     }
 
     @PostMapping
-    public String createTagFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookTagMapCreateRequestDto request) {
+    public String addTagFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookTagMapCreateRequestDto request) {
         bookService.createBookTagMap(bookId, request);
-        log.debug("Create tag from book success - bookId : {}, tagId : {}", bookId, request.tagId());
+        log.debug("Create tag from book success - bookId : {}, tagId : {}", bookId, request.getTagId());
         return "redirect:/admin/books/" + bookId + "/tags";
     }
 

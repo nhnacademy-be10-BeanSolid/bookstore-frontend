@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.admin.domain.requset;
+package com.nhnacademy.frontend.admin.domain.request;
 
 public record BookUpdateRequestDto (
         String title,

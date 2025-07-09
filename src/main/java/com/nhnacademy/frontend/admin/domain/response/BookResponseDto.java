@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.admin.domain.response;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public record BookResponseDto(
@@ -9,11 +10,11 @@ public record BookResponseDto(
         String toc,
         String publisher,
         String author,
-        String publishAt,
+        LocalDate publishAt,
         String isbn,
         int originalPrice,
         int salePrice,
-        Boolean wrappable,
+        boolean wrappable,
         String status,
         int stock,
         String image,

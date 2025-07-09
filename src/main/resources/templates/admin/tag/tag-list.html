@@ -26,14 +26,15 @@
             </td>
         </tr>
         </tbody>
-
     </table>
 
     <div>
-        <a th:if="${page.hasPrevious()}" th:href="@{/admin/tags(page=${page.number - 1})}">이전</a>
+        <a th:if="${page.hasPrevious()}" th:href="@{/admin/tags(page=${page.number - 1}, size=${page.size})}">이전</a>
         <span>현재 페이지: <span th:text="${page.number + 1}">1</span></span>
-        <a th:if="${page.hasNext()}" th:href="@{/admin/tags(page=${page.number + 1})}">다음</a>
+        <a th:if="${page.hasNext()}" th:href="@{/admin/tags(page=${page.number + 1}, size=${page.size})}">다음</a>
     </div>
-    <a href="/admin/tags/new">태그 생성하기</a>
+
+    <a th:href="@{/admin/tags/new}" class="btn">태그 생성하기</a><br>
+    <a th:href="@{/admin}" class="btn">관리자 페이지</a>
 </body>
 </html>

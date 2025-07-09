@@ -40,11 +40,14 @@
       </tr>
       </tbody>
     </table>
-  <div>
-    <a th:if="${page.hasPrevious()}" th:href="@{/admin/categories(page=${page.number - 1}, size=${page.size})}">이전</a>
-    <span>현재 페이지: <span th:text="${page.number + 1}">1</span></span>
-    <a th:if="${page.hasNext()}" th:href="@{/admin/categories(page=${page.number + 1}, size=${page.size})}">다음</a>
-  </div>
-<a href="/admin/categories/new">카테고리 생성하기</a>
+
+    <div>
+      <a th:if="${page.hasPrevious()}" th:href="@{/admin/categories(page=${page.number - 1}, size=${page.size})}">이전</a>
+      <span>현재 페이지: <span th:text="${page.number + 1}">1</span></span>
+      <a th:if="${page.hasNext()}" th:href="@{/admin/categories(page=${page.number + 1}, size=${page.size})}">다음</a>
+    </div>
+
+    <a th:href="@{/admin/categories/new}" class="btn">카테고리 생성하기</a><br>
+    <a th:href="@{/admin}" class="btn">관리자 페이지</a>
 </body>
 </html>

@@ -54,19 +54,19 @@
                 <ul class="pagination mb-0">
                     <!-- 이전 버튼 -->
                     <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
-                        <a class="page-link" th:href="@{/?page={p}(p=${(page.number - 1)})}" aria-label="Previous">&larr;</a>
+                        <a class="page-link" th:href="@{/(page=${page.number - 1}, size=${page.size})}" aria-label="Previous">&larr;</a>
                     </li>
 
                     <!-- 페이지 번호 -->
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                         th:classappend="${i == page.number} ? 'active'">
-                        <a class="page-link" th:href="@{/?page={p}(p=${(i)})}" th:text="${i + 1}">1</a>
+                        <a class="page-link" th:href="@{/(page=${i}, size=${page.size})}" th:text="${i + 1}">1</a>
                     </li>
 
                     <!-- 다음 버튼 -->
                     <li class="page-item" th:classappend="${page.number == page.totalPages - 1} ? 'disabled'">
-                        <a class="page-link" th:href="@{/?page={p}(p=${(page.number + 1)})}" aria-label="Next">&rarr;</a>
+                        <a class="page-link" th:href="@{/(page=${page.number + 1}, size=${page.size})}" aria-label="Next">&rarr;</a>
                     </li>
                 </ul>
             </nav>
