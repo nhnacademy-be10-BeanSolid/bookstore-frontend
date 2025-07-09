@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/orders").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

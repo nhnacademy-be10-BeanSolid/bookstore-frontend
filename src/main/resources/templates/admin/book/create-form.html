@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>도서 생성</title>
+</head>
+<body>
+<h1>도서 등록</h1>
+<form th:action="@{/admin/books}" method="post" th:object="${book}">
+
+    <!-- 모달 트리거 -->
+    <button type="button" onclick="openModal()">도서 검색</button>
+
+    <!-- 모달 -->
+    <div id="bookSearchModal" style="
+        display: none;
+        position: fixed;
+        top: 10%;
+        left: 30%;
+        width: 40%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 20px;
+        z-index: 1000;">
+        <h3>도서 검색</h3>
+        <input type="text" id="searchKeyword" />
+        <button type="button" onclick="searchBook()">검색</button>
+        <div id="searchResults"></div>
+        <button type="button" onclick="closeModal()">닫기</button>
+        <div id="pagination" style="margin-top: 10px;">
+            <button type="button" id="prevPage" onclick="changePage(-1)" disabled>이전</button>
+            <span id="currentPage">1</span> 페이지
+            <button type="button" id="nextPage" onclick="changePage(1)">다음</button>
+        </div>
+    </div>
+
+    <div>
+        <label>제목</label>
+        <input type="text" th:field="*{title}" maxlength="255" required />
+    </div>
+
+    <div>
+        <label>설명</label>
+        <textarea th:field="*{description}"></textarea>
+    </div>
+
+    <div>
+        <label>목차</label>
+        <textarea th:field="*{toc}"></textarea>
+    </div>
+
+    <div>
+        <label>출판사</label>
+        <input type="text" th:field="*{publisher}" maxlength="255" required />
+    </div>
+
+    <div>
+        <label>저자</label>
+        <input type="text" th:field="*{author}" maxlength="255" required />
+    </div>
+
+    <div>
+        <label>출판일</label>
+        <input type="date" th:field="*{publishAt}" required />
+    </div>
+
+    <div>
+        <label>ISBN</label>
+        <input type="text" th:field="*{isbn}" pattern=".{13}" title="13자리 ISBN" required />
+    </div>
+
+    <div>
+        <label>정가</label>
+        <input type="number" th:field="*{originalPrice}" min="1" required />
+    </div>
+
+    <div>
+        <label>판매가</label>
+        <input type="number" th:field="*{salePrice}" min="1" required />
+    </div>
+
+    <div>
+        <label>포장 가능</label>
+        <input type="checkbox" th:field="*{wrappable}" />
+    </div>
+
+    <div>
+        <label>재고</label>
+        <input type="number" th:field="*{stock}" min="0" required />
+    </div>
+
+    <!-- 카테고리 선택 -->
+    <div>
+        <label>카테고리 ID 입력</label>
+
+        <div id="categoryIdsContainer">
+            <input type="number" name="categoryIds" required />
+        </div>
+
+        <button type="button" onclick="addCategoryIdInput()">+ 추가</button>
+    </div>
+
+    <div>
+        <label>이미지 URL</label>
+        <input type="text" th:field="*{image}" name="image"/>
+    </div>
+
+    <div>
+        <button type="submit">도서 등록</button>
+    </div>
+</form>
+
+</body>
+<a href="/admin/books" style="text-decoration:none;">도서 목록으로</a>
+</html>
+
+<script>
+    function addCategoryIdInput() {
+        const container = document.getElementById('categoryIdsContainer');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.name = 'categoryIds';  // 같은 name으로 여러 값 전송 가능
+        input.required = true;
+        container.appendChild(input);
+    }
+    function openModal() {
+        document.getElementById("bookSearchModal").style.display = "block";
+    }
+    function closeModal() {
+        document.getElementById("bookSearchModal").style.display = "none";
+    }
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    function searchBook(page = 1) {
+        const keyword = document.getElementById("searchKeyword").value;
+        if (!keyword) {
+            alert("검색어를 입력하세요.");
+            return;
+        }
+
+        const start = (page - 1) * itemsPerPage + 1;
+
+        fetch(`/admin/books-search?query=${encodeURIComponent(keyword)}&start=${start}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById("searchResults");
+                resultsDiv.innerHTML = "";
+
+                currentPage = Math.floor((data.start - 1) / itemsPerPage) + 1;
+                document.getElementById("currentPage").innerText = currentPage;
+
+                document.getElementById("prevPage").disabled = currentPage <= 1;
+                const totalPages = Math.ceil(data.total / itemsPerPage);
+                document.getElementById("nextPage").disabled = currentPage >= totalPages;
+
+                data.items.forEach(item => {
+                    const div = document.createElement("div");
+                    div.style = "border:1px solid #ccc; margin:10px; padding:10px;";
+                    div.innerHTML = `
+                    <strong>${item.title}</strong> - ${item.author} / ${item.publisher}<br/>
+                    <img src="${item.image}" width="80"/><br/>
+                    <button type="button">이 책 선택</button>
+                `;
+                    div.querySelector("button").addEventListener("click", () => applyBookInfo(item));
+                    resultsDiv.appendChild(div);
+                });
+            });
+    }
+
+    function changePage(diff) {
+        const newPage = currentPage + diff;
+        if (newPage < 1) return;
+        searchBook(newPage);
+    }
+
+    function applyBookInfo(item) {
+        document.querySelector('[name="title"]').value = item.title;
+        document.querySelector('[name="description"]').value = item.description;
+        document.querySelector('[name="author"]').value = item.author;
+        document.querySelector('[name="publisher"]').value = item.publisher;
+        document.querySelector('[name="publishAt"]').value = item.pubdate;
+        document.querySelector('[name="isbn"]').value = item.isbn;
+        document.querySelector('[name="image"]').value = item.image;
+        closeModal();
+    }
+</script>

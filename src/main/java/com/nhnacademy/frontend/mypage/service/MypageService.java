@@ -29,4 +29,6 @@ public interface MypageService {
 
     int getUserPoint();
 
+    boolean updatePersonalInformationWithPassword(String password);
+
 }
