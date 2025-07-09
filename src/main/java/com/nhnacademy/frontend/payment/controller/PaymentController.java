@@ -78,7 +78,6 @@ public class PaymentController {
         dto.setOrderId(orderId);
         dto.setPayName("도서");
         dto.setPayAmount(amount);
-        // 앞에서 @Value로 주입받은 운영 도메인(예: https://bookstore-beansolid.store) 사용
         dto.setSuccessUrl(frontendBase + "/payments/success");
         dto.setFailUrl(frontendBase    + "/payments/fail");
 
