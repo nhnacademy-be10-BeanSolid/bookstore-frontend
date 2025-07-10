@@ -190,4 +190,10 @@ public class MypageController {
         model.addAttribute("user", user);
         return "mypage/grade";
     }
+
+    @PostMapping("/grade/update")
+    public String updateUserGrade() {
+        mypageService.bulkUpdateUserGrades();
+        return "redirect:/mypage/grade";
+    }
 }
