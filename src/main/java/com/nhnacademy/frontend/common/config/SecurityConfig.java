@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/orders").permitAll()
                         .requestMatchers("/cart/**").permitAll()
+                        .requestMatchers("/books/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
