@@ -78,8 +78,6 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-    private record CartOwnerInfo(OwnerType ownerType, String uuid) {}
-
     private record CartAndOwnerInfo(CartResponse cartResponse, OwnerType ownerType, String uuid) {}
 
     private CartAndOwnerInfo getOrCreateCartAndOwnerInfo(boolean isLoggedIn, String guestUUID, HttpServletResponse response) {

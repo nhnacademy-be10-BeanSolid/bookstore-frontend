@@ -36,7 +36,7 @@ public interface CartAdapter {
 
     @DeleteMapping("/user-api/carts/me/items")
     CartResponse deleteItemsFromCart(@RequestHeader("X-OWNER-TYPE") OwnerType ownerType,
-                                        @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
-                                        @RequestBody List<Long> itemIds);
+                                     @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
+                                     @RequestBody List<Long> itemIds);
 
 }
