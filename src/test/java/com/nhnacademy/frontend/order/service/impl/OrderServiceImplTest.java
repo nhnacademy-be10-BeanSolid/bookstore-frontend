@@ -136,7 +136,7 @@ class OrderServiceImplTest {
     @DisplayName("주문 전체 조회 - 성공")
     void getAllOrders_Success() {
         // given
-        Pageable pageable = Pageable.ofSize(10);
+        Pageable pageable = Pageable.ofSize(20);
         Page<OrderSummaryResponse> expectedPage = createOrderSummaryPage();
         when(orderAdapter.getAllOrdersByUserId(pageable)).thenReturn(expectedPage);
 
@@ -157,12 +157,12 @@ class OrderServiceImplTest {
     @DisplayName("주문 전체 조회 - OrderAdapter 호출 실패")
     void getAllOrders_AdapterCallFailed() {
         // given
-        Pageable pageable = Pageable.ofSize(10);
+        Pageable pageable = Pageable.ofSize(20);
         when(orderAdapter.getAllOrdersByUserId(pageable)).thenThrow(new RuntimeException("Network error"));
 
         // when & then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-            orderService.getAllOrders(Pageable.ofSize(10))
+            orderService.getAllOrders(Pageable.ofSize(20))
         );
         
         assertEquals("Network error", exception.getMessage());
