@@ -21,4 +21,8 @@ public class ResponseUser {
     private String userStatus;
     private LocalDateTime lastLoginAt;
     private String userGradeName;
+
+    public String getGradeName() {
+        return this.userGradeName;
+    }
 }

@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.mypage.controller;
 
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
@@ -161,5 +162,14 @@ public class MypageController {
     @GetMapping("/verify")
     public String mypageVerifyForm() {
         return "mypage/verify";
+    }
+
+    @GetMapping("/grade")
+    public String mypageGradeForm(Model model) {
+        ResponseUser user = mypageService.getMyInfo();
+        ResponsePointType pointType = mypageService.getPointTypeByGradeName(user.getGradeName());
+        model.addAttribute("pointType", pointType);
+        model.addAttribute("user", user);
+        return "mypage/grade";
     }
 }
