@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class PaymentRequestDto {
-    @JsonAlias({"order_id","orderId"})
     private String orderId;
 
     @NotNull(message = "결제 금액(payAmount)는 필수입니다.")
