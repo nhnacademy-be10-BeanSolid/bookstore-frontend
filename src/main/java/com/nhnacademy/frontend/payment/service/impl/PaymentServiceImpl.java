@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.payment.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.PaymentAdapter;
+import com.nhnacademy.frontend.payment.domain.request.PaymentApprovalRequestDto;
 import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
@@ -25,9 +26,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public void confirmSuccess(String paymentKey, String orderId) {
-        log.info("[Payment] confirmSuccess paymentKey={}, orderId={}", paymentKey, orderId);
-        paymentAdapter.confirmSuccess(paymentKey, orderId);
+    public void confirmSuccess(PaymentApprovalRequestDto dto) {
+        log.info("[Payment] confirmSuccess paymentKey={}, orderId={}, amount={}", dto.getPaymentKey(), dto.getOrderId(), dto.getAmount());
+        paymentAdapter.confirmSuccess(dto.getPaymentKey(), dto.getOrderId(), dto.getAmount());
     }
 
     @Override
@@ -36,3 +37,4 @@ public class PaymentServiceImpl implements PaymentService {
         paymentAdapter.confirmFail(paymentKey, orderId);
     }
 }
+

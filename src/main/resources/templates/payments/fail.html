@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>결제 실패</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        body { font-family: sans-serif; margin: 40px; text-align: center; }
+        .section { margin: 20px 0; display: inline-block; text-align: left; }
+        .label { font-weight: bold; width: 100px; display: inline-block; }
+        button { margin: 8px; padding: 8px 16px; }
+    </style>
 </head>
 <body>
-<h1>결제에 실패했습니다 </h1>
-<p>주문 번호: <span th:text="${param.orderId}">ORDER_ID</span></p>
-<p>결제 키: <span th:text="${param.paymentKey}">PAYMENT_KEY</span></p>
-<p>문제가 계속될 경우 고객센터에 문의하세요.</p>
-<a th:href="@{/payments/form}">다시 결제하기</a>
+<h2 style="color:red;">결제에 실패했습니다 😢</h2>
+<div class="section">
+    <div><span class="label">주문번호:</span> <span th:text="${orderId}">-</span></div>
+    <div><span class="label">결제키:</span> <span th:text="${paymentKey}">-</span></div>
+    <div th:if="${message}">
+        <span class="label">에러메시지:</span> <span th:text="${message}">-</span>
+    </div>
+</div>
+<button th:onclick="'location.href=\'/payments/form?orderId=' + ${orderId} + '&amount=' + ${amount}'">
+    다시 결제하기
+</button>
 </body>
 </html>
