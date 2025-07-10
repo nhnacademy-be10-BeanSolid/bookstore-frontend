@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>카테고리 목록</title>
-  <!-- Bootstrap 5 CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-<div class="container my-5">
-  <h1 class="mb-4 text-center">전체 카테고리</h1>
-
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover align-middle text-center">
-      <thead class="table-light">
+<body>
+  <h1>전체 카테고리</h1>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
       <tr>
         <th>카테고리 ID</th>
         <th>카테고리 이름</th>
@@ -32,51 +27,27 @@
         <td th:text="${category.parentId}"></td>
         <td th:text="${category.parentCategoryName}"></td>
         <td>
-          <form th:action="@{/admin/categories/{id}/edit(id=${category.categoryId})}" method="get" class="d-inline">
-            <button type="submit" class="btn btn-outline-primary btn-sm">수정</button>
+          <form th:action="@{/admin/categories/{id}/edit(id=${category.categoryId})}" method="get">
+            <button type="submit">수정</button>
           </form>
         </td>
         <td>
-          <form th:action="@{/admin/categories/{id}(id=${category.categoryId})}" method="post" class="d-inline">
+          <form th:action="@{/admin/categories/{id}(id=${category.categoryId})}" method="post">
             <input type="hidden" name="_method" value="delete" />
-            <button type="submit" class="btn btn-outline-danger btn-sm"
-                    onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+            <button type="submit">삭제</button>
           </form>
         </td>
       </tr>
       </tbody>
     </table>
-  </div>
 
-  <!-- 페이지네이션 -->
-  <nav aria-label="Page navigation" class="d-flex justify-content-center my-4">
-    <ul class="pagination">
-      <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
-        <a class="page-link"
-           th:href="@{/admin/categories(page=${page.number - 1}, size=${page.size})}"
-           th:if="${page.hasPrevious()}">이전</a>
-        <span class="page-link" th:unless="${page.hasPrevious()}">이전</span>
-      </li>
-      <li class="page-item active">
-        <span class="page-link">
-          현재 페이지: <span th:text="${page.number + 1}">1</span>
-        </span>
-      </li>
-      <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
-        <a class="page-link"
-           th:href="@{/admin/categories(page=${page.number + 1}, size=${page.size})}"
-           th:if="${page.hasNext()}">다음</a>
-        <span class="page-link" th:unless="${page.hasNext()}">다음</span>
-      </li>
-    </ul>
-  </nav>
+    <div>
+      <a th:if="${page.hasPrevious()}" th:href="@{/admin/categories(page=${page.number - 1}, size=${page.size})}">이전</a>
+      <span>현재 페이지: <span th:text="${page.number + 1}">1</span></span>
+      <a th:if="${page.hasNext()}" th:href="@{/admin/categories(page=${page.number + 1}, size=${page.size})}">다음</a>
+    </div>
 
-  <div class="d-flex justify-content-between">
-    <a th:href="@{/admin/categories/new}" class="btn btn-success">카테고리 생성하기</a>
-    <a th:href="@{/admin}" class="btn btn-secondary">관리자 페이지</a>
-  </div>
-</div>
-<!-- Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <a th:href="@{/admin/categories/new}" class="btn">카테고리 생성하기</a><br>
+    <a th:href="@{/admin}" class="btn">관리자 페이지</a>
 </body>
 </html>

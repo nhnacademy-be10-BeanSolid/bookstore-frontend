@@ -5,7 +5,10 @@ import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "gateway-service", contextId = "paymentsAdapter")
+@FeignClient(
+        name      = "gateway-service",
+        contextId = "paymentsAdapter"
+)
 public interface PaymentAdapter {
 
     /** 결제 준비(redirect URL 받기) */

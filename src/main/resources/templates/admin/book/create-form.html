@@ -1,123 +1,136 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>도서 생성</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container my-5" style="max-width: 700px;">
-    <h1 class="mb-4">도서 등록</h1>
-    <form th:action="@{/admin/books}" method="post" th:object="${book}">
-        <!-- 도서 검색 모달 트리거 -->
-        <button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#bookSearchModal">
-            도서 검색
-        </button>
+<h1>도서 등록</h1>
+<form th:action="@{/admin/books}" method="post" th:object="${book}">
 
-        <!-- 도서 검색 모달 -->
-        <div class="modal fade" id="bookSearchModal" tabindex="-1" aria-labelledby="bookSearchModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="bookSearchModalLabel">도서 검색</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group mb-3">
-                            <input type="text" id="searchKeyword" class="form-control" placeholder="검색어 입력" />
-                            <button type="button" class="btn btn-primary" onclick="searchBook()">검색</button>
-                        </div>
-                        <div id="searchResults"></div>
-                        <div id="pagination" class="d-flex align-items-center gap-2 mt-3">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" id="prevPage" onclick="changePage(-1)" disabled>이전</button>
-                            <span id="currentPage">1</span> 페이지
-                            <button type="button" class="btn btn-outline-secondary btn-sm" id="nextPage" onclick="changePage(1)">다음</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- 모달 트리거 -->
+    <button type="button" onclick="openModal()">도서 검색</button>
+
+    <!-- 모달 -->
+    <div id="bookSearchModal" style="
+        display: none;
+        position: fixed;
+        top: 10%;
+        left: 30%;
+        width: 40%;
+        max-height: 80%;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 20px;
+        z-index: 1000;">
+        <h3>도서 검색</h3>
+        <input type="text" id="searchKeyword" />
+        <button type="button" onclick="searchBook()">검색</button>
+        <div id="searchResults"></div>
+        <button type="button" onclick="closeModal()">닫기</button>
+        <div id="pagination" style="margin-top: 10px;">
+            <button type="button" id="prevPage" onclick="changePage(-1)" disabled>이전</button>
+            <span id="currentPage">1</span> 페이지
+            <button type="button" id="nextPage" onclick="changePage(1)">다음</button>
+        </div>
+    </div>
+
+    <div>
+        <label>제목</label>
+        <input type="text" th:field="*{title}" maxlength="255" required />
+    </div>
+
+    <div>
+        <label>설명</label>
+        <textarea th:field="*{description}"></textarea>
+    </div>
+
+    <div>
+        <label>목차</label>
+        <textarea th:field="*{toc}"></textarea>
+    </div>
+
+    <div>
+        <label>출판사</label>
+        <input type="text" th:field="*{publisher}" maxlength="255" required />
+    </div>
+
+    <div>
+        <label>저자</label>
+        <input type="text" th:field="*{author}" maxlength="255" required />
+    </div>
+
+    <div>
+        <label>출판일</label>
+        <input type="date" th:field="*{publishAt}" required />
+    </div>
+
+    <div>
+        <label>ISBN</label>
+        <input type="text" th:field="*{isbn}" pattern=".{13}" title="13자리 ISBN" required />
+    </div>
+
+    <div>
+        <label>정가</label>
+        <input type="number" th:field="*{originalPrice}" min="1" required />
+    </div>
+
+    <div>
+        <label>판매가</label>
+        <input type="number" th:field="*{salePrice}" min="1" required />
+    </div>
+
+    <div>
+        <label>포장 가능</label>
+        <input type="checkbox" th:field="*{wrappable}" />
+    </div>
+
+    <div>
+        <label>재고</label>
+        <input type="number" th:field="*{stock}" min="0" required />
+    </div>
+
+    <!-- 카테고리 선택 -->
+    <div>
+        <label>카테고리 ID 입력</label>
+
+        <div id="categoryIdsContainer">
+            <input type="number" name="categoryIds" required />
         </div>
 
-        <!-- 입력 폼 -->
-        <div class="mb-3">
-            <label class="form-label">제목</label>
-            <input type="text" th:field="*{title}" maxlength="255" required class="form-control" name="title"/>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">설명</label>
-            <textarea th:field="*{description}" class="form-control" name="description"></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">목차</label>
-            <textarea th:field="*{toc}" class="form-control" name="toc"></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">출판사</label>
-            <input type="text" th:field="*{publisher}" maxlength="255" required class="form-control" name="publisher"/>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">저자</label>
-            <input type="text" th:field="*{author}" maxlength="255" required class="form-control" name="author"/>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">출판일</label>
-            <input type="date" th:field="*{publishAt}" required class="form-control" name="publishAt"/>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">ISBN</label>
-            <input type="text" th:field="*{isbn}" pattern=".{13}" title="13자리 ISBN" required class="form-control" name="isbn"/>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">정가</label>
-            <input type="number" th:field="*{originalPrice}" min="1" required class="form-control" name="originalPrice"/>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">판매가</label>
-            <input type="number" th:field="*{salePrice}" min="1" required class="form-control" name="salePrice"/>
-        </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" th:field="*{wrappable}" class="form-check-input" id="wrappable" name="wrappable"/>
-            <label class="form-check-label" for="wrappable">포장 가능</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">재고</label>
-            <input type="number" th:field="*{stock}" min="0" required class="form-control" name="stock"/>
-        </div>
-        <!-- 카테고리 선택 -->
-        <div class="mb-3">
-            <label class="form-label">카테고리 ID 입력</label>
-            <div id="categoryIdsContainer" class="d-flex flex-wrap gap-2">
-                <input type="number" name="categoryIds" class="form-control" style="max-width:180px;" required />
-            </div>
-            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addCategoryIdInput()">+ 추가</button>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">이미지 URL</label>
-            <input type="text" th:field="*{image}" name="image" class="form-control"/>
-        </div>
-        <div>
-            <button type="submit" class="btn btn-success">도서 등록</button>
-            <a href="/admin/books" class="btn btn-secondary ms-2">도서 목록으로</a>
-        </div>
-    </form>
-</div>
+        <button type="button" onclick="addCategoryIdInput()">+ 추가</button>
+    </div>
 
-<!-- Bootstrap JS (필수: 모달 등 동작) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div>
+        <label>이미지 URL</label>
+        <input type="text" th:field="*{image}" name="image"/>
+    </div>
+
+    <div>
+        <button type="submit">도서 등록</button>
+    </div>
+</form>
+
+</body>
+<a href="/admin/books" style="text-decoration:none;">도서 목록으로</a>
+</html>
+
 <script>
     function addCategoryIdInput() {
         const container = document.getElementById('categoryIdsContainer');
         const input = document.createElement('input');
         input.type = 'number';
-        input.name = 'categoryIds';
-        input.className = 'form-control mt-2';
-        input.style.maxWidth = '180px';
+        input.name = 'categoryIds';  // 같은 name으로 여러 값 전송 가능
         input.required = true;
         container.appendChild(input);
     }
-
-    // 모달 검색 관련
+    function openModal() {
+        document.getElementById("bookSearchModal").style.display = "block";
+    }
+    function closeModal() {
+        document.getElementById("bookSearchModal").style.display = "none";
+    }
     let currentPage = 1;
     const itemsPerPage = 10;
 
@@ -145,15 +158,12 @@
 
                 data.items.forEach(item => {
                     const div = document.createElement("div");
-                    div.className = "border rounded p-2 mb-2 d-flex align-items-center gap-3";
+                    div.style = "border:1px solid #ccc; margin:10px; padding:10px;";
                     div.innerHTML = `
-                        <img src="${item.image}" width="60" class="img-thumbnail"/>
-                        <div>
-                            <strong>${item.title}</strong><br/>
-                            ${item.author} / ${item.publisher}
-                        </div>
-                        <button type="button" class="btn btn-outline-success btn-sm ms-auto">이 책 선택</button>
-                    `;
+                    <strong>${item.title}</strong> - ${item.author} / ${item.publisher}<br/>
+                    <img src="${item.image}" width="80"/><br/>
+                    <button type="button">이 책 선택</button>
+                `;
                     div.querySelector("button").addEventListener("click", () => applyBookInfo(item));
                     resultsDiv.appendChild(div);
                 });
@@ -174,10 +184,6 @@
         document.querySelector('[name="publishAt"]').value = item.pubdate;
         document.querySelector('[name="isbn"]').value = item.isbn;
         document.querySelector('[name="image"]').value = item.image;
-        // 모달 닫기 (Bootstrap)
-        const modal = bootstrap.Modal.getInstance(document.getElementById('bookSearchModal'));
-        modal.hide();
+        closeModal();
     }
 </script>
-</body>
-</html>
