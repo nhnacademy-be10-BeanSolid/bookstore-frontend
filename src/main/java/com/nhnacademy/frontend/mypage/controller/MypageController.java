@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.mypage.controller;
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePointType;
+import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
@@ -11,6 +12,8 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -118,6 +121,21 @@ public class MypageController {
     @GetMapping("/address/register")
     public String mypageAddressRegisterForm() {
         return "mypage/address_register";
+    }
+
+    @GetMapping("/point")
+    public String mypagePointForm(Pageable pageable, Model model) {
+
+        Page<ResponsePoint> points = mypageService.getAllPoints(pageable);
+
+
+        int newPoint = mypageService.getUserPoint();
+
+        model.addAttribute("newPoint", newPoint);
+        model.addAttribute("points", points.getContent());
+        model.addAttribute("page", points);
+
+        return "mypage/point";
     }
 
     @GetMapping("/myinfo")
