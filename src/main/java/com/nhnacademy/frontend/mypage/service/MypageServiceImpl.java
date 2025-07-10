@@ -6,6 +6,7 @@ import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
 import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
@@ -102,5 +103,10 @@ public class MypageServiceImpl implements MypageService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public ResponsePointType getPointTypeByGradeName(String gradeName) {
+        return Objects.requireNonNull(userAdapter.getPointTypeByGradeName(gradeName, null).getBody()).getContent().getFirst();
     }
 }

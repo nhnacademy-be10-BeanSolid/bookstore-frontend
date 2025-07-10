@@ -2,11 +2,14 @@ package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,4 +47,11 @@ public interface UserAdapter {
 
     @GetMapping("/user-api/users/me/point")
     ResponseEntity<Page<ResponsePoint>> getAllPoints(@RequestParam int page, @RequestParam int size);
+
+    @GetMapping("/user-api/users/pointType")
+    ResponseEntity<Page<ResponsePointType>> getPointTypeByGradeName(
+            @RequestParam(name = "gradeName", required = false) String gradeName,
+            Pageable pageable);
+
+
 }
