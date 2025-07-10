@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.book.adapter;
 
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
+import com.nhnacademy.frontend.book.domain.response.BookDocumentResponseDto;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -106,5 +107,5 @@ public interface BookAdapter {
 
     // 엘라스틱 서치
     @GetMapping("/book-api/search")
-    void searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
+    Page<SimpleBookResponseDto> searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
 }

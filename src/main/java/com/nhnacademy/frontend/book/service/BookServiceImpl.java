@@ -1,8 +1,9 @@
-package com.nhnacademy.frontend.admin.service;
+package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.book.adapter.BookAdapter;
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
+import com.nhnacademy.frontend.book.domain.response.BookDocumentResponseDto;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -149,5 +150,11 @@ public class BookServiceImpl implements BookService {
     public void deleteBookLike(Long bookId, String userId) {
         log.info("BookLike Delete Start - bookId: {}, userId: {}", bookId, userId);
         bookAdapter.deleteBookLike(bookId, userId);
+    }
+
+    @Override
+    public Page<SimpleBookResponseDto> elasticSearchBooks(String keyword, Pageable pageable) {
+        log.info("Book Search Start - keyword: {}", keyword);
+        return bookAdapter.searchBooks(keyword, pageable.getPageNumber(), pageable.getPageSize());
     }
 }

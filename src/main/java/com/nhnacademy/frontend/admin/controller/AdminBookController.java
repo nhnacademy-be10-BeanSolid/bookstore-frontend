@@ -4,7 +4,7 @@ import com.nhnacademy.frontend.admin.domain.request.BookCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.admin.domain.response.BookResponseDto;
 import com.nhnacademy.frontend.admin.domain.request.BookUpdateRequestDto;
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 
 @Slf4j
 @Controller

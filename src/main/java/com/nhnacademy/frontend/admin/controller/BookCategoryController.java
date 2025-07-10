@@ -3,7 +3,7 @@ package com.nhnacademy.frontend.admin.controller;
 import com.nhnacademy.frontend.admin.domain.request.BookCategoryCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.admin.domain.request.BookCategoryUpdateRequestDto;
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.user.exception.ValidationFailedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

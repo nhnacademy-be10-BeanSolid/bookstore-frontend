@@ -1,7 +1,8 @@
-package com.nhnacademy.frontend.admin.service;
+package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
+import com.nhnacademy.frontend.book.domain.response.BookDocumentResponseDto;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,4 +51,6 @@ public interface BookService {
     void createBookLike(Long bookId, String tagId);
 
     void deleteBookLike(Long bookId, String userId);
+
+    Page<SimpleBookResponseDto> elasticSearchBooks(String keyword, Pageable pageable);
 }

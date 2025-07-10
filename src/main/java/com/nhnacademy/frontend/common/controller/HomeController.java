@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.common.controller;
 
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,4 +28,5 @@ public class HomeController {
         model.addAttribute("page", bookList);
         return "home";
     }
+
 }

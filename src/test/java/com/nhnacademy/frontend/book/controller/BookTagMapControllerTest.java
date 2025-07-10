@@ -4,7 +4,7 @@ import com.nhnacademy.frontend.admin.controller.BookTagMapController;
 import com.nhnacademy.frontend.admin.domain.request.BookTagMapCreateRequestDto;
 import com.nhnacademy.frontend.admin.domain.response.BookTagMapResponseDto;
 import com.nhnacademy.frontend.admin.domain.response.BookTagResponseDto;
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
