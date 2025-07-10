@@ -5,6 +5,7 @@ import com.nhnacademy.frontend.auth.domain.request.PasswordVerificationRequestDt
 import com.nhnacademy.frontend.common.adapter.AuthAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePointType;
 import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
 import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -82,5 +84,10 @@ public class MypageServiceImpl implements MypageService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public ResponsePointType getPointTypeByGradeName(String gradeName) {
+        return Objects.requireNonNull(userAdapter.getPointTypeByGradeName(gradeName, null).getBody()).getContent().getFirst();
     }
 }
