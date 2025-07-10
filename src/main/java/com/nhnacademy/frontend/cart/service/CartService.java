@@ -12,5 +12,5 @@ public interface CartService {
 
     void addToCart(Long bookId, int quantity, boolean isLoggedIn, String guestUUID, HttpServletResponse response);
 
-    void deleteCartItems(List<Long> bookIds, boolean isLoggedIn, String guestUUID);
+    void deleteCartItems(List<Long> bookIds, boolean isLoggedIn, String guestUUID, HttpServletResponse response);
 }

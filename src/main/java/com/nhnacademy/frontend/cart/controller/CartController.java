@@ -37,8 +37,9 @@ public class CartController {
     @PostMapping("/delete")
     public String deleteFromCart(@RequestParam(name = "bookId") List<Long> bookIds,
                                  @ModelAttribute("isLoggedIn") boolean isLoggedIn,
-                                 @CookieValue(value = "guest_uuid", required = false) String guestUUID) {
-        cartService.deleteCartItems(bookIds, isLoggedIn, guestUUID);
+                                 @CookieValue(value = "guest_uuid", required = false) String guestUUID,
+                                 HttpServletResponse response) {
+        cartService.deleteCartItems(bookIds, isLoggedIn, guestUUID, response);
         return "redirect:/cart";
     }
 }
