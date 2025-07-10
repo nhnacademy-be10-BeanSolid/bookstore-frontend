@@ -126,7 +126,8 @@ class OrderControllerTest {
     void orderList_Success() throws Exception {
         // given
         Page<OrderSummaryResponse> orders = createOrderSummaryPage();
-        when(orderService.getAllOrders()).thenReturn(orders);
+        Pageable pageable = Pageable.ofSize(10);
+        when(orderService.getAllOrders(pageable)).thenReturn(orders);
 
         // when & then
         mockMvc.perform(get("/orders/list"))
@@ -135,7 +136,7 @@ class OrderControllerTest {
                 .andExpect(model().attributeExists("orders"))
                 .andExpect(model().attribute("orders", orders));
         
-        verify(orderService).getAllOrders();
+        verify(orderService).getAllOrders(pageable);
     }
 
     @Test

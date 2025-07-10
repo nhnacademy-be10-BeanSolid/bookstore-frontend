@@ -136,35 +136,37 @@ class OrderServiceImplTest {
     @DisplayName("주문 전체 조회 - 성공")
     void getAllOrders_Success() {
         // given
+        Pageable pageable = Pageable.ofSize(10);
         Page<OrderSummaryResponse> expectedPage = createOrderSummaryPage();
-        when(orderAdapter.getAllOrdersByUserId()).thenReturn(expectedPage);
+        when(orderAdapter.getAllOrdersByUserId(pageable)).thenReturn(expectedPage);
 
         // when
-        Page<OrderSummaryResponse> result = orderService.getAllOrders();
+        Page<OrderSummaryResponse> result = orderService.getAllOrders(pageable);
 
         // then
         assertNotNull(result);
         assertEquals(expectedPage.getTotalElements(), result.getTotalElements());
         assertEquals(expectedPage.getContent().size(), result.getContent().size());
-        assertEquals(expectedPage.getContent().get(0).orderId(), result.getContent().get(0).orderId());
-        assertEquals(expectedPage.getContent().get(0).receiverName(), result.getContent().get(0).receiverName());
+        assertEquals(expectedPage.getContent().getFirst().orderId(), result.getContent().getFirst().orderId());
+        assertEquals(expectedPage.getContent().getFirst().receiverName(), result.getContent().getFirst().receiverName());
         
-        verify(orderAdapter).getAllOrdersByUserId();
+        verify(orderAdapter).getAllOrdersByUserId(pageable);
     }
 
     @Test
     @DisplayName("주문 전체 조회 - OrderAdapter 호출 실패")
     void getAllOrders_AdapterCallFailed() {
         // given
-        when(orderAdapter.getAllOrdersByUserId()).thenThrow(new RuntimeException("Network error"));
+        Pageable pageable = Pageable.ofSize(10);
+        when(orderAdapter.getAllOrdersByUserId(pageable)).thenThrow(new RuntimeException("Network error"));
 
         // when & then
         RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-            orderService.getAllOrders()
+            orderService.getAllOrders(Pageable.ofSize(10))
         );
         
         assertEquals("Network error", exception.getMessage());
-        verify(orderAdapter).getAllOrdersByUserId();
+        verify(orderAdapter).getAllOrdersByUserId(pageable);
     }
 
     @Test

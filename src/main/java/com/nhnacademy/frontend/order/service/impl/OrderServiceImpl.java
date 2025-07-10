@@ -8,6 +8,7 @@ import com.nhnacademy.frontend.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -29,8 +30,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderSummaryResponse> getAllOrders() {
-        return orderAdapter.getAllOrdersByUserId();
+    public Page<OrderSummaryResponse> getAllOrders(Pageable pageable) {
+        return orderAdapter.getAllOrdersByUserId(pageable);
     }
 
     @Override

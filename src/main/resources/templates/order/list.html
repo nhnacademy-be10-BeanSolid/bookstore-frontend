@@ -15,7 +15,7 @@
                     <th>주문 번호</th>
                     <th>주문 날짜</th>
                     <th>수령인</th>
-                    <th>총 금액</th>
+                    <th>결제 금액</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +31,35 @@
     
     <div th:if="${orders.content.size() == 0}">
         <p>주문 내역이 없습니다.</p>
+    </div>
+    
+    <!-- 페이지네이션 -->
+    <div th:if="${orders.totalPages > 1}" style="margin-top: 20px; text-align: center;">
+        <!-- 이전 페이지 버튼 -->
+        <a th:if="${orders.hasPrevious()}" 
+           th:href="@{/orders/list(page=${orders.number - 1}, size=${orders.size})}"
+           style="margin: 0 5px; padding: 5px 10px; text-decoration: none; border: 1px solid #ccc;">이전</a>
+        
+        <!-- 페이지 번호들 -->
+        <span th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}">
+            <a th:if="${i != orders.number}" 
+               th:href="@{/orders/list(page=${i}, size=${orders.size})}"
+               th:text="${i + 1}"
+               style="margin: 0 2px; padding: 5px 8px; text-decoration: none; border: 1px solid #ccc;"></a>
+            <strong th:if="${i == orders.number}" 
+                    th:text="${i + 1}"
+                    style="margin: 0 2px; padding: 5px 8px; background-color: #007bff; color: white; border: 1px solid #007bff;"></strong>
+        </span>
+        
+        <!-- 다음 페이지 버튼 -->
+        <a th:if="${orders.hasNext()}" 
+           th:href="@{/orders/list(page=${orders.number + 1}, size=${orders.size})}"
+           style="margin: 0 5px; padding: 5px 10px; text-decoration: none; border: 1px solid #ccc;">다음</a>
+    </div>
+    
+    <!-- 페이지 정보 -->
+    <div th:if="${orders.totalPages > 0}" style="margin-top: 10px; text-align: center; color: #666;">
+        <span th:text="|페이지 ${orders.number + 1} / ${orders.totalPages} (총 ${orders.totalElements}개)|"></span>
     </div>
 </body>
 </html>
