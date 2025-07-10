@@ -50,19 +50,6 @@
 
     <hr/>
 
-    <!-- 상품 추가 -->
-    <h2>상품 추가</h2>
-    <form th:action="@{/cart/add}" method="post">
-        <div>
-            <label for="bookId">Book ID:</label>
-            <input type="text" id="bookId" name="bookId" required>
-        </div>
-        <div>
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" value="1" required>
-        </div>
-        <button type="submit" class="btn btn-primary">장바구니에 추가</button>
-    </form>
 </div>
 
 <th:block layout:fragment="scripts">
