@@ -34,6 +34,9 @@
         <span th:text="' (적립률: ' + ${pointType.earningRate} + '%)'">earningRate</span>
     </div>
 </div>
+<form th:action="@{/mypage/grade/update}" method="post">
+    <button type="submit" id="submitBtn" class="btn btn-primary">변경하기-테스트 시 사용</button>
+</form>
 
 </body>
 </html>

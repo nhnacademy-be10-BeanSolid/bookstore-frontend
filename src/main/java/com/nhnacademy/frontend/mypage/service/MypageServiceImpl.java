@@ -109,4 +109,9 @@ public class MypageServiceImpl implements MypageService {
     public ResponsePointType getPointTypeByGradeName(String gradeName) {
         return Objects.requireNonNull(userAdapter.getPointTypeByGradeName(gradeName, null).getBody()).getContent().getFirst();
     }
+
+    @Override
+    public void bulkUpdateUserGrades() {
+        userAdapter.bulkUpdateUserGrades();
+    }
 }

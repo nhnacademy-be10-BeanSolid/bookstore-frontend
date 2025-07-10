@@ -34,4 +34,5 @@ public interface MypageService {
 
     ResponsePointType getPointTypeByGradeName(String gradeName);
 
+    void bulkUpdateUserGrades();
 }
