@@ -67,8 +67,10 @@
         </table>
     </div>
 
-    <!-- 등록 버튼 -->
     <div class="my-4 text-end">
+        <a th:href="@{/admin}">
+            <button type="button" class="btn btn-success">관리자페이지</button>
+        </a>
         <a th:href="@{/admin/pointtype/register}">
             <button type="button" class="btn btn-success">등록</button>
         </a>
@@ -79,7 +81,7 @@
         <ul class="pagination">
             <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/admin(page=${page.number - 1}, size=${page.size})}"
+                   th:href="@{/templates/admin/pointtype(page=${page.number - 1}, size=${page.size})}"
                    th:if="${page.hasPrevious()}">이전</a>
                 <span class="page-link" th:unless="${page.hasPrevious()}">이전</span>
             </li>
@@ -90,7 +92,7 @@
             </li>
             <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/admin(page=${page.number + 1}, size=${page.size})}"
+                   th:href="@{/templates/admin/pointtype(page=${page.number + 1}, size=${page.size})}"
                    th:if="${page.hasNext()}">다음</a>
                 <span class="page-link" th:unless="${page.hasNext()}">다음</span>
             </li>

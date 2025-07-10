@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "gateway-service", contextId = "orderAdapter")
+@FeignClient(name = "gateway-service", contextId = "orderAdapter1")
 public interface OrderAdapter {
     
     @PostMapping("/order-api/orders")
