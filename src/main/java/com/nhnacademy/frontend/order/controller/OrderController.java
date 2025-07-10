@@ -58,7 +58,7 @@ public class OrderController {
 
         try {
             OrderResponse orderResponse = orderService.createOrder(orderRequest);
-            log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
+            log.debug("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
 
             return "redirect:/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount();
         } catch (Exception e) {

@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 
-    OrderResponse createOrder(@Valid OrderRequest orderRequest);
+    OrderResponse createOrder(OrderRequest orderRequest);
     Page<OrderSummaryResponse> getAllOrders(Pageable pageable);
     OrderResponse getOrder(String orderId);
 }

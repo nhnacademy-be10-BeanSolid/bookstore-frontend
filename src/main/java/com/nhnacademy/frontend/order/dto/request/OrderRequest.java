@@ -19,15 +19,8 @@ public class OrderRequest {
             message = "올바른 휴대폰 번호 형식이 아닙니다 (올바른 형식: 01012345678)")
     private String receiverPhoneNumber;
 
-    @NotBlank(message = "우편번호를 선택해주세요")
-    @Pattern(regexp = "^\\d{5}$", message = "우편번호는 5자리 숫자여야 합니다")
-    private String zipCode;
-
-    @NotBlank(message = "주소를 선택해주세요")
-    private String baseAddress;
-
-    @Size(max = 50, message = "상세 주소는 50자 이하로 입력해주세요")
-    private String detailAddress;
+    @NotBlank(message = "배송지를 선택해주세요")
+    private String deliveryAddress;
 
     @Future(message = "배송 요청 날짜는 주문일 다음 날부터 가능합니다")
     private LocalDate requestedDeliveryDate;
