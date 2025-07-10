@@ -60,10 +60,31 @@
 
         <div class="mb-2">
           <label for="quantity">수량</label>
-          <input type="number" id="quantity" name="quantity" value="1" min="1" max="100" class="form-control" style="width:120px;" required />
+          <input type="number" id="quantity" value="1" min="1" max="100" class="form-control" style="width:120px;" required />
         </div>
 
-        <button type="submit" class="btn btn-success">구매하기</button>
+        <form id="buyNowForm" th:action="@{/books}" method="post" class="mt-3">
+          <input type="hidden" name="bookId" th:value="${book.id}" />
+          <input type="hidden" name="title" th:value="${book.title}" />
+          <input type="hidden" name="salePrice" th:value="${book.salePrice}" />
+          <input type="hidden" name="wrappable" th:value="${book.wrappable}" />
+          <input type="hidden" name="quantity" id="buyNowQuantity" value="1" />
+          <button type="submit" class="btn btn-success">구매하기</button>
+        </form>
+
+        <form id="addToCartForm" th:action="@{/cart/add}" method="post" class="mt-3">
+          <input type="hidden" name="bookId" th:value="${book.id}" />
+          <input type="hidden" name="quantity" id="addToCartQuantity" value="1" />
+          <button type="submit" class="btn btn-primary">장바구니 추가</button>
+        </form>
+
+        <script th:inline="javascript">
+          document.getElementById('quantity').addEventListener('change', function() {
+            const quantity = this.value;
+            document.getElementById('buyNowQuantity').value = quantity;
+            document.getElementById('addToCartQuantity').value = quantity;
+          });
+        </script>
       </form>
     </div>
   </div>

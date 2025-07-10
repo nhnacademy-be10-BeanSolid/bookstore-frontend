@@ -24,15 +24,15 @@ public interface CartAdapter {
                                @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
                                @RequestBody CartAddItemRequest request);
 
-    @PatchMapping("/user-api/carts/me/items/{itemId}")
+    @PutMapping("/user-api/carts/me/items/{itemId}")
     CartResponse updateItemQuantity(@RequestHeader("X-OWNER-TYPE") OwnerType ownerType,
                                     @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
-                                    @PathVariable String itemId, @RequestBody CartUpdateRequest request);
+                                    @PathVariable Long itemId, @RequestBody CartUpdateRequest request);
 
     @DeleteMapping("/user-api/carts/me/items/{itemId}")
     CartResponse deleteItemFromCart(@RequestHeader("X-OWNER-TYPE") OwnerType ownerType,
                                     @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
-                                    @PathVariable String itemId);
+                                    @PathVariable Long itemId);
 
     @DeleteMapping("/user-api/carts/me/items")
     CartResponse deleteItemsFromCart(@RequestHeader("X-OWNER-TYPE") OwnerType ownerType,
