@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>결제 실패</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<h1>결제에 실패했습니다 </h1>
+<p>주문 번호: <span th:text="${param.orderId}">ORDER_ID</span></p>
+<p>결제 키: <span th:text="${param.paymentKey}">PAYMENT_KEY</span></p>
+<p>문제가 계속될 경우 고객센터에 문의하세요.</p>
+<a th:href="@{/payments/form}">다시 결제하기</a>
+</body>
+</html>
