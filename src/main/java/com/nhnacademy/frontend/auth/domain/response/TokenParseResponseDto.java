@@ -4,6 +4,7 @@ import java.util.List;
 
 public record TokenParseResponseDto(
         String username,
-        List<String> authorities
+        List<String> authorities,
+        String userType
 ) {
 }

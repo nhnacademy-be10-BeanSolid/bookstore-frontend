@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/orders").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/books/**").permitAll()
                         .requestMatchers("/images/**").permitAll()

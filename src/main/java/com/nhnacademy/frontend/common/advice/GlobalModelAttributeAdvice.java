@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.common.advice;
 
+import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +22,17 @@ public class GlobalModelAttributeAdvice {
     public String loginUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+        if (auth != null && auth.getPrincipal() instanceof CustomPrincipal) {
+            return (((CustomPrincipal) auth.getPrincipal()).getUsername());
+        }
+        return null;
+    }
 
-            return auth.getName();
+    @ModelAttribute("userType")
+    public String userType() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth != null && auth.getPrincipal() instanceof CustomPrincipal) {
+            return ((CustomPrincipal)auth.getPrincipal()).getUserType();
         }
         return null;
     }

@@ -1,40 +1,69 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>태그 목록</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>전체 태그</h1>
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-        <tr>
-            <th>태그 ID</th>
-            <th>태그 이름</th>
-            <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="tag : ${tags}">
-            <td th:text="${tag.tagId}"></td>
-            <td th:text="${tag.tagName}"></td>
-            <td>
-                <form th:action="@{/admin/tags/{id}(id=${tag.tagId})}" method="post">
-                    <input type="hidden" name="_method" value="delete" />
-                    <button type="submit">삭제</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<body class="bg-light">
+<div class="container my-5">
+    <h1 class="mb-4 text-center">전체 태그</h1>
 
-    <div>
-        <a th:if="${page.hasPrevious()}" th:href="@{/admin/tags(page=${page.number - 1}, size=${page.size})}">이전</a>
-        <span>현재 페이지: <span th:text="${page.number + 1}">1</span></span>
-        <a th:if="${page.hasNext()}" th:href="@{/admin/tags(page=${page.number + 1}, size=${page.size})}">다음</a>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
+            <tr>
+                <th>태그 ID</th>
+                <th>태그 이름</th>
+                <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="tag : ${tags}">
+                <td th:text="${tag.tagId}"></td>
+                <td th:text="${tag.tagName}"></td>
+                <td>
+                    <form th:action="@{/admin/tags/{id}(id=${tag.tagId})}" method="post" class="d-inline">
+                        <input type="hidden" name="_method" value="delete" />
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
-    <a th:href="@{/admin/tags/new}" class="btn">태그 생성하기</a><br>
-    <a th:href="@{/admin}" class="btn">관리자 페이지</a>
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation" class="d-flex justify-content-center my-4">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/tags(page=${page.number - 1}, size=${page.size})}"
+                   th:if="${page.hasPrevious()}">이전</a>
+                <span class="page-link" th:unless="${page.hasPrevious()}">이전</span>
+            </li>
+            <li class="page-item active">
+                <span class="page-link">
+                    현재 페이지: <span th:text="${page.number + 1}">1</span>
+                </span>
+            </li>
+            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/tags(page=${page.number + 1}, size=${page.size})}"
+                   th:if="${page.hasNext()}">다음</a>
+                <span class="page-link" th:unless="${page.hasNext()}">다음</span>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="d-flex justify-content-between">
+        <a th:href="@{/admin/tags/new}" class="btn btn-success">태그 생성하기</a>
+        <a th:href="@{/admin}" class="btn btn-secondary">관리자 페이지</a>
+    </div>
+</div>
+<!-- Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

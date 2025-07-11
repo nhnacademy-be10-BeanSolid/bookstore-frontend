@@ -4,11 +4,11 @@ package com.nhnacademy.frontend.auth.controller;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
+import com.nhnacademy.frontend.auth.service.SignupService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.user.domain.request.UserIdCheckRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.auth.domain.request.UserIdCheckRequestDto;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
-import com.nhnacademy.frontend.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SignupController {
     private final AuthService authService;
     private final JwtCookieUtil jwtCookieUtil;
-    private final UserService userService;
+    private final SignupService signupService;
 
     @PostMapping("/oauth2")
     public String signup(@ModelAttribute OAuth2AdditionalSignupRequestDto request,
@@ -55,7 +55,7 @@ public class SignupController {
     @PostMapping("/check-user-id")
     public String checkUserId(@ModelAttribute UserIdCheckRequestDto dto,
                               RedirectAttributes redirectAttributes) {
-        boolean exists = userService.isExistUser(dto.getUserId());
+        boolean exists = signupService.isExistUser(dto.getUserId());
         redirectAttributes.addFlashAttribute("isAvailable", !exists); // hidden input용 값 전달
         redirectAttributes.addFlashAttribute("userId", dto.getUserId());
         redirectAttributes.addFlashAttribute("duplicateMessage", exists ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
@@ -78,14 +78,14 @@ public class SignupController {
             return "redirect:/auth/signup/normal-signup";
         }
 
-        boolean exists = userService.isExistUser(request.userId());
+        boolean exists = signupService.isExistUser(request.userId());
         if (exists) {
             redirectAttributes.addFlashAttribute("duplicateMessage", "이미 사용 중인 아이디입니다.");
             redirectAttributes.addFlashAttribute("userId", request.userId());
             return "redirect:/auth/signup/normal-signup";
         }
 
-        userService.register(request);
+        signupService.register(request);
 
         redirectAttributes.addFlashAttribute("signupSuccess", true);
         return "redirect:/auth/login";

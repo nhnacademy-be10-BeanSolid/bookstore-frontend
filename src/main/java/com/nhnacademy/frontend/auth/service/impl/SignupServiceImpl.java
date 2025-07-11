@@ -1,14 +1,14 @@
-package com.nhnacademy.frontend.user.service.impl;
+package com.nhnacademy.frontend.auth.service.impl;
 
+import com.nhnacademy.frontend.auth.service.SignupService;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.user.service.UserService;
+import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class SignupServiceImpl implements SignupService {
 
     private final UserAdapter userAdapter;
 
@@ -21,4 +21,6 @@ public class UserServiceImpl implements UserService {
     public boolean isExistUser(String userId) {
         return userAdapter.isExistUser(userId);
     }
+
+
 }

@@ -51,7 +51,7 @@ class JwtAuthenticationFilterTest {
         Cookie[] cookies = { new Cookie("accessToken", "valid-access") };
         when(request.getCookies()).thenReturn(cookies);
         when(authService.validate("valid-access")).thenReturn(true);
-        when(authService.parse("valid-access")).thenReturn(new TokenParseResponseDto("user", List.of("ROLE_USER")));
+        when(authService.parse("valid-access")).thenReturn(new TokenParseResponseDto("user", List.of("ROLE_USER"), "LOCAL"));
 
         filter.doFilterInternal(request, response, filterChain);
 
@@ -69,7 +69,7 @@ class JwtAuthenticationFilterTest {
         when(request.getCookies()).thenReturn(cookies);
         when(authService.validate("expired-access")).thenReturn(false);
         when(authService.refresh("valid-refresh")).thenReturn(new RefreshTokenResponseDto("new-access", "new-refresh"));
-        when(authService.parse("new-access")).thenReturn(new TokenParseResponseDto("user", List.of("ROLE_ADMIN")));
+        when(authService.parse("new-access")).thenReturn(new TokenParseResponseDto("user", List.of("ROLE_ADMIN"), "LOCAL"));
 
         filter.doFilterInternal(request, response, filterChain);
 

@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.auth.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.common.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.domain.response.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ class AuthIntegrationTest {
     @Test
     void login_success_setsCookiesAndRedirects() throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto("access-token", "refresh-token");
-        TokenParseResponseDto parseResponseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"));
+        TokenParseResponseDto parseResponseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"), "LOCAL");
         when(authAdapter.login(any())).thenReturn(loginResponseDto);
         when(authAdapter.parse(any())).thenReturn(parseResponseDto);
 
