@@ -6,6 +6,7 @@ import com.nhnacademy.frontend.cart.dto.CartOperationResult;
 import com.nhnacademy.frontend.cart.dto.CartViewResponse;
 import com.nhnacademy.frontend.cart.dto.request.CartAddItemRequest;
 import com.nhnacademy.frontend.cart.dto.request.CartItemUpdateRequest;
+import com.nhnacademy.frontend.cart.dto.request.CartUpdateItemsRequest;
 import com.nhnacademy.frontend.cart.dto.request.CartUpdateRequest;
 import com.nhnacademy.frontend.cart.dto.response.BookResponse;
 import com.nhnacademy.frontend.cart.dto.response.CartCreateResponse;
@@ -79,9 +80,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartOperationResult updateCartItems(List<CartItemUpdateRequest> updates, boolean isLoggedIn, String guestUUID) {
         CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID);
-        for (CartItemUpdateRequest update : updates) {
-            cartAdapter.updateItemQuantity(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), update.getBookId(), new CartUpdateRequest(update.getQuantity()));
-        }
+        List<CartUpdateItemsRequest.CartItemUpdate> items = updates.stream()
+                .map(update -> new CartUpdateItemsRequest.CartItemUpdate(update.getBookId(), update.getQuantity()))
+                .toList();
+        cartAdapter.updateItemsInCart(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), new CartUpdateItemsRequest(items));
         return new CartOperationResult(cartAndOwnerInfo.newGuestUuid());
     }
 
