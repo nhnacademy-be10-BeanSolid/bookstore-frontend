@@ -70,28 +70,37 @@ public class MypageController {
     }
 
     @PostMapping("/edit")
-    public String editMyPage(@RequestParam String password,
+    public String editMyPage(@RequestParam(required = false) String password,
                              @RequestParam(required = false) String userPassword,
                              @RequestParam(required = false) String userPasswordConfirm,
                              @ModelAttribute UserUpdateRequestDto request,
                              RedirectAttributes redirectAttributes,
-                             @RequestHeader(value = "Referer", required = false) String referer) {
+                             @RequestHeader(value = "Referer", required = false) String referer,
+                             Model model) {
+
+        // 비밀번호 수정 시 발생
         if (userPassword != null || userPasswordConfirm != null) {
             if (!Objects.equals(userPassword, userPasswordConfirm)) {
                 redirectAttributes.addFlashAttribute("error", "수정할 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
                 return "redirect:" + (referer != null ? referer : "/mypage/edit");
             }
         }
-        boolean isPasswordCorrect = mypageService.updatePersonalInformationWithPassword(password);
 
-        if (!isPasswordCorrect) {
-            redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
-            return "redirect:" + (referer != null ? referer : "/mypage/myinfo");
+        String userType = (String) model.getAttribute("userType");
+
+        // 로컬 사용자일 경우 비밀번호 확인
+        if("LOCAL".equals(userType)) {
+            boolean isPasswordCorrect = mypageService.updatePersonalInformationWithPassword(password);
+
+            if (!isPasswordCorrect) {
+                redirectAttributes.addFlashAttribute("error", "비밀번호가 일치하지 않습니다.");
+                return "redirect:" + (referer != null ? referer : "/mypage/myinfo");
+            }
         }
 
         mypageService.updatePersonalInformation(request);
         redirectAttributes.addFlashAttribute("message", "정보가 성공적으로 수정되었습니다.");
-        return "redirect:/mypage/myinfo";
+        return "redirect:/mypage";
     }
 
     @GetMapping("/address")
