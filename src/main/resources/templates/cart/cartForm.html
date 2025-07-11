@@ -47,6 +47,9 @@
             </div>
             <h4 class="total-cart-price">총 장바구니 가격: <span id="overallTotalPrice">0</span>원</h4>
         </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-success" id="orderSelected">주문하기</button>
+        </div>
     </form>
 
     <hr/>
@@ -147,6 +150,36 @@
                 }
             } else {
                 alert('삭제할 상품을 선택해주세요.');
+            }
+        });
+
+        // Order Selected Button
+        const orderSelectedButton = document.getElementById('orderSelected');
+        orderSelectedButton.addEventListener('click', function() {
+            const selectedItems = [];
+            document.querySelectorAll('input[name="bookIdToDelete"]:checked').forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                const bookId = checkbox.value;
+                const quantityInput = row.querySelector('.quantity-input');
+                const quantity = quantityInput.value;
+                const bookTitle = row.querySelector('td:nth-child(3)').textContent; // Assuming title is the 3rd td
+                const price = quantityInput.dataset.price;
+
+                selectedItems.push({
+                    bookId: bookId,
+                    quantity: quantity,
+                    bookTitle: bookTitle,
+                    price: price
+                });
+            });
+
+            if (selectedItems.length > 0) {
+                let queryString = selectedItems.map((item, index) => {
+                    return `items[${index}].bookId=${item.bookId}&items[${index}].quantity=${item.quantity}&items[${index}].bookTitle=${encodeURIComponent(item.bookTitle)}&items[${index}].price=${item.price}`;
+                }).join('&');
+                window.location.href = '/orders?' + queryString;
+            } else {
+                alert('주문할 상품을 선택해주세요.');
             }
         });
     });
