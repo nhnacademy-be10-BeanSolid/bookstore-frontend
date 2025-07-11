@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.cart.adapter;
 
 import com.nhnacademy.frontend.cart.domain.OwnerType;
 import com.nhnacademy.frontend.cart.dto.request.CartAddItemRequest;
+import com.nhnacademy.frontend.cart.dto.request.CartUpdateItemsRequest;
 import com.nhnacademy.frontend.cart.dto.request.CartUpdateRequest;
 import com.nhnacademy.frontend.cart.dto.response.CartCreateResponse;
 import com.nhnacademy.frontend.cart.dto.response.CartResponse;
@@ -38,5 +39,10 @@ public interface CartAdapter {
     CartResponse deleteItemsFromCart(@RequestHeader("X-OWNER-TYPE") OwnerType ownerType,
                                      @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
                                      @RequestBody List<Long> itemIds);
+
+    @PutMapping("/user-api/carts/me/items")
+    CartResponse updateItemsInCart(@RequestHeader("X-OWNER-TYPE") OwnerType ownerType,
+                                   @RequestHeader(value = "X-GUEST-UUID", required = false) String guestUUID,
+                                   @RequestBody CartUpdateItemsRequest request);
 
 }
