@@ -9,26 +9,27 @@
 <body class="bg-white">
 <div class="container d-flex flex-column align-items-center" style="max-width: 600px; min-height: 100vh; margin-top: 30px;">
     <!-- 로고 박스 -->
-    <div class="border mt-4 mb-5 d-flex justify-content-center align-items-center" style="width: 180px; height: 120px;">
-        <span class="fs-4">로고</span>
-    </div>
+    <a href="/" class="border rounded d-flex justify-content-center align-items-center my-4"
+       style="width:200px; height:160px;">
+        <img src="/images/BeanSolid-Logo.png" alt="로고" class="img-fluid" style="max-width:180px; max-height:140px;">
+    </a>
     <div class="row w-100 justify-content-center">
         <!-- PAYCO 회원가입 -->
-        <div class="col-6 d-flex flex-column align-items-center">
+        <div class="col-12 col-md-6 d-flex flex-column align-items-center mb-4 mb-md-0">
             <div class="mb-2">페이코를 통한 회원가입</div>
-            <a href="/auth/login/payco" class="d-block border text-decoration-none" style="width:220px; height:220px;">
-                <div class="bg-danger d-flex justify-content-center align-items-center" style="width:100%; height:100%;">
-                    <span class="text-white fw-bold fs-1">PAYCO</span>
-                </div>
+            <a href="/auth/login/payco"
+               class="d-flex border rounded text-decoration-none justify-content-center align-items-center bg-danger"
+               style="width:220px; height:220px;">
+                <span class="text-white fw-bold fs-1">PAYCO</span>
             </a>
         </div>
         <!-- 일반 회원가입 -->
-        <div class="col-6 d-flex flex-column align-items-center">
+        <div class="col-12 col-md-6 d-flex flex-column align-items-center">
             <div class="mb-2">일반 회원가입</div>
-            <a href="/auth/signup/normal-signup" class="d-block border text-decoration-none" style="width:220px; height:220px;">
-                <div class="bg-secondary d-flex justify-content-center align-items-center" style="width:100%; height:100%;">
-                    <span class="text-white fs-4">일반 회원가입</span>
-                </div>
+            <a href="/auth/signup/normal-signup"
+               class="d-flex border rounded text-decoration-none justify-content-center align-items-center bg-secondary"
+               style="width:220px; height:220px;">
+                <span class="text-white fs-4">일반 회원가입</span>
             </a>
         </div>
     </div>

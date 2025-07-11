@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>장바구니</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>장바구니</h1>
+
+    <!-- 장바구니 목록 -->
+    <form id="cartForm" th:action="@{/cart/update}" th:object="${cartUpdateQuantitiesRequest}" method="post">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><input type="checkbox" id="selectAll"/></th>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>가격</th>
+                <th>총 가격</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, stat : ${cartItems}">
+                <td><input type="hidden" th:name="|updates[__${stat.index}__].bookId|" th:value="${item.bookId}"/></td>
+                <td><input type="checkbox" name="bookIdToDelete" th:value="${item.bookId}"/></td>
+                <td th:text="${item.bookTitle}">상품명</td>
+                <td>
+                    <div class="input-group" style="width: 120px;">
+                        <button type="button" class="btn btn-outline-secondary btn-sm decrease-quantity" data-book-id="${item.bookId}">-</button>
+                        <input type="number" class="form-control form-control-sm quantity-input"
+                               th:field="*{updates[__${stat.index}__].quantity}"
+                               min="1" data-price="${item.price}" />
+                        <button type="button" class="btn btn-outline-secondary btn-sm increase-quantity" data-book-id="${item.bookId}">+</button>
+                    </div>
+                </td>
+                <td th:text="${item.price}">10000</td>
+                <td class="item-total-price" th:text="${item.price * item.quantity}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                <button type="submit" class="btn btn-primary">장바구니 업데이트</button>
+                <button type="button" class="btn btn-danger" id="deleteSelected">선택 삭제</button>
+            </div>
+            <h4 class="total-cart-price">총 장바구니 가격: <span id="overallTotalPrice">0</span>원</h4>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-success" id="orderSelected">주문하기</button>
+        </div>
+    </form>
+
+    <hr/>
+
+</div>
+
+<th:block layout:fragment="scripts">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const quantityInputs = document.querySelectorAll('.quantity-input');
+        const increaseButtons = document.querySelectorAll('.increase-quantity');
+        const decreaseButtons = document.querySelectorAll('.decrease-quantity');
+        const overallTotalPriceSpan = document.getElementById('overallTotalPrice');
+        const deleteSelectedButton = document.getElementById('deleteSelected');
+        const cartForm = document.getElementById('cartForm');
+
+        function updateItemTotalPrice(inputElement) {
+            const quantity = parseInt(inputElement.value);
+            const price = parseFloat(inputElement.dataset.price);
+            const itemTotalPriceElement = inputElement.closest('tr').querySelector('.item-total-price');
+            itemTotalPriceElement.textContent = (quantity * price).toLocaleString();
+            updateOverallTotalPrice();
+        }
+
+        function updateOverallTotalPrice() {
+            let total = 0;
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const quantity = parseInt(input.value);
+                const price = parseFloat(input.dataset.price);
+                total += (quantity * price);
+            });
+            overallTotalPriceSpan.textContent = total.toLocaleString();
+        }
+
+        // Initial calculation
+        updateOverallTotalPrice();
+
+        // Select All Checkbox
+        selectAllCheckbox.addEventListener('click', function(event) {
+            let checkboxes = document.querySelectorAll('input[name="bookIdToDelete"]');
+            for (let checkbox of checkboxes) {
+                checkbox.checked = event.target.checked;
+            }
+        });
+
+        // Quantity Input Change
+        quantityInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (parseInt(this.value) < 1) {
+                    this.value = 1;
+                }
+                updateItemTotalPrice(this);
+            });
+        });
+
+        // Increase Quantity Button
+        increaseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.closest('.input-group').querySelector('.quantity-input');
+                input.value = parseInt(input.value) + 1;
+                updateItemTotalPrice(input);
+            });
+        });
+
+        // Decrease Quantity Button
+        decreaseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.closest('.input-group').querySelector('.quantity-input');
+                if (parseInt(input.value) > 1) {
+                    input.value = parseInt(input.value) - 1;
+                    updateItemTotalPrice(input);
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Delete Selected Button
+        deleteSelectedButton.addEventListener('click', function() {
+            const selectedBookIds = Array.from(document.querySelectorAll('input[name="bookIdToDelete"]:checked'))
+                                        .map(checkbox => checkbox.value);
+            if (selectedBookIds.length > 0) {
+                if (confirm('선택된 상품을 장바구니에서 삭제하시겠습니까?')) {
+                    const deleteForm = document.createElement('form');
+                    deleteForm.method = 'post';
+                    deleteForm.action = '/cart/delete';
+
+                    selectedBookIds.forEach(bookId => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'bookId'; // CartController expects 'bookId'
+                        input.value = bookId;
+                        deleteForm.appendChild(input);
+                    });
+
+                    document.body.appendChild(deleteForm);
+                    deleteForm.submit();
+                }
+            } else {
+                alert('삭제할 상품을 선택해주세요.');
+            }
+        });
+
+        // Order Selected Button
+        const orderSelectedButton = document.getElementById('orderSelected');
+        orderSelectedButton.addEventListener('click', function() {
+            const selectedItems = [];
+            document.querySelectorAll('input[name="bookIdToDelete"]:checked').forEach(checkbox => {
+                const row = checkbox.closest('tr');
+                const bookId = checkbox.value;
+                const quantityInput = row.querySelector('.quantity-input');
+                const quantity = quantityInput.value;
+                const bookTitle = row.querySelector('td:nth-child(3)').textContent; // Assuming title is the 3rd td
+                const price = quantityInput.dataset.price;
+
+                selectedItems.push({
+                    bookId: bookId,
+                    quantity: quantity,
+                    bookTitle: bookTitle,
+                    price: price
+                });
+            });
+
+            if (selectedItems.length > 0) {
+                let queryString = selectedItems.map((item, index) => {
+                    return `items[${index}].bookId=${item.bookId}&items[${index}].quantity=${item.quantity}&items[${index}].bookTitle=${encodeURIComponent(item.bookTitle)}&items[${index}].price=${item.price}`;
+                }).join('&');
+                window.location.href = '/orders?' + queryString;
+            } else {
+                alert('주문할 상품을 선택해주세요.');
+            }
+        });
+    });
+</script>
+</th:block>
+
+</body>
+</html>
