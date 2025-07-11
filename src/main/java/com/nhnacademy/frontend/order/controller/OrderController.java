@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.order.controller;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.order.dto.CartItem;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,7 +59,7 @@ public class OrderController {
 
         try {
             OrderResponse orderResponse = orderService.createOrder(orderRequest);
-            log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
+            log.debug("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
 
             return "redirect:/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount();
         } catch (Exception e) {
@@ -70,8 +72,8 @@ public class OrderController {
 
     // 주문 전체 조회 페이지
     @GetMapping("/list")
-    public String orderList(Model model) {
-        Page<OrderSummaryResponse> orders = orderService.getAllOrders();
+    public String orderList(Pageable pageable, Model model) {
+        Page<OrderSummaryResponse> orders = orderService.getAllOrders(pageable);
         model.addAttribute("orders", orders);
 
         return "order/list";
@@ -80,7 +82,7 @@ public class OrderController {
     // 주문 상세 조회 페이지
     @GetMapping("/{orderId}")
     public String getOrderDetail(@PathVariable String orderId, Model model) {
-        OrderResponse orderDetail = orderService.getOrder(orderId);
+        OrderDetailResponse orderDetail = orderService.getOrder(orderId);
         model.addAttribute("order", orderDetail);
 
         return "order/detail";
