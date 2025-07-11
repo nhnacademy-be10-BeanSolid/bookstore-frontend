@@ -1,18 +1,17 @@
 package com.nhnacademy.frontend.cart.service;
 
-import com.nhnacademy.frontend.cart.dto.view.CartItemViewModel;
-import jakarta.servlet.http.HttpServletResponse;
+import com.nhnacademy.frontend.cart.dto.CartOperationResult;
+import com.nhnacademy.frontend.cart.dto.CartViewResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CartService {
-    List<CartItemViewModel> getCartItems(boolean isLoggedIn,
-                                         String guestUUID,
-                                         HttpServletResponse response);
+    CartViewResponse getCartItems(boolean isLoggedIn, String guestUUID);
 
-    void addToCart(Long bookId, int quantity, boolean isLoggedIn, String guestUUID, HttpServletResponse response);
+    CartOperationResult addToCart(Long bookId, int quantity, boolean isLoggedIn, String guestUUID);
 
-    void deleteCartItems(List<Long> bookIds, boolean isLoggedIn, String guestUUID, HttpServletResponse response);
+    CartOperationResult deleteCartItems(List<Long> bookIds, boolean isLoggedIn, String guestUUID);
 
-    void updateCartItems(java.util.Map<Long, Integer> quantities, boolean isLoggedIn, String guestUUID, HttpServletResponse response);
+    CartOperationResult updateCartItems(Map<Long, Integer> quantities, boolean isLoggedIn, String guestUUID);
 }

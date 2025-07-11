@@ -1,19 +1,19 @@
 package com.nhnacademy.frontend.cart.service.impl;
 
-import com.nhnacademy.frontend.cart.dto.request.CartUpdateRequest;
-import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.cart.adapter.CartAdapter;
 import com.nhnacademy.frontend.cart.domain.OwnerType;
+import com.nhnacademy.frontend.cart.dto.CartOperationResult;
+import com.nhnacademy.frontend.cart.dto.CartViewResponse;
 import com.nhnacademy.frontend.cart.dto.request.CartAddItemRequest;
+import com.nhnacademy.frontend.cart.dto.request.CartUpdateRequest;
 import com.nhnacademy.frontend.cart.dto.response.BookResponse;
 import com.nhnacademy.frontend.cart.dto.response.CartCreateResponse;
 import com.nhnacademy.frontend.cart.dto.response.CartItemDto;
 import com.nhnacademy.frontend.cart.dto.response.CartResponse;
 import com.nhnacademy.frontend.cart.dto.view.CartItemViewModel;
 import com.nhnacademy.frontend.cart.service.CartService;
+import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import feign.FeignException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +29,8 @@ public class CartServiceImpl implements CartService {
     private final BookAdapter bookAdapter;
 
     @Override
-    public List<CartItemViewModel> getCartItems(boolean isLoggedIn, String guestUUID, HttpServletResponse response) {
-        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID, response);
+    public CartViewResponse getCartItems(boolean isLoggedIn, String guestUUID) {
+        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID);
         CartResponse cartResponse = cartAndOwnerInfo.cartResponse();
 
         List<BookResponse> bookResponseList = bookAdapter.getBooks(cartResponse.getItems().stream()
@@ -40,14 +40,16 @@ public class CartServiceImpl implements CartService {
         Map<Long, Integer> itemQuantityMap = cartResponse.getItems().stream()
                 .collect(Collectors.toMap(CartItemDto::getItemId, CartItemDto::getQuantity));
 
-        return bookResponseList.stream()
+        List<CartItemViewModel> cartItemViewModels = bookResponseList.stream()
                 .map(item -> new CartItemViewModel(item.id(), item.title(), itemQuantityMap.get(item.id()), item.originalPrice()))
                 .collect(Collectors.toList());
+
+        return new CartViewResponse(cartItemViewModels, cartAndOwnerInfo.newGuestUuid());
     }
 
     @Override
-    public void addToCart(Long bookId, int quantity, boolean isLoggedIn, String guestUUID, HttpServletResponse response) {
-        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID, response);
+    public CartOperationResult addToCart(Long bookId, int quantity, boolean isLoggedIn, String guestUUID) {
+        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID);
         boolean itemFound = false;
         for (CartItemDto item : cartAndOwnerInfo.cartResponse().getItems()) {
             if (item.getItemId() == bookId) {
@@ -60,30 +62,35 @@ public class CartServiceImpl implements CartService {
         if (!itemFound) {
             cartAdapter.addItemToCart(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), new CartAddItemRequest(bookId, quantity));
         }
+
+        return new CartOperationResult(cartAndOwnerInfo.newGuestUuid());
     }
 
     @Override
-    public void deleteCartItems(List<Long> bookIds, boolean isLoggedIn, String guestUUID, HttpServletResponse response) {
-        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID, response);
+    public CartOperationResult deleteCartItems(List<Long> bookIds, boolean isLoggedIn, String guestUUID) {
+        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID);
         cartAdapter.deleteItemsFromCart(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), bookIds);
+        return new CartOperationResult(cartAndOwnerInfo.newGuestUuid());
     }
 
     @Override
-    public void updateCartItems(Map<Long, Integer> quantities, boolean isLoggedIn, String guestUUID, HttpServletResponse response) {
-        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID, response);
+    public CartOperationResult updateCartItems(Map<Long, Integer> quantities, boolean isLoggedIn, String guestUUID) {
+        CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID);
         for (Map.Entry<Long, Integer> entry : quantities.entrySet()) {
             Long bookId = entry.getKey();
             Integer quantity = entry.getValue();
             cartAdapter.updateItemQuantity(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), bookId, new CartUpdateRequest(quantity));
         }
+        return new CartOperationResult(cartAndOwnerInfo.newGuestUuid());
     }
 
-    private record CartAndOwnerInfo(CartResponse cartResponse, OwnerType ownerType, String uuid) {}
+    private record CartAndOwnerInfo(CartResponse cartResponse, OwnerType ownerType, String uuid, String newGuestUuid) {}
 
-    private CartAndOwnerInfo getOrCreateCartAndOwnerInfo(boolean isLoggedIn, String guestUUID, HttpServletResponse response) {
+    private CartAndOwnerInfo getOrCreateCartAndOwnerInfo(boolean isLoggedIn, String guestUUID) {
         OwnerType ownerType = isLoggedIn ? OwnerType.USER : OwnerType.GUEST;
         String effectiveUuid = guestUUID;
         CartResponse cartResponse;
+        String newGuestUuid = null;
 
         try {
             cartResponse = cartAdapter.getCart(ownerType, effectiveUuid);
@@ -91,14 +98,10 @@ public class CartServiceImpl implements CartService {
             CartCreateResponse create = cartAdapter.createCart(ownerType);
             if (!isLoggedIn) {
                 effectiveUuid = create.getGuestUUID();
-                Cookie cookie = new Cookie("guest_uuid", effectiveUuid);
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
-                cookie.setMaxAge(60 * 60 * 24 * 30);
-                response.addCookie(cookie);
+                newGuestUuid = effectiveUuid;
             }
             cartResponse = cartAdapter.getCart(ownerType, effectiveUuid);
         }
-        return new CartAndOwnerInfo(cartResponse, ownerType, effectiveUuid);
+        return new CartAndOwnerInfo(cartResponse, ownerType, effectiveUuid, newGuestUuid);
     }
 }
