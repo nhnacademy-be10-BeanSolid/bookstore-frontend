@@ -5,8 +5,8 @@ import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.user.service.UserService;
+import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.auth.service.SignupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -47,7 +47,7 @@ class SignupControllerTest {
     private AuthService authService;
 
     @MockBean
-    private UserService userService;
+    private SignupService signupService;
 
     @MockBean
     private JwtCookieUtil jwtCookieUtil;
@@ -106,7 +106,7 @@ class SignupControllerTest {
     @DisplayName("아이디 중복확인 - 이미 존재하는 아이디")
     @Test
     void checkUserId_duplicate() throws Exception {
-        given(userService.isExistUser("testuser")).willReturn(true);
+        given(signupService.isExistUser("testuser")).willReturn(true);
 
         mockMvc.perform(post("/auth/signup/check-user-id")
                         .param("userId", "testuser"))
@@ -119,7 +119,7 @@ class SignupControllerTest {
     @DisplayName("아이디 중복확인 - 사용 가능한 아이디")
     @Test
     void checkUserId_available() throws Exception {
-        given(userService.isExistUser("newuser")).willReturn(false);
+        given(signupService.isExistUser("newuser")).willReturn(false);
 
         mockMvc.perform(post("/auth/signup/check-user-id")
                         .param("userId", "newuser"))
@@ -146,7 +146,7 @@ class SignupControllerTest {
     @DisplayName("회원가입 처리 - 정상 플로우")
     @Test
     void registerUser_success() throws Exception {
-        doNothing().when(userService).register(ArgumentMatchers.any(UserCreateRequestDto.class));
+        doNothing().when(signupService).register(ArgumentMatchers.any(UserCreateRequestDto.class));
 
         mockMvc.perform(post("/auth/signup/normal-signup/register")
                         .param("userId", "user2")

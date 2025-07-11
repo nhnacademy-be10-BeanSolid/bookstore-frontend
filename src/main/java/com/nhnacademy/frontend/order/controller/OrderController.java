@@ -1,12 +1,12 @@
 package com.nhnacademy.frontend.order.controller;
 
+import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.order.dto.CartItem;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
-import com.nhnacademy.frontend.user.exception.ValidationFailedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

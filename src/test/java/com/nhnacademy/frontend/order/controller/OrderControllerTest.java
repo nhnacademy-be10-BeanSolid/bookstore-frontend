@@ -1,11 +1,11 @@
 package com.nhnacademy.frontend.order.controller;
 
+import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
-import com.nhnacademy.frontend.user.exception.ValidationFailedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -97,7 +97,7 @@ class OrderControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
 
         // when & then
-        assertThrows(ValidationFailedException.class, () -> 
+        assertThrows(ValidationFailedException.class, () ->
             orderController.createOrder(orderRequest, bindingResult, redirectAttributes)
         );
         

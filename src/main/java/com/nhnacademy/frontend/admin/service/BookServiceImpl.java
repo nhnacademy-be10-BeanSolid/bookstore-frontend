@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.admin.service;
 
-import com.nhnacademy.frontend.book.adapter.BookAdapter;
+import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;

@@ -1,0 +1,64 @@
+<!-- src/main/resources/templates/payment-result.html -->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>결제 결과</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: { DEFAULT: '#2563eb', light: '#3b82f6' } }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+<div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center">
+  <!-- 성공 -->
+  <div th:if="${param.status} == 'success'">
+    <svg class="mx-auto mb-4 w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 13l4 4L19 7"/>
+    </svg>
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">결제가 완료되었습니다 🎉</h1>
+    <p class="text-gray-600 mb-2">주문번호: <span th:text="${param.orderId}">ORDER_ID</span></p>
+    <p class="text-gray-600 mb-4">결제 키: <span th:text="${param.paymentKey}">PAYMENT_KEY</span></p>
+    <p class="text-gray-700 text-lg font-semibold mb-6">
+      결제금액: <span th:text="${param.amount}">AMOUNT</span>원
+    </p>
+    <a th:href="@{/{}}" class="inline-block px-6 py-2 bg-primary text-white rounded-lg shadow hover:bg-primary-light">
+      홈으로 돌아가기
+    </a>
+  </div>
+
+  <!-- 실패 -->
+  <div th:if="${param.status} == 'fail'">
+    <svg class="mx-auto mb-4 w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">결제에 실패했습니다 😢</h1>
+    <p class="text-gray-600 mb-2">주문번호: <span th:text="${param.orderId}">ORDER_ID</span></p>
+    <p class="text-gray-600 mb-4">결제 키: <span th:text="${param.paymentKey}">PAYMENT_KEY</span></p>
+    <p class="text-gray-700 mb-6">
+      문제가 지속되면 고객센터에 문의해 주세요.
+    </p>
+    <div class="space-x-4">
+      <a th:href="@{/payments/form(orderId=${param.orderId},amount=${param.amount})}"
+         class="inline-block px-6 py-2 bg-primary text-white rounded-lg shadow hover:bg-primary-light">
+        다시 결제하기
+      </a>
+      <a th:href="@{/{}}"
+         class="inline-block px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100">
+        홈으로
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
