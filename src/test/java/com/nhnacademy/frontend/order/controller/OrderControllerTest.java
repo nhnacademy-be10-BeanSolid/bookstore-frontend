@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.order.controller;
 
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
@@ -147,7 +148,7 @@ class OrderControllerTest {
     void getOrderDetail_Success() throws Exception {
         // given
         String orderId = "190001-abcabc-123123";
-        OrderResponse orderDetail = createOrderResponse();
+        OrderDetailResponse orderDetail = createOrderDetailResponse();
         when(orderService.getOrder(orderId)).thenReturn(orderDetail);
 
         // when & then
@@ -170,11 +171,9 @@ class OrderControllerTest {
         // when & then
         mockMvc.perform(post("/orders")
                 .param("receiverName", "홍길동")
-                .param("receiverPhoneNumber", "01012345678")
-                .param("zipCode", "12345")
-                .param("baseAddress", "서울시 강남구")
-                .param("detailAddress", "101동 101호")
-                .param("requestedDeliveryDate", "3000-01-04")
+                .param("receiverPhoneNumber", "010-1234-5678")
+                .param("deliveryAddress", "12345 서울시 강남구 101동 101호")
+                .param("requestedDeliveryDate", "2030-01-04")
                 .param("orderItems[0].bookId", "1")
                 .param("orderItems[0].quantity", "2")
                 .param("orderItems[0].price", "10000")
@@ -201,9 +200,7 @@ class OrderControllerTest {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiverName("홍길동");
         orderRequest.setReceiverPhoneNumber("01012345678");
-        orderRequest.setZipCode("12345");
-        orderRequest.setBaseAddress("서울시 강남구");
-        orderRequest.setDetailAddress("101동 101호");
+        orderRequest.setDeliveryAddress("12345 서울시 강남구 101동 101호");
         orderRequest.setRequestedDeliveryDate(LocalDate.of(3000, 1, 1).plusDays(3));
         
         OrderRequest.OrderItem orderItem = new OrderRequest.OrderItem();
@@ -223,11 +220,26 @@ class OrderControllerTest {
                 "PENDING",
                 LocalDate.of(3000, 1, 1),
                 "홍길동",
-                "01012345678",
+                "010-1234-5678",
                 "서울시 강남구 101동 101호",
                 LocalDate.of(3000, 1, 1).plusDays(3),
                 3000,
                 23000L
+        );
+    }
+
+    private OrderDetailResponse createOrderDetailResponse() {
+        return new OrderDetailResponse(
+                LocalDate.now().minusDays(1),
+                "202507-abcabc-123123",
+                "PENDING",
+                10_000L,
+                null,
+                "홍길동",
+                "010-1234-5678",
+                "서울시 강남구 101동 101호",
+                LocalDate.of(2025, 12, 31),
+                5_000
         );
     }
 

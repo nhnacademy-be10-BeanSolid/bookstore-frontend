@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,5 +19,5 @@ public interface OrderAdapter {
     Page<OrderSummaryResponse> getAllOrdersByUserId(Pageable pageable);
 
     @GetMapping("/order-api/orders/{orderId}")
-    OrderResponse getOrder(@PathVariable String orderId);
+    OrderDetailResponse getOrder(@PathVariable String orderId);
 }

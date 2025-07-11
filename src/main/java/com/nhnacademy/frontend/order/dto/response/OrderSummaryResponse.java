@@ -6,5 +6,5 @@ public record OrderSummaryResponse(
         LocalDate orderDate,
         String orderId,
         String receiverName,
-        Long totalPrice
+        Long totalAmount
 ) {}

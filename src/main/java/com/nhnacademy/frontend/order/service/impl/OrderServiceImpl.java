@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.order.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
@@ -35,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse getOrder(String orderId) {
+    public OrderDetailResponse getOrder(String orderId) {
         return orderAdapter.getOrder(orderId);
     }
 }

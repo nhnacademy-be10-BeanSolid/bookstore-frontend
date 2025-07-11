@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.order.controller;
 
 import com.nhnacademy.frontend.order.dto.CartItem;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
@@ -81,7 +82,7 @@ public class OrderController {
     // 주문 상세 조회 페이지
     @GetMapping("/{orderId}")
     public String getOrderDetail(@PathVariable String orderId, Model model) {
-        OrderResponse orderDetail = orderService.getOrder(orderId);
+        OrderDetailResponse orderDetail = orderService.getOrder(orderId);
         model.addAttribute("order", orderDetail);
 
         return "order/detail";

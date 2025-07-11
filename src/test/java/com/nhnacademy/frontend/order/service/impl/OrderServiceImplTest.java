@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.order.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import feign.FeignException;
@@ -127,8 +128,7 @@ class OrderServiceImplTest {
         // then
         verify(orderAdapter).createOrder(argThat(request -> 
             "테스트 사용자".equals(request.getReceiverName()) &&
-            request.getOrderItems().size() == 1 &&
-            request.getZipCode().equals("12345")
+            request.getOrderItems().size() == 1
         ));
     }
 
@@ -174,19 +174,18 @@ class OrderServiceImplTest {
     void getOrder_Success() {
         // given
         String orderId = "190001-abcabc-123123";
-        OrderResponse expectedOrder = createOrderResponse();
+        OrderDetailResponse expectedOrder = createOrderDetailResponse();
         when(orderAdapter.getOrder(orderId)).thenReturn(expectedOrder);
 
         // when
-        OrderResponse result = orderService.getOrder(orderId);
+        OrderDetailResponse result = orderService.getOrder(orderId);
 
         // then
         assertNotNull(result);
-        assertEquals(expectedOrder.id(), result.id());
-        assertEquals(expectedOrder.orderId(), result.orderId());
-        assertEquals(expectedOrder.status(), result.status());
-        assertEquals(expectedOrder.receiverName(), result.receiverName());
-        assertEquals(expectedOrder.totalAmount(), result.totalAmount());
+        assertEquals(expectedOrder.getOrderId(), result.getOrderId());
+        assertEquals(expectedOrder.getStatus(), result.getStatus());
+        assertEquals(expectedOrder.getReceiverName(), result.getReceiverName());
+        assertEquals(expectedOrder.getTotalAmount(), result.getTotalAmount());
         
         verify(orderAdapter).getOrder(orderId);
     }
@@ -212,7 +211,7 @@ class OrderServiceImplTest {
     void getOrder_ParameterValidation() {
         // given
         String orderId = "test-order-id-123";
-        OrderResponse expectedOrder = createOrderResponse();
+        OrderDetailResponse expectedOrder = createOrderDetailResponse();
         when(orderAdapter.getOrder(orderId)).thenReturn(expectedOrder);
 
         // when
@@ -226,9 +225,7 @@ class OrderServiceImplTest {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setReceiverName("홍길동");
         orderRequest.setReceiverPhoneNumber("01012345678");
-        orderRequest.setZipCode("12345");
-        orderRequest.setBaseAddress("서울시 강남구");
-        orderRequest.setDetailAddress("101동 101호");
+        orderRequest.setDeliveryAddress("12345 서울시 강남구 101동 101호");
         orderRequest.setRequestedDeliveryDate(LocalDate.now().plusDays(3));
         
         OrderRequest.OrderItem orderItem = new OrderRequest.OrderItem();
@@ -274,5 +271,20 @@ class OrderServiceImplTest {
         
         Pageable pageable = PageRequest.of(0, 10);
         return new PageImpl<>(orderSummaries, pageable, orderSummaries.size());
+    }
+
+    private OrderDetailResponse createOrderDetailResponse() {
+        return new OrderDetailResponse(
+                LocalDate.now().minusDays(1),
+                "202507-abcabc-123123",
+                "PENDING",
+                10_000L,
+                null,
+                "홍길동",
+                "010-1234-5678",
+                "서울시 강남구 101동 101호",
+                LocalDate.of(2025, 12, 31),
+                5_000
+        );
     }
 }
