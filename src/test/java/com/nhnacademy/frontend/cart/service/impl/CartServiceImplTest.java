@@ -188,14 +188,13 @@ class CartServiceImplTest {
         );
         CartResponse cartResponse = CartResponse.builder().cartId(1L).items(Collections.singletonList(cartItemDto)).build();
         when(cartAdapter.getCart(any(OwnerType.class), anyString())).thenReturn(cartResponse);
-        when(cartAdapter.updateItemQuantity(any(OwnerType.class), anyString(), anyLong(), any(CartUpdateRequest.class)))
+        when(cartAdapter.updateItemsInCart(any(OwnerType.class), anyString(), any(com.nhnacademy.frontend.cart.dto.request.CartUpdateItemsRequest.class)))
                 .thenReturn(CartResponse.builder().cartId(1L).items(Collections.emptyList()).build());
 
         CartOperationResult result = cartService.updateCartItems(updates, false, guestUuid);
 
         assertNull(result.newGuestUuid());
         verify(cartAdapter, times(1)).getCart(OwnerType.GUEST, guestUuid);
-        verify(cartAdapter, times(1)).updateItemQuantity(OwnerType.GUEST, guestUuid, bookId, new CartUpdateRequest(5));
-        verify(cartAdapter, times(1)).updateItemQuantity(OwnerType.GUEST, guestUuid, 2L, new CartUpdateRequest(3));
+        verify(cartAdapter, times(1)).updateItemsInCart(eq(OwnerType.GUEST), eq(guestUuid), any(com.nhnacademy.frontend.cart.dto.request.CartUpdateItemsRequest.class));
     }
 }
