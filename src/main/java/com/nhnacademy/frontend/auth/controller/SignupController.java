@@ -7,7 +7,7 @@ import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.user.domain.request.UserIdCheckRequestDto;
-import com.nhnacademy.frontend.user.exception.ValidationFailedException;
+import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

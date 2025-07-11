@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.user.exception;
+package com.nhnacademy.frontend.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;

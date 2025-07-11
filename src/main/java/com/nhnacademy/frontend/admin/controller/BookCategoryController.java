@@ -1,10 +1,10 @@
 package com.nhnacademy.frontend.admin.controller;
 
 import com.nhnacademy.frontend.admin.domain.request.BookCategoryCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.admin.domain.request.BookCategoryUpdateRequestDto;
-import com.nhnacademy.frontend.book.service.BookService;
-import com.nhnacademy.frontend.user.exception.ValidationFailedException;
+import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class BookCategoryController {
     public String getCategory(Model model, @PathVariable("categoryId") Long categoryId) {
         BookCategoryResponseDto category = bookService.getCategory(categoryId);
         log.debug("Category Get Success : {}", category);
-        model.addAttribute("category", category);;
+        model.addAttribute("category", category);
         return "admin/category/detail";
     }
 
