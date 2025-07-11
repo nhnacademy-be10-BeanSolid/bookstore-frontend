@@ -101,7 +101,7 @@
         function searchAddress() {
             new daum.Postcode({
                 oncomplete: function(data) {
-                    document.getElementById('deliveryAddress').value = data.address;
+                    document.getElementById('deliveryAddress').value = `[${data.zonecode}] ${data.address}`;
                 }
             }).open();
         }
