@@ -50,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/orders").permitAll()
+                        .requestMatchers("/cart/**").permitAll()
+                        .requestMatchers("/books/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
