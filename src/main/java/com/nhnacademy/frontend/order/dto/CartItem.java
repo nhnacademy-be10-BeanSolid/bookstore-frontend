@@ -15,4 +15,5 @@ public class CartItem {
     private String title;
     private Integer quantity;
     private Long price;
+    private Boolean wrappable;
 }

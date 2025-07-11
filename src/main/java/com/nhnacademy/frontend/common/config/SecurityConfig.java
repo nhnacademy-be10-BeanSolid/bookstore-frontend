@@ -7,6 +7,7 @@ import com.nhnacademy.frontend.auth.handler.LoginSuccessHandler;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,14 +25,30 @@ public class SecurityConfig {
                                                    AuthService authService,
                                                    LoginSuccessHandler successHandler,
                                                    CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
-        LoginFilter loginFilter = new LoginFilter(LOGIN_URL, authService, successHandler, new SimpleUrlAuthenticationFailureHandler());
+
+        LoginFilter loginFilter = new LoginFilter(
+                LOGIN_URL, authService, successHandler,
+                new SimpleUrlAuthenticationFailureHandler()
+        );
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET,
+                                "/payments",
+                                "/payments/form",
+                                "/payments/form/**",
+                                "/payments/success",
+                                "/payments/fail"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/payments"
+                        ).permitAll()
+                        // 인증 없이 열어둘 경로들
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/").permitAll()
                         .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/orders").permitAll()
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/books/**").permitAll()
@@ -39,7 +56,8 @@ public class SecurityConfig {
                 )
                 .formLogin(login -> login
                         .loginPage(LOGIN_URL)
-                        .loginProcessingUrl(LOGIN_URL))
+                        .loginProcessingUrl(LOGIN_URL)
+                )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
                         .addLogoutHandler(customCookieClearingLogoutHandler)
