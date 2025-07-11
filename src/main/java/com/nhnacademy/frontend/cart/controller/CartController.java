@@ -1,6 +1,8 @@
 package com.nhnacademy.frontend.cart.controller;
 
 import com.nhnacademy.frontend.cart.dto.GuestUuidProvider;
+import com.nhnacademy.frontend.cart.dto.request.CartItemUpdateRequest;
+import java.util.stream.Collectors;
 
 import com.nhnacademy.frontend.cart.dto.CartOperationResult;
 import com.nhnacademy.frontend.cart.dto.CartViewResponse;
@@ -29,7 +31,16 @@ public class CartController {
                            HttpServletResponse response) {
         CartViewResponse cartViewResponse = cartService.getCartItems(isLoggedIn, guestUUID);
         handleGuestCookie(cartViewResponse, response);
+
+        List<CartItemUpdateRequest> updates = cartViewResponse.cartItems().stream()
+                .map(item -> new CartItemUpdateRequest(item.getBookId(), item.getQuantity()))
+                .collect(Collectors.toList());
+
+        CartUpdateQuantitiesRequest cartUpdateQuantitiesRequest = new CartUpdateQuantitiesRequest();
+        cartUpdateQuantitiesRequest.setUpdates(updates);
+
         model.addAttribute("cartItems", cartViewResponse.cartItems());
+        model.addAttribute("cartUpdateQuantitiesRequest", cartUpdateQuantitiesRequest);
         return "cart/cartForm";
     }
 

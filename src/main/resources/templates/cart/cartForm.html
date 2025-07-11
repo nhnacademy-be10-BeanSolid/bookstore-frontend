@@ -10,7 +10,7 @@
     <h1>장바구니</h1>
 
     <!-- 장바구니 목록 -->
-    <form id="cartForm" th:action="@{/cart/update}" method="post">
+    <form id="cartForm" th:action="@{/cart/update}" th:object="${cartUpdateQuantitiesRequest}" method="post">
         <table class="table">
             <thead>
             <tr>
@@ -22,14 +22,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${cartItems}">
+            <tr th:each="item, stat : ${cartItems}">
+                <td><input type="hidden" th:name="|updates[__${stat.index}__].bookId|" th:value="${item.bookId}"/></td>
                 <td><input type="checkbox" name="bookIdToDelete" th:value="${item.bookId}"/></td>
                 <td th:text="${item.bookTitle}">상품명</td>
                 <td>
                     <div class="input-group" style="width: 120px;">
                         <button type="button" class="btn btn-outline-secondary btn-sm decrease-quantity" data-book-id="${item.bookId}">-</button>
                         <input type="number" class="form-control form-control-sm quantity-input"
-                               th:name="|quantities[${item.bookId}]|" th:value="${item.quantity}"
+                               th:field="*{updates[__${stat.index}__].quantity}"
                                min="1" data-price="${item.price}" />
                         <button type="button" class="btn btn-outline-secondary btn-sm increase-quantity" data-book-id="${item.bookId}">+</button>
                     </div>
@@ -118,6 +119,7 @@
                 if (parseInt(input.value) > 1) {
                     input.value = parseInt(input.value) - 1;
                     updateItemTotalPrice(input);
+                    input.dispatchEvent(new Event('change'));
                 }
             });
         });

@@ -80,7 +80,7 @@ public class CartServiceImpl implements CartService {
     public CartOperationResult updateCartItems(List<CartItemUpdateRequest> updates, boolean isLoggedIn, String guestUUID) {
         CartAndOwnerInfo cartAndOwnerInfo = getOrCreateCartAndOwnerInfo(isLoggedIn, guestUUID);
         for (CartItemUpdateRequest update : updates) {
-            cartAdapter.updateItemQuantity(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), update.bookId(), new CartUpdateRequest(update.quantity()));
+            cartAdapter.updateItemQuantity(cartAndOwnerInfo.ownerType(), cartAndOwnerInfo.uuid(), update.getBookId(), new CartUpdateRequest(update.getQuantity()));
         }
         return new CartOperationResult(cartAndOwnerInfo.newGuestUuid());
     }
