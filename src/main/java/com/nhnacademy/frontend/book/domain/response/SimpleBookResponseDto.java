@@ -6,6 +6,7 @@ public record SimpleBookResponseDto(
         String author,
         int salePrice,
         int stock,
-        String image
+        String image,
+        long viewCount
 ) {
 }

@@ -34,6 +34,7 @@
                             <option value="publishAt,asc">발행일 오래된순</option>
                             <option value="salePrice,asc">최저가</option>
                             <option value="salePrice,desc">최고가</option>
+                            <option value="viewCount,desc">조회수 높은순</option>
                         </select>
                     </form>
                 </div>
@@ -50,7 +51,8 @@
                                 <p class="card-text">
                                     저자: <span th:text="${book.author}">저자</span><br>
                                     가격: <span th:text="${book.salePrice}">0</span>원<br>
-                                    재고: <span th:text="${book.stock}">0</span>권
+                                    재고: <span th:text="${book.stock}">0</span>권<br>
+                                    조회수: <span th:text="${book.viewCount}"></span>
                                 </p>
                             </div>
                         </div>
