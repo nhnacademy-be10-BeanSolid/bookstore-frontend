@@ -18,6 +18,19 @@
         <p>검색 결과가 없습니다.</p>
     </div>
 
+<!--    <div class="d-flex justify-content-end mb-3">-->
+<!--        <form method="get" th:action="@{/search}" id="sortForm">-->
+<!--            <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>-->
+<!--            <input type="hidden" name="size" th:value="${page.size}" />-->
+<!--            <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">-->
+<!--                <option value="publishAt,desc">발행일 최신순</option>-->
+<!--                <option value="publishAt,asc">발행일 오래된순</option>-->
+<!--                <option value="salePrice,asc">최저가</option>-->
+<!--                <option value="salePrice,desc">최고가</option>-->
+<!--            </select>-->
+<!--        </form>-->
+<!--    </div>-->
+
     <div class="row row-cols-2 g-4">
         <div class="col" th:each="book : ${books}">
             <div class="card h-100">
@@ -56,3 +69,38 @@
 
 </body>
 </html>
+
+<script>
+    const sortSelect = document.getElementById('sortSelect');
+    const pageInput = document.getElementById('pageInput');
+
+    sortSelect.addEventListener('change', () => {
+        pageInput.value = 0;
+        document.getElementById('sortForm').submit();
+    });
+</script>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSort = urlParams.get("sort");
+
+    const select = document.getElementById("sortSelect");
+
+    if (currentSort) {
+        select.value = currentSort; // 현재 선택값 설정
+
+        // 선택된 옵션을 맨 위로 올리기
+        const options = Array.from(select.options);
+        const selectedOptionIndex = options.findIndex(opt => opt.value === currentSort);
+
+        if (selectedOptionIndex > -1) {
+            const selectedOption = options.splice(selectedOptionIndex, 1)[0];
+            options.unshift(selectedOption);
+            select.innerHTML = '';
+            options.forEach(opt => select.appendChild(opt));
+
+            // 선택된 값 다시 설정 (innerHTML 날렸으므로)
+            select.value = currentSort;
+        }
+    }
+</script>

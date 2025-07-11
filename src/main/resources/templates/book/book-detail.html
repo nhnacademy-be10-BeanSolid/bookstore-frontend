@@ -8,7 +8,7 @@
 <body>
 <div layout:fragment="content" class="container mt-4" style="max-width:800px;">
   <div class="card">
-    <img th:src="${book.image}" class="card-img-top" alt="Book Image" style="height:250px; object-fit:cover;">
+    <img th:src="${book.image}" class="card-img-top img-fluid" alt="Book Image" style="max-height: 250px; object-fit: cover;">
     <div class="card-body">
       <h3 class="card-title" th:text="${book.title}">도서 제목</h3>
       <div>
@@ -17,7 +17,7 @@
           <li th:each="cat : ${book.bookCategories}" th:text="${cat.categoryName}">카테고리명</li>
         </ul>
       </div>
-      <div>
+      <div th:if="${book.bookTags != null and !#lists.isEmpty(book.bookTags)}">
         <h5>태그</h5>
         <ul>
           <li th:each="tag : ${book.bookTags}" th:text="${tag.tagName}">태그명</li>

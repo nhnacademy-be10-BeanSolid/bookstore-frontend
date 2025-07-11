@@ -2,11 +2,13 @@ package com.nhnacademy.frontend.book.adapter;
 
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
-import com.nhnacademy.frontend.book.domain.response.BookDocumentResponseDto;
+import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @FeignClient(name = "gateway-service", contextId = "bookAdapter")
 public interface BookAdapter {
@@ -45,7 +47,11 @@ public interface BookAdapter {
 
     // 도서 리스트
     @GetMapping("/book-api/books")
-    Page<SimpleBookResponseDto> getBooks(@RequestParam int page, @RequestParam int size);
+    Page<SimpleBookResponseDto> getBooks(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(name = "sort", required = false) String sort
+    );
 
     // 도서 상세정보
     @GetMapping("/book-api/books/{bookId}")
@@ -68,6 +74,10 @@ public interface BookAdapter {
     // 도서 삭제
     @DeleteMapping("/book-api/books/{bookId}")
     void deleteBook(@PathVariable Long bookId);
+
+    // 엘라스틱 서치
+    @GetMapping("/book-api/search")
+    Page<SimpleBookResponseDto> searchBooks(@RequestParam String keyword, @RequestParam int page, @RequestParam int size);
 
     // 해당 도서의 태그 조회
     @GetMapping("/book-api/books/{bookId}/tags")
@@ -105,7 +115,7 @@ public interface BookAdapter {
     @DeleteMapping("/book-api/books/{bookId}/bookLikes")
     void deleteBookLike(@PathVariable Long bookId, @RequestHeader String userId);
 
-    // 엘라스틱 서치
-    @GetMapping("/book-api/search")
-    Page<SimpleBookResponseDto> searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
+    // 카테고리 노드
+    @GetMapping("/book-api/categories/tree")
+    List<BookCategoryNodeResponseDto> getCategoryTree();
 }
