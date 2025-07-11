@@ -1,5 +1,7 @@
 package com.nhnacademy.frontend.cart.controller;
 
+import com.nhnacademy.frontend.cart.dto.GuestUuidProvider;
+
 import com.nhnacademy.frontend.cart.dto.CartOperationResult;
 import com.nhnacademy.frontend.cart.dto.CartViewResponse;
 import com.nhnacademy.frontend.cart.dto.request.CartUpdateQuantitiesRequest;
@@ -26,9 +28,7 @@ public class CartController {
                            @CookieValue(value = "guest_uuid", required = false) String guestUUID,
                            HttpServletResponse response) {
         CartViewResponse cartViewResponse = cartService.getCartItems(isLoggedIn, guestUUID);
-        if (cartViewResponse.newGuestUuid() != null) {
-            addGuestCookie(response, cartViewResponse.newGuestUuid());
-        }
+        handleGuestCookie(cartViewResponse, response);
         model.addAttribute("cartItems", cartViewResponse.cartItems());
         return "cart/cartForm";
     }
@@ -62,11 +62,15 @@ public class CartController {
                              @ModelAttribute("isLoggedIn") boolean isLoggedIn,
                              @CookieValue(value = "guest_uuid", required = false) String guestUUID,
                              HttpServletResponse response) {
-        CartOperationResult result = cartService.updateCartItems(request.getQuantities(), isLoggedIn, guestUUID);
-        if (result.newGuestUuid() != null) {
-            addGuestCookie(response, result.newGuestUuid());
-        }
+        CartOperationResult result = cartService.updateCartItems(request.getUpdates(), isLoggedIn, guestUUID);
+        handleGuestCookie(result, response);
         return "redirect:/cart";
+    }
+
+    private void handleGuestCookie(GuestUuidProvider provider, HttpServletResponse response) {
+        if (provider.newGuestUuid() != null) {
+            addGuestCookie(response, provider.newGuestUuid());
+        }
     }
 
     private void addGuestCookie(HttpServletResponse response, String guestUUID) {

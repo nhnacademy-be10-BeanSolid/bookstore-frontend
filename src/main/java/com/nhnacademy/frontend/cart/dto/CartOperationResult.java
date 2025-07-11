@@ -1,4 +1,4 @@
 package com.nhnacademy.frontend.cart.dto;
 
-public record CartOperationResult(String newGuestUuid) {
+public record CartOperationResult(String newGuestUuid) implements GuestUuidProvider {
 }
