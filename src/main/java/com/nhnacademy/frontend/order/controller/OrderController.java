@@ -2,12 +2,11 @@ package com.nhnacademy.frontend.order.controller;
 
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
-import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
-import com.nhnacademy.frontend.order.exception.OrderNotFoundException;
 import com.nhnacademy.frontend.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +32,9 @@ public class OrderController {
     @GetMapping("/{orderNumber}/input-detail")
     public String orderPage(@PathVariable String orderNumber,
                             Model model) {
-        CreateOrderResponse order = (CreateOrderResponse) model.getAttribute("order");
-        if (order == null) {
-            throw new OrderNotFoundException("주문 정보를 찾을 수 없습니다.");
-        }
-        
-        List<CreateOrderResponse.CreateOrderItemResponse> items = order.getOrderItems();
+        CreateOrderResponse unfinishedOrder = orderService.getUnfinishedOrder(orderNumber);
+
+        List<CreateOrderResponse.CreateOrderItemResponse> items = unfinishedOrder.getOrderItems();
         if (items == null) {
             items = List.of();
         }
@@ -62,27 +58,16 @@ public class OrderController {
         return "redirect:/orders/" + order.getOrderNumber() + "/input-detail";
     }
 
-    @PostMapping("/{orderId}")
-    public String updateOrder(@Valid @ModelAttribute OrderRequest orderRequest,
+    @PutMapping("/{orderNumber}")
+    public String updateOrder(@Valid @ModelAttribute UpdateOrderRequest request,
                               BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes) {
-        log.info("POST /orders - 주문 생성 요청 [받는 사람: {}]", orderRequest.getReceiverName());
-
+                              @PathVariable String orderNumber) {
         if (bindingResult.hasErrors()) {
             throw new ValidationFailedException(bindingResult);
         }
 
-        try {
-            OrderResponse orderResponse = orderService.updateOrder(orderRequest);
-            log.debug("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
-
-            return "redirect:/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount();
-        } catch (Exception e) {
-            log.warn("POST /orders - 실패 리다이렉트 [에러: {}]", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-
-            return "redirect:/orders";
-        }
+        OrderResponse orderResponse = orderService.updateOrder(orderNumber, request);
+        return "redirect:/payments/form?orderId=" + orderResponse.orderNumber() + "&amount=" + orderResponse.totalPrice();
     }
 
     // 주문 전체 조회 페이지

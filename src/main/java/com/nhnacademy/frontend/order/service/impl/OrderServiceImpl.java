@@ -2,7 +2,7 @@ package com.nhnacademy.frontend.order.service.impl;
 
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
-import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
@@ -27,14 +27,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse updateOrder(OrderRequest orderRequest) {
-        log.debug("주문 생성 요청 - 받는 사람: {}", orderRequest.getReceiverName());
+    public CreateOrderResponse getUnfinishedOrder(String orderNumber) {
+        return orderAdapter.getUnfinishedOrder(orderNumber);
+    }
 
-        OrderResponse orderResponse = orderAdapter.updateOrder(orderRequest); //TODO: feignclient 실패 처리 필요.
-
-        log.debug("주문 생성 성공 - 주문번호: {}", orderResponse.orderId());
-
-        return orderResponse;
+    @Override
+    public OrderResponse updateOrder(String orderNumber, UpdateOrderRequest orderRequest) {
+        return orderAdapter.updateOrder(orderNumber, orderRequest);
     }
 
     @Override

@@ -45,6 +45,7 @@ public class PaymentController {
         dto.setFailUrl(failCallbackUrl);
 
         model.addAttribute("paymentRequest", dto);
+        model.addAttribute("shippingFee",  5000);
         return "payments/form";
     }
 
