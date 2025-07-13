@@ -174,10 +174,26 @@
             });
 
             if (selectedItems.length > 0) {
-                let queryString = selectedItems.map((item, index) => {
-                    return `items[${index}].bookId=${item.bookId}&items[${index}].quantity=${item.quantity}&items[${index}].bookTitle=${encodeURIComponent(item.bookTitle)}&items[${index}].price=${item.price}`;
-                }).join('&');
-                window.location.href = '/orders?' + queryString;
+                const orderForm = document.createElement('form');
+                orderForm.method = 'post';
+                orderForm.action = '/orders';
+
+                selectedItems.forEach((item, index) => {
+                    const bookIdInput = document.createElement('input');
+                    bookIdInput.type = 'hidden';
+                    bookIdInput.name = `createItemRequests[${index}].bookId`;
+                    bookIdInput.value = item.bookId;
+                    orderForm.appendChild(bookIdInput);
+
+                    const quantityInput = document.createElement('input');
+                    quantityInput.type = 'hidden';
+                    quantityInput.name = `createItemRequests[${index}].quantity`;
+                    quantityInput.value = item.quantity;
+                    orderForm.appendChild(quantityInput);
+                });
+
+                document.body.appendChild(orderForm);
+                orderForm.submit();
             } else {
                 alert('주문할 상품을 선택해주세요.');
             }
