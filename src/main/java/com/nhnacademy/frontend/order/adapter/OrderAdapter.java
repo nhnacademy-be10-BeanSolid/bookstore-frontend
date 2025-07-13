@@ -1,6 +1,8 @@
-package com.nhnacademy.frontend.common.adapter;
+package com.nhnacademy.frontend.order.adapter;
 
+import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
@@ -13,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public interface OrderAdapter {
     
     @PostMapping("/order-api/orders")
-    OrderResponse createOrder(@RequestBody OrderRequest orderRequest);
+    CreateOrderResponse createOrder(@RequestBody CreateOrderRequest orderRequest);
+
+    @PostMapping("/order-api/orders/{orderId}")
+    OrderResponse updateOrder(@RequestBody OrderRequest orderRequest);
 
     @GetMapping("/order-api/orders")
     Page<OrderSummaryResponse> getAllOrdersByUserId(Pageable pageable);

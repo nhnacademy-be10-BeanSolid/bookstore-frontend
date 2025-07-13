@@ -1,7 +1,9 @@
 package com.nhnacademy.frontend.order.service.impl;
 
-import com.nhnacademy.frontend.common.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
 import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
@@ -20,10 +22,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderAdapter orderAdapter;
 
     @Override
-    public OrderResponse createOrder(OrderRequest orderRequest) {
+    public CreateOrderResponse createOrder(CreateOrderRequest request) {
+        return orderAdapter.createOrder(request);
+    }
+
+    @Override
+    public OrderResponse updateOrder(OrderRequest orderRequest) {
         log.debug("주문 생성 요청 - 받는 사람: {}", orderRequest.getReceiverName());
 
-        OrderResponse orderResponse = orderAdapter.createOrder(orderRequest); //TODO: feignclient 실패 처리 필요.
+        OrderResponse orderResponse = orderAdapter.updateOrder(orderRequest); //TODO: feignclient 실패 처리 필요.
 
         log.debug("주문 생성 성공 - 주문번호: {}", orderResponse.orderId());
 
