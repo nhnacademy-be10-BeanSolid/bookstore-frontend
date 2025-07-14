@@ -14,4 +14,5 @@ public class ResponsePointType {
     private Integer earningPoint;
     private Integer earningRate;
     private String gradeName;
+    private Boolean isActive;
 }
