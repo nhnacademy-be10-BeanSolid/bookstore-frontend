@@ -87,4 +87,23 @@ public class OrderController {
 
         return "order/detail";
     }
+
+    @GetMapping("/non-member-detail")
+    public String nonMemberOrderDetail(Model model,
+                                       RedirectAttributes redirectAttributes) {
+        String orderNumber = (String) model.getAttribute("nonMemberOrderNumber");
+        if (orderNumber == null || orderNumber.isEmpty()) {
+            redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+
+        try {
+            OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
+            model.addAttribute("order", orderDetail);
+            return "order/non-member-order-detail";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+    }
 }
