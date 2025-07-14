@@ -135,7 +135,6 @@ public class BookServiceImpl implements BookService {
         bookAdapter.deleteBookTagMap(bookId, tagId);
     }
 
-    // 시작
     @Override
     public void createBookCategoryMap(Long bookId, BookCategoryMapCreateRequestDto request) {
         log.info("BookCategoryMap Create Start - bookId {}", bookId);

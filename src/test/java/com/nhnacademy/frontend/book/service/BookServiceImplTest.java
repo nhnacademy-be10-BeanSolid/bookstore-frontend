@@ -13,10 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -166,31 +169,46 @@ class BookServiceImplTest {
         verify(bookAdapter, times(1)).deleteCategory(1L);
     }
 
-//    @Test
-//    @DisplayName("도서 생성 - 성공")
-//    void createBook_Success() {
-//        BookCreateRequestDto request = new BookCreateRequestDto();
-//        request.setTitle("제목");
-//        request.setDescription("설명");
-//        request.setPublisher("출판사");
-//        request.setAuthor("작가");
-//        request.setPublishAt(LocalDate.of(2020, 1, 1));
-//        request.setIsbn("1234567891011"); // 13 자리
-//        request.setOriginalPrice(3000);
-//        request.setSalePrice(1000);
-//        request.setWrappable(Boolean.TRUE);
-//        request.setStock(100);
-//        request.setCategoryIds(Set.of(1L));
-//
-//        BookResponseDto response = new BookResponseDto(1L, "제목", "설명", null, "출판사",
-//                "작가", LocalDate.of(2020,1,1), "1234567891011", 3000, 1000, true, "ON_SALE", 30,  null, Set.of("카테고리1, 카테고리2"), null);
-//
-//        when(bookAdapter.createBook(request)).thenReturn(response);
-//
-//        BookResponseDto result = bookService.createBook(request);
-//
-//        assertNotNull(result);
-//    }
+    @Test
+    @DisplayName("도서 생성 - 성공")
+    void createBook_Success() {
+        BookCreateRequestDto request = createBookCreateRequestDto();
+
+        BookResponseDto response = new BookResponseDto(1L, "제목", "설명", null, "출판사",
+                "작가", LocalDate.of(2020,1,1), "1234567891011", 3000, 1000, true, "ON_SALE", 30,  null, Set.of("카테고리1, 카테고리2"), null);
+
+        when(bookAdapter.createBook(request)).thenReturn(response);
+
+        BookResponseDto result = bookService.createBook(request);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("도서 삭제 - 성공")
+    void deleteBook_Success() {
+        bookService.deleteBook(1L);
+
+        verify(bookAdapter).deleteBook(1L);
+    }
+
+    @Test
+    @DisplayName("외부 검색 테스트 - 성공")
+    void searchNaverBooks_Success() {
+        String query = "소설";
+        Integer start = 1;
+        BookSearchResponseDto expected = new BookSearchResponseDto(100, 1, 20,
+                List.of(new BookItemResponseDto("제목", "링크",
+                        "이미지", "작가", "출판사",
+                        "출판일", "isbn", "설명")));
+        when(bookAdapter.searchBooks(query, start)).thenReturn(expected);
+
+        BookSearchResponseDto result = bookService.searchNaverBooks(query, start);
+
+        assertThat(result).isEqualTo(expected);
+        verify(bookAdapter).searchBooks(query, start);
+    }
+
 
     @Test
     @DisplayName("도서 태그 추가 - 성공")
@@ -242,7 +260,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("도서 태그 삭제 - 성공")
+    @DisplayName("도서 카테고리 삭제 - 성공")
     void deleteBookCategoryMap_Success() {
         bookService.deleteBookCategoryMap(1L, 1L);
 
@@ -250,7 +268,7 @@ class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("도서의 태그 조회 - 성공")
+    @DisplayName("도서의 카테고리 조회 - 성공")
     void getBookCategoryMap_Success() {
         BookCategoryResponseDto category1 = new BookCategoryResponseDto(1L, "카테고리1",
                 null, null, LocalDateTime.now(), null);
@@ -268,5 +286,21 @@ class BookServiceImplTest {
                 .containsExactly(1L, 2L);
         assertThat(result.categories()).extracting("categoryName")
                 .containsExactly("카테고리1", "카테고리2");
+    }
+
+    private BookCreateRequestDto createBookCreateRequestDto() {
+        BookCreateRequestDto request = new BookCreateRequestDto();
+        request.setTitle("제목");
+        request.setDescription("설명");
+        request.setPublisher("출판사");
+        request.setAuthor("작가");
+        request.setPublishAt(LocalDate.of(2020, 1, 1));
+        request.setIsbn("1234567891011");
+        request.setOriginalPrice(3000);
+        request.setSalePrice(1000);
+        request.setWrappable(Boolean.TRUE);
+        request.setStock(100);
+        request.setCategoryIds(Set.of(1L));
+        return request;
     }
 }

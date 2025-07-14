@@ -30,8 +30,7 @@
                         <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>
                         <input type="hidden" name="size" th:value="${page.size}" />
                         <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">
-                            <option value="publishAt,desc">발행일 최신순</option>
-                            <option value="publishAt,asc">발행일 오래된순</option>
+                            <option value="publishAt,desc">최신순</option>
                             <option value="salePrice,asc">최저가</option>
                             <option value="salePrice,desc">최고가</option>
                             <option value="viewCount,desc">조회수 높은순</option>

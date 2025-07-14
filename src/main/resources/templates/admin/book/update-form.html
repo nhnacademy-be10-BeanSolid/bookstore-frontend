@@ -50,8 +50,8 @@
 
     <label>책 상태</label><br/>
     <select name="status">
-        <option th:value="ON_SALE" th:selected="${book.status == 'ON_SALE'}">판매중</option>
-        <option th:value="SALE_END" th:selected="${book.status == 'SALE_END'}">판매종료</option>
+        <option th:value="ON_SALE">판매중</option>
+        <option th:value="SALE_END">판매종료</option>
     </select><br/><br/>
 
     <button type="submit">수정 완료</button>
