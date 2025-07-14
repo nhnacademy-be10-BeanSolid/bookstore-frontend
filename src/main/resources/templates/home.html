@@ -32,6 +32,21 @@
                     <span>분류<br>테마<br>추천<br>이벤트</span>
                 </div>
             </div>
+            <div class="col-8">
+                <!-- ✅ 정렬 드롭다운 -->
+                <div class="d-flex justify-content-end mb-3">
+                    <form method="get" th:action="@{/}" id="sortForm">
+                        <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>
+                        <input type="hidden" name="size" th:value="${page.size}" />
+                        <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">
+                            <option value="publishAt,desc">최신순</option>
+                            <option value="salePrice,asc">최저가</option>
+                            <option value="salePrice,desc">최고가</option>
+                            <option value="viewCount,desc">조회수 높은순</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
             <!-- 책 2열 -->
             <div class="col-8">
                 <div class="row row-cols-2 g-4">

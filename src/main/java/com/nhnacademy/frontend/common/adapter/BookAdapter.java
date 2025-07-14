@@ -47,7 +47,11 @@ public interface BookAdapter {
 
     // 도서 리스트
     @GetMapping("/book-api/books")
-    Page<SimpleBookResponseDto> getBooks(@RequestParam int page, @RequestParam int size);
+    Page<SimpleBookResponseDto> getBooks(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(name = "sort", required = false) String sort
+    );
 
     // 도서 상세정보
     @GetMapping("/book-api/books/{bookId}")
@@ -109,7 +113,7 @@ public interface BookAdapter {
 
     // 엘라스틱 서치
     @GetMapping("/book-api/search")
-    void searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
+    Page<SimpleBookResponseDto> searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
 
     @GetMapping("/book-api/books/ids")
     List<BookResponse> getBooks(@RequestParam List<Long> ids);

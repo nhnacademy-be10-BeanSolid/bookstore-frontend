@@ -171,8 +171,8 @@ public class BookServiceImpl implements BookService {
         return bookAdapter.searchBooks(keyword, pageable.getPageNumber(), pageable.getPageSize());
     }
 
-    @Override
-    public List<BookCategoryNodeResponseDto> getCategoryTree(){
-        return bookAdapter.getCategoryTree();
-    }
+//    @Override
+//    public List<BookCategoryNodeResponseDto> getCategoryTree(){
+//        return bookAdapter.getCategoryTree();
+//    }
 }
