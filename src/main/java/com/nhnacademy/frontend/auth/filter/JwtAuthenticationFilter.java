@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.auth.filter;
 
-import com.nhnacademy.frontend.auth.domain.response.RefreshTokenResponseDto;
-import com.nhnacademy.frontend.auth.domain.response.TokenParseResponseDto;
+import com.nhnacademy.frontend.auth.dto.response.RefreshTokenResponseDto;
+import com.nhnacademy.frontend.auth.dto.response.TokenParseResponseDto;
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;

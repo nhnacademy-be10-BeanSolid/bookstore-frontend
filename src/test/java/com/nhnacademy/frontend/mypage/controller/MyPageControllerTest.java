@@ -1,10 +1,10 @@
 package com.nhnacademy.frontend.mypage.controller;
 
 
-import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.advice.GlobalModelAttributeAdvice;
 import com.nhnacademy.frontend.mypage.service.MypageService;
 import feign.FeignException;

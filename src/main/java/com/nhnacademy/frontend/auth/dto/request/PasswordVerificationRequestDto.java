@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.domain.request;
+package com.nhnacademy.frontend.auth.dto.request;
 
 public record PasswordVerificationRequestDto (
         String password

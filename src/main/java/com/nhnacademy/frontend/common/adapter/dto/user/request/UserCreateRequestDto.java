@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.domain.request;
+package com.nhnacademy.frontend.common.adapter.dto.user.request;
 
 import jakarta.validation.constraints.*;
 

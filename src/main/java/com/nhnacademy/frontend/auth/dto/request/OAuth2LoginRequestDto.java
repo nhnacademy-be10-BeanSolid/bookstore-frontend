@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.domain.request;
+package com.nhnacademy.frontend.auth.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

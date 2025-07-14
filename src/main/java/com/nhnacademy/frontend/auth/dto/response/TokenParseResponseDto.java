@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.auth.domain.response;
+package com.nhnacademy.frontend.auth.dto.response;
 
 import java.util.List;
 
