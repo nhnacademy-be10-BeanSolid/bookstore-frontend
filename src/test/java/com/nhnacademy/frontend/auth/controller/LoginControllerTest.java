@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.auth.domain.response.AdditionalSignupRequiredDto;
-import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
-import com.nhnacademy.frontend.auth.domain.response.ResponseDto;
+import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
+import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;

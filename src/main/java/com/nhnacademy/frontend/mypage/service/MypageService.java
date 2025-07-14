@@ -1,11 +1,11 @@
 package com.nhnacademy.frontend.mypage.service;
 
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponseAddress;
-import com.nhnacademy.frontend.admin.domain.response.ResponsePoint;
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponsePointType;
-import com.nhnacademy.frontend.common.adapter.domain.response.ResponseUser;
-import com.nhnacademy.frontend.mypage.domain.request.AddressCreateRequest;
-import com.nhnacademy.frontend.mypage.domain.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

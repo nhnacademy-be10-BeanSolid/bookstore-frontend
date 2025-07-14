@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.user.service;
 
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.auth.service.impl.SignupServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

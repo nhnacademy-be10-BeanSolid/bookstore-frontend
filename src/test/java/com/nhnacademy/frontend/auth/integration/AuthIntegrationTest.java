@@ -2,7 +2,7 @@ package com.nhnacademy.frontend.auth.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
-import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.dto.response.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
