@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
-import com.nhnacademy.frontend.admin.service.BookServiceImpl;
+import com.nhnacademy.frontend.common.service.impl.BookServiceImpl;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;

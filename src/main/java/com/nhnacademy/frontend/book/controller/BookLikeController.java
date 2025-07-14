@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.book.controller;
 
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

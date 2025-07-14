@@ -4,7 +4,7 @@ import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCreateRequest
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookUpdateRequestDto;
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.common.service.BookService;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

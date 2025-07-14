@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.admin.service;
+package com.nhnacademy.frontend.common.service;
 
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
