@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.AdminBookController;
-import com.nhnacademy.frontend.common.adapter.dto.response.BookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.book.service.BookService;
 import org.junit.jupiter.api.Test;

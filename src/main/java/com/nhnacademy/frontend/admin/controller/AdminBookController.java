@@ -1,11 +1,11 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.common.adapter.dto.request.BookCreateRequestDto;
-import com.nhnacademy.frontend.common.adapter.dto.response.BookDetailResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.response.BookResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.request.BookUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookUpdateRequestDto;
 import com.nhnacademy.frontend.book.service.BookService;
-import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

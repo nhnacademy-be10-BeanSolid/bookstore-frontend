@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.common.adapter.dto.request;
+package com.nhnacademy.frontend.common.adapter.dto.book.request;
 
 import lombok.Data;
 

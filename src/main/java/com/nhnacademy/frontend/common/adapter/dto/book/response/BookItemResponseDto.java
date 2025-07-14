@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.common.adapter.dto.response;
+package com.nhnacademy.frontend.common.adapter.dto.book.response;
 
 public record BookItemResponseDto(
         String title, // 상품명

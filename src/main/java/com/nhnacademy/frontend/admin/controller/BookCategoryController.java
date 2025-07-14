@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.common.adapter.dto.request.BookCategoryCreateRequestDto;
-import com.nhnacademy.frontend.common.adapter.dto.request.BookCategoryUpdateRequestDto;
-import com.nhnacademy.frontend.common.adapter.dto.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import jakarta.validation.Valid;

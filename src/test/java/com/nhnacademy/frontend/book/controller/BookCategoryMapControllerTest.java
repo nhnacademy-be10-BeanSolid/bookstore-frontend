@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.BookCategoryMapController;
-import com.nhnacademy.frontend.common.adapter.dto.request.BookCategoryMapCreateRequestDto;
-import com.nhnacademy.frontend.common.adapter.dto.response.BookCategoryMapResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryMapCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
