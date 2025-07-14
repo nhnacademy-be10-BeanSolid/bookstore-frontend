@@ -1,10 +1,8 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.AdminBookController;
-import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
-import com.nhnacademy.frontend.admin.domain.response.BookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.response.BookResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
-import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +11,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;

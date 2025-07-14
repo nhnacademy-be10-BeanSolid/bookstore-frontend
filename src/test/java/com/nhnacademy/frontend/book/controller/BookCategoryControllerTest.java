@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.BookCategoryController;
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryUpdateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.request.BookCategoryCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.request.BookCategoryUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;

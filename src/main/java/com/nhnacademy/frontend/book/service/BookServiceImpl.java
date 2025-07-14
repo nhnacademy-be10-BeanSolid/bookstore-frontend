@@ -1,15 +1,14 @@
 package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
-import com.nhnacademy.frontend.admin.domain.request.*;
-import com.nhnacademy.frontend.admin.domain.response.*;
 import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.request.*;
+import com.nhnacademy.frontend.common.adapter.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.admin.domain.response;
+package com.nhnacademy.frontend.common.adapter.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

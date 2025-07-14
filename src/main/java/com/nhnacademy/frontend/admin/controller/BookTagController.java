@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.request.BookTagCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookTagResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.request.BookTagCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.response.BookTagResponseDto;
 import com.nhnacademy.frontend.book.service.BookService;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import jakarta.validation.Valid;

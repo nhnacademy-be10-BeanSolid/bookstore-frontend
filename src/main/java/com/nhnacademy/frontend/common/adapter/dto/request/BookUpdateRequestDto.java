@@ -1,13 +1,12 @@
-package com.nhnacademy.frontend.admin.domain.request;
+package com.nhnacademy.frontend.common.adapter.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Data
-public class BookCreateRequestDto {
+public class BookUpdateRequestDto {
 
     @NotBlank
     @Size(max = 255)
@@ -29,24 +28,18 @@ public class BookCreateRequestDto {
     @NotNull
     private LocalDate publishAt;
 
-    @NotBlank
-    @Pattern(regexp = "^.{13}$")
-    private String isbn;
+    @Positive
+    private Integer originalPrice;
 
     @Positive
-    private int originalPrice;
-
-    @Positive
-    private int salePrice;
+    private Integer salePrice;
 
     @NotNull
-    private boolean wrappable;
+    private Boolean wrappable;
 
     @PositiveOrZero
-    private int stock;
+    private Integer stock;
 
-    private String image;
-
-    @NotEmpty
-    private Set<Long> categoryIds;
+    @NotNull
+    private String status;
 }
