@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.payment.service.impl;
 
-import com.nhnacademy.frontend.common.adapter.PaymentAdapter;
+import com.nhnacademy.frontend.payment.adapter.PaymentAdapter;
 import com.nhnacademy.frontend.payment.domain.request.PaymentApprovalRequestDto;
 import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
