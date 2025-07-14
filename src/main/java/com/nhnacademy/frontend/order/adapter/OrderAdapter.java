@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "gateway-service", contextId = "orderAdapter1")
+@FeignClient(name = "gateway-service", contextId = "orderAdapter")
 public interface OrderAdapter {
     
     @PostMapping("/order-api/orders")

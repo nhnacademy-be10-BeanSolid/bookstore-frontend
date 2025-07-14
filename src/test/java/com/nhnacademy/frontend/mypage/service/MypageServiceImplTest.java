@@ -76,7 +76,7 @@ public class MypageServiceImplTest {
     }
 
     private ResponsePointType createResponsePointType() {
-        return new ResponsePointType(1L, "테스트 포인트 타입", null, 2, "BASIC");
+        return new ResponsePointType(1L, "테스트 포인트 타입", null, 2, "BASIC", true);
     }
 
 
