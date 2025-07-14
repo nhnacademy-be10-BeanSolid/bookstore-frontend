@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.payment.domain.response;
+package com.nhnacademy.frontend.payment.dto.response;
 
 import lombok.Data;
 

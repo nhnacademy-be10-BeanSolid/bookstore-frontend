@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.payment.domain.request;
+package com.nhnacademy.frontend.payment.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

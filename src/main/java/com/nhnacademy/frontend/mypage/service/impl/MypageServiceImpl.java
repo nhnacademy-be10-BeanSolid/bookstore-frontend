@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.mypage.service;
+package com.nhnacademy.frontend.mypage.service.impl;
 
 
 import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
@@ -10,6 +10,7 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointTyp
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.mypage.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

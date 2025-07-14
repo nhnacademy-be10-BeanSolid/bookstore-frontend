@@ -1,8 +1,7 @@
-package com.nhnacademy.frontend.payment.domain.request;
+package com.nhnacademy.frontend.payment.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nhnacademy.frontend.payment.domain.PayType;
+import com.nhnacademy.frontend.payment.dto.PayType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

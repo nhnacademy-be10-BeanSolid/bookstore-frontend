@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.payment.adapter;
 
-import com.nhnacademy.frontend.payment.domain.request.PaymentApprovalRequestDto;
-import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
-import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
+import com.nhnacademy.frontend.payment.dto.request.PaymentApprovalRequestDto;
+import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
+import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

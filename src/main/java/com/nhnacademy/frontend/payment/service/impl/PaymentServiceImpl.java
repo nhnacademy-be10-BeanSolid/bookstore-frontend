@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.payment.service.impl;
 
 import com.nhnacademy.frontend.payment.adapter.PaymentAdapter;
-import com.nhnacademy.frontend.payment.domain.request.PaymentApprovalRequestDto;
-import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
-import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
+import com.nhnacademy.frontend.payment.dto.request.PaymentApprovalRequestDto;
+import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
+import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
