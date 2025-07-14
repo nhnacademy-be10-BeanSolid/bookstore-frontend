@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "gateway-service", contextId = "adminAdapter")
-public interface AdminAdapter {
+@FeignClient(name = "gateway-service", contextId = "userAdminAdapter")
+public interface UserAdminAdapter {
 
     @GetMapping("/user-api/users/pointType")
     ResponseEntity<Page<ResponsePointType>> getAllPointTypes(@RequestParam int page, @RequestParam int size);

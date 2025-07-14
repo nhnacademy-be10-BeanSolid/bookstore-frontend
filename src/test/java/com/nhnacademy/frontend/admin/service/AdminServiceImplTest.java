@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.admin.service;
 
-import com.nhnacademy.frontend.admin.adapter.AdminAdapter;
+import com.nhnacademy.frontend.admin.adapter.UserAdminAdapter;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class AdminServiceImplTest {
 
     @Mock
-    AdminAdapter adminAdapter;
+    UserAdminAdapter userAdminAdapter;
 
     @InjectMocks
     AdminServiceImpl adminService;
@@ -33,47 +33,47 @@ class AdminServiceImplTest {
     @Test
     void getAllPointTypes_returnsPage() {
         Page<ResponsePointType> page = new PageImpl<>(Collections.emptyList());
-        when(adminAdapter.getAllPointTypes(anyInt(), anyInt()))
+        when(userAdminAdapter.getAllPointTypes(anyInt(), anyInt()))
                 .thenReturn(ResponseEntity.ok(page));
 
         Page<ResponsePointType> result = adminService.getAllPointTypes(Pageable.ofSize(10));
         assertThat(result).isNotNull();
-        verify(adminAdapter).getAllPointTypes(anyInt(), anyInt());
+        verify(userAdminAdapter).getAllPointTypes(anyInt(), anyInt());
     }
 
     @Test
     void addPointType_callsAdapter() {
         PointTypeCreateRequestDto dto = new PointTypeCreateRequestDto("type", 1, 1, "grade", true);
         adminService.addPointType(dto);
-        verify(adminAdapter).addPointType(dto);
+        verify(userAdminAdapter).addPointType(dto);
     }
 
     @Test
     void deletePointType_callsAdapter() {
         adminService.deletePointType(1L);
-        verify(adminAdapter).deletePointType(1L);
+        verify(userAdminAdapter).deletePointType(1L);
     }
 
     @Test
     void changeActive_callsAdapter() {
         adminService.changeActive(2L);
-        verify(adminAdapter).changeIsActivePointType(2L);
+        verify(userAdminAdapter).changeIsActivePointType(2L);
     }
 
     @Test
     void updatePointType_callsAdapter() {
         PointTypeUpdateRequestDto dto = new PointTypeUpdateRequestDto("type", 1, 1, "grade");
         adminService.updatePointType(3L, dto);
-        verify(adminAdapter).editPointType(dto, 3L);
+        verify(userAdminAdapter).editPointType(dto, 3L);
     }
 
     @Test
     void getPointType_returnsResponse() {
         ResponsePointType response = new ResponsePointType();
-        when(adminAdapter.getPointType(4L)).thenReturn(ResponseEntity.ok(response));
+        when(userAdminAdapter.getPointType(4L)).thenReturn(ResponseEntity.ok(response));
 
         ResponsePointType result = adminService.getPointType(4L);
         assertThat(result).isEqualTo(response);
-        verify(adminAdapter).getPointType(4L);
+        verify(userAdminAdapter).getPointType(4L);
     }
 }
