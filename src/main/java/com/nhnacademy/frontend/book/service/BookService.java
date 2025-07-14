@@ -56,5 +56,5 @@ public interface BookService {
 
     Page<SimpleBookResponseDto> elasticSearchBooks(String keyword, Pageable pageable);
 
-//    List<BookCategoryNodeResponseDto> getCategoryTree();
+    List<BookCategoryNodeResponseDto> getCategoryTree();
 }

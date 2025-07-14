@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -69,7 +70,6 @@ public class BookServiceImpl implements BookService {
         bookAdapter.deleteCategory(categoryId);
     }
 
-    // 여기서 시작
     @Override
     public Page<SimpleBookResponseDto> getAllBooks(Pageable pageable) {
         log.info("BookList Get Start - page: {}, size: {}, sort: {}",
@@ -78,13 +78,14 @@ public class BookServiceImpl implements BookService {
                 pageable.getSort());
 
         // 정렬 정보 추출
-        String sortStr = null;
+        String sort = null;
         if (pageable.getSort().isSorted()) {
-            Sort.Order order = pageable.getSort().iterator().next();
-            sortStr = order.getProperty() + "," + order.getDirection().name().toLowerCase();
+            sort = pageable.getSort().stream()
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
+                    .collect(Collectors.joining("&sort="));
         }
 
-        return bookAdapter.getBooks(pageable.getPageNumber(), pageable.getPageSize(), sortStr);
+        return bookAdapter.getBooks(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
     @Override
@@ -168,11 +169,19 @@ public class BookServiceImpl implements BookService {
     @Override
     public Page<SimpleBookResponseDto> elasticSearchBooks(String keyword, Pageable pageable) {
         log.info("Book Search Start - keyword: {}", keyword);
-        return bookAdapter.searchBooks(keyword, pageable.getPageNumber(), pageable.getPageSize());
+
+        String sort = null;
+        if (pageable.getSort().isSorted()) {
+            sort = pageable.getSort().stream()
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
+                    .collect(Collectors.joining("&sort="));
+        }
+
+        return bookAdapter.searchBooks(keyword, pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
-//    @Override
-//    public List<BookCategoryNodeResponseDto> getCategoryTree(){
-//        return bookAdapter.getCategoryTree();
-//    }
+    @Override
+    public List<BookCategoryNodeResponseDto> getCategoryTree(){
+        return bookAdapter.getCategoryTree();
+    }
 }

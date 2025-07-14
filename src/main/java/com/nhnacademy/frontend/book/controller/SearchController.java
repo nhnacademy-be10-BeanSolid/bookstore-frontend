@@ -28,6 +28,7 @@ public class SearchController {
         log.info("searchBooks keyword = {}", keyword);
         Page<SimpleBookResponseDto> result = bookService.elasticSearchBooks(keyword, pageable);
         log.info("page number: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        log.info("sort : {}", pageable.getSort());
         model.addAttribute("books", result.getContent());
         model.addAttribute("page", result);
         model.addAttribute("keyword", keyword);

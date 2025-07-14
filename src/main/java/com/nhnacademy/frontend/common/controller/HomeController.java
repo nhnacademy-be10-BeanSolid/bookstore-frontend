@@ -27,11 +27,10 @@ public class HomeController {
     public String home(@PageableDefault(size = 4) Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
         log.info("BookListGet Success - page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-//        List<BookCategoryNodeResponseDto> categoryTree = bookService.getCategoryTree();
-//        log.info("CategoryTree : {}", categoryTree.get(1));
+        List<BookCategoryNodeResponseDto> categoryTree = bookService.getCategoryTree();
         log.info("Sort : {}", pageable.getSort());
         model.addAttribute("books", bookList.getContent());
-//        model.addAttribute("categoryTree", categoryTree);
+        model.addAttribute("categoryTree", categoryTree);
         model.addAttribute("page", bookList);
         return "home";
     }

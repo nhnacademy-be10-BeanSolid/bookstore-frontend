@@ -1,12 +1,12 @@
 package com.nhnacademy.frontend.book.domain.response;
 
 public record SimpleBookResponseDto(
-        long id,
+        Long id,
         String title,
         String author,
-        int salePrice,
-        int stock,
+        Integer salePrice,
+        Integer stock,
         String image,
-        long viewCount
+        Long viewCount
 ) {
 }

@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
+import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.cart.dto.response.BookResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -113,8 +114,15 @@ public interface BookAdapter {
 
     // 엘라스틱 서치
     @GetMapping("/book-api/search")
-    Page<SimpleBookResponseDto> searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
+    Page<SimpleBookResponseDto> searchBooks(
+            @RequestParam String keyword,
+            @RequestParam Integer start,
+            @RequestParam Integer size,
+            @RequestParam(name = "sort", required = false) String sort);
 
     @GetMapping("/book-api/books/ids")
     List<BookResponse> getBooks(@RequestParam List<Long> ids);
+
+    @GetMapping("/book-api/categories/tree")
+    List<BookCategoryNodeResponseDto> getCategoryTree();
 }

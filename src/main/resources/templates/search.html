@@ -18,18 +18,22 @@
         <p>검색 결과가 없습니다.</p>
     </div>
 
-<!--    <div class="d-flex justify-content-end mb-3">-->
-<!--        <form method="get" th:action="@{/search}" id="sortForm">-->
-<!--            <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>-->
-<!--            <input type="hidden" name="size" th:value="${page.size}" />-->
-<!--            <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">-->
-<!--                <option value="publishAt,desc">발행일 최신순</option>-->
-<!--                <option value="publishAt,asc">발행일 오래된순</option>-->
-<!--                <option value="salePrice,asc">최저가</option>-->
-<!--                <option value="salePrice,desc">최고가</option>-->
-<!--            </select>-->
-<!--        </form>-->
-<!--    </div>-->
+    <div class="col-8">
+        <!-- ✅ 정렬 드롭다운 -->
+        <div class="d-flex justify-content-end mb-3">
+            <form method="get" th:action="@{/search}" id="sortForm">
+                <input type="hidden" name="keyword" th:value="${keyword}" />
+                <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>
+                <input type="hidden" name="size" th:value="${page.size}" />
+                <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">
+                    <option value="publishAt,desc" th:selected="${param.sort == 'publishAt,desc'}">최신순</option>
+                    <option value="salePrice,asc" th:selected="${param.sort == 'salePrice,asc'}">최저가</option>
+                    <option value="salePrice,desc" th:selected="${param.sort == 'salePrice,desc'}">최고가</option>
+                    <option value="viewCount,desc" th:selected="${param.sort == 'viewCount,desc'}">조회수 높은순</option>
+                </select>
+            </form>
+        </div>
+    </div>
 
     <div class="row row-cols-2 g-4">
         <div class="col" th:each="book : ${books}">
@@ -42,7 +46,8 @@
                     <p class="card-text">
                         저자: <span th:text="${book.author}">저자</span><br>
                         가격: <span th:text="${book.salePrice}">0</span>원<br>
-                        재고: <span th:text="${book.stock}">0</span>권
+                        재고: <span th:text="${book.stock}">0</span>권<br>
+                        조회수: <span th:text="${book.viewCount}"></span>
                     </p>
                 </div>
             </div>
@@ -52,19 +57,29 @@
     <!-- 📄 페이지네이션 -->
     <nav class="mt-5" th:if="${page.totalPages > 1}">
         <ul class="pagination justify-content-center">
+            <!-- 이전 페이지 -->
             <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-                <a class="page-link" th:href="@{/search(keyword=${keyword}, page=${page.number - 1}, size=${page.size})}">&laquo;</a>
+                <a class="page-link"
+                   th:href="@{/search(keyword=${keyword}, page=${page.number - 1}, size=${page.size}, sort=${param.sort})}">&laquo;</a>
             </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+
+            <!-- 페이지 번호 -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                 th:classappend="${i == page.number} ? 'active'">
-                <a class="page-link" th:href="@{/search(keyword=${keyword}, page=${i}, size=${page.size})}"
+                <a class="page-link"
+                   th:href="@{/search(keyword=${keyword}, page=${i}, size=${page.size}, sort=${param.sort})}"
                    th:text="${i + 1}">1</a>
             </li>
+
+            <!-- 다음 페이지 -->
             <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-                <a class="page-link" th:href="@{/search(keyword=${keyword}, page=${page.number + 1}, size=${page.size})}">&raquo;</a>
+                <a class="page-link"
+                   th:href="@{/search(keyword=${keyword}, page=${page.number + 1}, size=${page.size}, sort=${param.sort})}">&raquo;</a>
             </li>
         </ul>
     </nav>
+
 </div>
 
 </body>

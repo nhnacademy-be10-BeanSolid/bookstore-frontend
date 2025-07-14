@@ -6,5 +6,5 @@ public record BookCategoryNodeResponseDto (
         Long categoryId,
         String categoryName,
         List<BookCategoryNodeResponseDto> children
-)
-{}
+) {
+}

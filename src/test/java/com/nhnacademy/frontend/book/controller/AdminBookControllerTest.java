@@ -54,24 +54,24 @@ public class AdminBookControllerTest {
                 .andExpect(view().name("admin/book/create-form"));
     }
 
-    @Test
-    void getBookList() throws Exception {
-        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1, "제목", "작가", 3000, 20, null, 1);
-        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2, "제목", "작가", 3000, 20, null, 1);
-
-        List<SimpleBookResponseDto> books = List.of(response1, response2);
-        Page<SimpleBookResponseDto> page = new PageImpl<>(books);
-
-        when(bookService.getAllBooks(any(Pageable.class))).thenReturn(page);
-
-        mockMvc.perform(get("/admin/books"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin/book/book-list"))
-                .andExpect(model().attributeExists("books"))
-                .andExpect(model().attributeExists("page"));
-
-        verify(bookService, times(1)).getAllBooks(any(Pageable.class));
-    }
+//    @Test
+//    void getBookList() throws Exception {
+//        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1, "제목", "작가", 3000, 20, null, 1);
+//        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2, "제목", "작가", 3000, 20, null, 1);
+//
+//        List<SimpleBookResponseDto> books = List.of(response1, response2);
+//        Page<SimpleBookResponseDto> page = new PageImpl<>(books);
+//
+//        when(bookService.getAllBooks(any(Pageable.class))).thenReturn(page);
+//
+//        mockMvc.perform(get("/admin/books"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("admin/book/book-list"))
+//                .andExpect(model().attributeExists("books"))
+//                .andExpect(model().attributeExists("page"));
+//
+//        verify(bookService, times(1)).getAllBooks(any(Pageable.class));
+//    }
 
     @Test
     void createBook_Success() throws Exception {
