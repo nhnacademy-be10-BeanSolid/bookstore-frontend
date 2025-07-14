@@ -1,5 +1,6 @@
-package com.nhnacademy.frontend.admin.service;
+package com.nhnacademy.frontend.admin.service.impl;
 
+import com.nhnacademy.frontend.admin.service.BookService;
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;

@@ -3,7 +3,7 @@ package com.nhnacademy.frontend.book.service;
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.admin.domain.request.*;
 import com.nhnacademy.frontend.admin.domain.response.*;
-import com.nhnacademy.frontend.admin.service.BookServiceImpl;
+import com.nhnacademy.frontend.admin.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
