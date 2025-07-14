@@ -1,12 +1,12 @@
 package com.nhnacademy.frontend.book.service;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
-import com.nhnacademy.frontend.common.service.impl.BookServiceImpl;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagMapResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagResponseDto;
+import com.nhnacademy.frontend.common.service.impl.BookServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
