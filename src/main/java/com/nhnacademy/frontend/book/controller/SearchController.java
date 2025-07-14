@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
-import com.nhnacademy.frontend.book.service.BookService;
+import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

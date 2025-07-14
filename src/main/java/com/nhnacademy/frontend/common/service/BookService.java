@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.book.service;
+package com.nhnacademy.frontend.common.service;
 
 import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
