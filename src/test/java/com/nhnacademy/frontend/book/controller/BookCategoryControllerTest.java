@@ -1,10 +1,10 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.BookCategoryController;
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryUpdateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.common.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
