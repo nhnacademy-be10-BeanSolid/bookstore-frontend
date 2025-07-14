@@ -15,15 +15,7 @@
         <div class="row">
             <!-- 좌측 카테고리 -->
             <div class="col-2">
-                <div class="d-flex flex-column gap-2">
-                    <div class="bg-secondary text-white text-center py-2">국내도서</div>
-                    <div class="bg-secondary text-white text-center py-2">서양도서</div>
-                    <div class="bg-secondary text-white text-center py-2">일본도서</div>
-                    <div class="bg-secondary text-white text-center py-2">중국도서</div>
-                    <div class="bg-secondary text-white text-center py-2">eBook</div>
-                    <div class="bg-secondary text-white text-center py-2">온라인중고</div>
-                    <div class="bg-secondary text-white text-center py-2">etc</div>
-                </div>
+                <div th:replace="~{fragments/category-tree :: categoryList(${categoryTree})}"></div>
             </div>
             <!-- 세로 메뉴 -->
             <div class="col-2 d-flex flex-column align-items-center">
