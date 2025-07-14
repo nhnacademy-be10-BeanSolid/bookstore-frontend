@@ -1,13 +1,13 @@
 package com.nhnacademy.frontend.auth.controller;
 
 
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.service.SignupService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.auth.domain.request.UserIdCheckRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.UserIdCheckRequestDto;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

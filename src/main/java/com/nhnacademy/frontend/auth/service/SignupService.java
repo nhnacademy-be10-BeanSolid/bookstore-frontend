@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.auth.service;
 
-import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
 
 public interface SignupService {
 

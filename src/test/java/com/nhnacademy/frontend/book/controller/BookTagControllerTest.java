@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.BookTagController;
-import com.nhnacademy.frontend.admin.domain.request.BookTagCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookTagResponseDto;
-import com.nhnacademy.frontend.admin.service.BookService;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookTagCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagResponseDto;
+import com.nhnacademy.frontend.common.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

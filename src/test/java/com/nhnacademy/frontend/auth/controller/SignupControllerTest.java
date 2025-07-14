@@ -1,11 +1,11 @@
 package com.nhnacademy.frontend.auth.controller;
 
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.auth.domain.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.auth.service.SignupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

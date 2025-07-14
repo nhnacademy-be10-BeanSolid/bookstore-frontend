@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.auth.service;
 
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.*;
 
 public interface AuthService {
     LoginResponseDto login(String username, String password);

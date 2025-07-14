@@ -8,7 +8,7 @@ import com.nhnacademy.frontend.cart.dto.request.CartAddItemRequest;
 import com.nhnacademy.frontend.cart.dto.request.CartItemUpdateRequest;
 import com.nhnacademy.frontend.cart.dto.request.CartUpdateItemsRequest;
 import com.nhnacademy.frontend.cart.dto.request.CartUpdateRequest;
-import com.nhnacademy.frontend.cart.dto.response.BookResponse;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponse;
 import com.nhnacademy.frontend.cart.dto.response.CartCreateResponse;
 import com.nhnacademy.frontend.cart.dto.response.CartItemDto;
 import com.nhnacademy.frontend.cart.dto.response.CartResponse;
