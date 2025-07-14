@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.admin.domain.request;
+package com.nhnacademy.frontend.common.adapter.dto.book.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;

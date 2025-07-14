@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.admin.domain.response;
+package com.nhnacademy.frontend.common.adapter.dto.book.response;
 
 public record BookTagResponseDto (
         Long tagId,

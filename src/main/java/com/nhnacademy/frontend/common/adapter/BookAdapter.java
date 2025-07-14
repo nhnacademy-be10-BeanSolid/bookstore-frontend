@@ -1,9 +1,7 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.admin.domain.request.*;
-import com.nhnacademy.frontend.admin.domain.response.*;
-import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
-import com.nhnacademy.frontend.cart.dto.response.BookResponse;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;

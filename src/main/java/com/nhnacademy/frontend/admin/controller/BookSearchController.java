@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.response.BookSearchResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookSearchResponseDto;
 import com.nhnacademy.frontend.admin.service.BookService;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryMapCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookCategoryMapResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryMapCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapResponseDto;
 import com.nhnacademy.frontend.admin.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

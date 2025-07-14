@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.admin.service;
 
-import com.nhnacademy.frontend.admin.domain.request.*;
-import com.nhnacademy.frontend.admin.domain.response.*;
-import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

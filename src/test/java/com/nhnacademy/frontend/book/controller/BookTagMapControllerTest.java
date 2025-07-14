@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.BookTagMapController;
-import com.nhnacademy.frontend.admin.domain.request.BookTagMapCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookTagMapResponseDto;
-import com.nhnacademy.frontend.admin.domain.response.BookTagResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookTagMapCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagMapResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagResponseDto;
 import com.nhnacademy.frontend.admin.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;

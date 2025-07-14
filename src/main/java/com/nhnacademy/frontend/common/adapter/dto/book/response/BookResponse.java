@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.cart.dto.response;
+package com.nhnacademy.frontend.common.adapter.dto.book.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
