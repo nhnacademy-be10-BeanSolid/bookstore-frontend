@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .info-container {
+            max-width: 500px;
+            margin: auto;
+        }
+        .info-item {
+            margin-bottom: 15px;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+<div class="info-container">
+    <h1>내 정보</h1>
+
+    <div class="info-item">
+        <span class="label">아이디:</span>
+        <span th:text="${user.userId}">userId</span>
+    </div>
+    <div class="info-item">
+        <span class="label">이름:</span>
+        <span th:text="${user.userName}">userName</span>
+    </div>
+    <div class="info-item">
+        <span class="label">전화번호:</span>
+        <span th:text="${user.userPhoneNumber}">userPhoneNumber</span>
+    </div>
+    <div class="info-item">
+        <span class="label">이메일:</span>
+        <span th:text="${user.userEmail}">userEmail</span>
+    </div>
+    <div class="info-item">
+        <span class="label">생년월일:</span>
+        <span th:text="${user.userBirth}">userBirth</span>
+    </div>
+    <div class="info-item">
+        <span class="label">포인트:</span>
+        <span th:text="${user.userPoint}">userPoint</span>
+    </div>
+    <div class="info-item">
+        <span class="label">마지막 로그인:</span>
+        <span th:text="${#strings.replace(user.lastLoginAt, 'T', ' ')}">lastLoginAt</span>
+    </div>
+    <div class="info-item">
+        <span class="label">내 등급:</span>
+        <span th:text="${user.userGradeName}">userGradeName</span>
+    </div>
+</div>
+<div class="info-item">
+    <button onclick="location.href='/mypage/edit'">회원정보 수정</button>
+    <button th:if="${userType == 'LOCAL'}" onclick="location.href='/mypage/editpassword'">비밀번호 변경</button>
+</div>
+</body>
+</html>

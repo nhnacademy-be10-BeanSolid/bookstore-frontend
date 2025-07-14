@@ -1,7 +1,7 @@
 package com.nhnacademy.frontend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.common.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
@@ -74,7 +74,7 @@ class AuthServiceImplTest {
     @Test
     void parse_success_returnsTokenParseResponseDto() {
         String token = "token";
-        TokenParseResponseDto responseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"));
+        TokenParseResponseDto responseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"), "LOCAL");
         when(authAdapter.parse(token)).thenReturn(responseDto);
 
         TokenParseResponseDto result = authService.parse(token);

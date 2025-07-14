@@ -82,7 +82,7 @@
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-gray-600">배송비</dt>
-                            <dd><span id="sumShip" th:text="${shippingFee ?: 0}">0</span>원</dd>
+                            <dd><span id="sumShip" th:text="${#numbers.formatInteger(shippingFee ?: 0, 0, 'COMMA')}">0</span>원</dd>
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-gray-600">상품 할인</dt>
@@ -148,8 +148,9 @@
 
     function updateSummary(){
         document.getElementById('sumProduct').textContent = toKR(priceEl.value);
+        const shippingFee = num('sumShip');
         const final = (+priceEl.value||0)
-            + num('sumShip')
+            + shippingFee
             - num('sumProdDc')
             - num('sumCoupon')
             - sumBy('pointUse')

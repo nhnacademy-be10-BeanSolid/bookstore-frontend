@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 등급</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .info-container {
+            max-width: 500px;
+            margin: auto;
+        }
+        .info-item {
+            margin-bottom: 15px;
+        }
+        .label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+<div class="info-container">
+    <h1>내 등급</h1>
+    <div class="info-item">
+        <span class="label">내 등급:</span>
+        <span th:text="${user.userGradeName}">userGradeName</span>
+    </div>
+    <div class="info-item">
+        <span class="label">내 등급 혜택:</span>
+        <span th:text="${pointType.typeName}">typeName</span><br>
+        <span th:text="' (적립률: ' + ${pointType.earningRate} + '%)'">earningRate</span>
+    </div>
+</div>
+<form th:action="@{/mypage/grade/update}" method="post">
+    <button type="submit" id="submitBtn" class="btn btn-primary">변경하기-테스트 시 사용</button>
+</form>
+
+</body>
+</html>

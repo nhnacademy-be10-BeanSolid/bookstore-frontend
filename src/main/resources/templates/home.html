@@ -1,62 +1,58 @@
-<!-- main.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title layout:fragment="title">메인 페이지</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- ✅ 본문 콘텐츠 fragment -->
 <div layout:fragment="content">
     <div class="container mt-4" style="max-width:1200px;">
         <div class="row">
             <!-- 좌측 카테고리 -->
             <div class="col-2">
-                <div th:replace="~{fragments/category-tree :: categoryList(${categoryTree})}"></div>
+                <div class="d-flex flex-column gap-2">
+                    <div class="bg-secondary text-white text-center py-2">국내도서</div>
+                    <div class="bg-secondary text-white text-center py-2">서양도서</div>
+                    <div class="bg-secondary text-white text-center py-2">일본도서</div>
+                    <div class="bg-secondary text-white text-center py-2">중국도서</div>
+                    <div class="bg-secondary text-white text-center py-2">eBook</div>
+                    <div class="bg-secondary text-white text-center py-2">온라인중고</div>
+                    <div class="bg-secondary text-white text-center py-2">etc</div>
+                </div>
             </div>
             <!-- 세로 메뉴 -->
             <div class="col-2 d-flex flex-column align-items-center">
-                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:260px; writing-mode:vertical-rl; text-orientation: mixed; font-size:1.1rem;">
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                     style="height:260px; writing-mode:vertical-rl; text-orientation: mixed; font-size:1.1rem;">
                     <span>분류<br>테마<br>추천<br>이벤트</span>
                 </div>
             </div>
             <!-- 책 2열 -->
-            <!-- 도서 목록 영역 -->
             <div class="col-8">
-                <!-- ✅ 정렬 드롭다운 -->
-                <div class="d-flex justify-content-end mb-3">
-                    <form method="get" th:action="@{/}" id="sortForm">
-                        <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>
-                        <input type="hidden" name="size" th:value="${page.size}" />
-                        <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">
-                            <option value="publishAt,desc">최신순</option>
-                            <option value="salePrice,asc">최저가</option>
-                            <option value="salePrice,desc">최고가</option>
-                            <option value="viewCount,desc">조회수 높은순</option>
-                        </select>
-                    </form>
-                </div>
-
-                <!-- ✅ 책 2열 출력 -->
                 <div class="row row-cols-2 g-4">
                     <div class="col" th:each="book : ${books}">
                         <div class="card h-100">
                             <a th:href="@{/books/{id}(id=${book.id})}">
-                                <img th:src="${book.image}" class="card-img-top" alt="Book Image" style="height:180px; object-fit:cover;">
+                                <img th:src="${book.image}" class="card-img-top" alt="Book Image"
+                                     style="height:180px; object-fit:cover;">
                             </a>
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${book.title}">도서 제목</h5>
                                 <p class="card-text">
                                     저자: <span th:text="${book.author}">저자</span><br>
                                     가격: <span th:text="${book.salePrice}">0</span>원<br>
-                                    재고: <span th:text="${book.stock}">0</span>권<br>
-                                    조회수: <span th:text="${book.viewCount}"></span>
+                                    재고: <span th:text="${book.stock}">0</span>권
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
         <!-- 페이지네이션 -->
         <div class="d-flex justify-content-center align-items-center mt-4">
@@ -64,61 +60,24 @@
                 <ul class="pagination mb-0">
                     <!-- 이전 버튼 -->
                     <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
-                        <a class="page-link" th:href="@{/(page=${page.number - 1}, size=${page.size}, sort=${param.sort})}" aria-label="Previous">&larr;</a>
+                        <a class="page-link" th:href="@{/(page=${page.number - 1}, size=${page.size})}" aria-label="Previous">&larr;</a>
                     </li>
-
                     <!-- 페이지 번호 -->
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                         th:classappend="${i == page.number} ? 'active'">
-                        <a class="page-link" th:href="@{/(page=${i}, size=${page.size}, sort=${param.sort})}" th:text="${i + 1}">1</a>
+                        <a class="page-link" th:href="@{/(page=${i}, size=${page.size})}" th:text="${i + 1}">1</a>
                     </li>
-
                     <!-- 다음 버튼 -->
                     <li class="page-item" th:classappend="${page.number == page.totalPages - 1} ? 'disabled'">
-                        <a class="page-link" th:href="@{/(page=${page.number + 1}, size=${page.size}, sort=${param.sort})}" aria-label="Next">&rarr;</a>
+                        <a class="page-link" th:href="@{/(page=${page.number + 1}, size=${page.size})}" aria-label="Next">&rarr;</a>
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
-    </div>
 </div>
+<!-- Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-<script>
-    const sortSelect = document.getElementById('sortSelect');
-    const pageInput = document.getElementById('pageInput');
-
-    sortSelect.addEventListener('change', () => {
-        pageInput.value = 0;
-        document.getElementById('sortForm').submit();
-    });
-</script>
-
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentSort = urlParams.get("sort");
-
-    const select = document.getElementById("sortSelect");
-
-    if (currentSort) {
-        select.value = currentSort; // 현재 선택값 설정
-
-        // 선택된 옵션을 맨 위로 올리기
-        const options = Array.from(select.options);
-        const selectedOptionIndex = options.findIndex(opt => opt.value === currentSort);
-
-        if (selectedOptionIndex > -1) {
-            const selectedOption = options.splice(selectedOptionIndex, 1)[0];
-            options.unshift(selectedOption);
-            select.innerHTML = '';
-            options.forEach(opt => select.appendChild(opt));
-
-            // 선택된 값 다시 설정 (innerHTML 날렸으므로)
-            select.value = currentSort;
-        }
-    }
-</script>
