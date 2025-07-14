@@ -2,7 +2,6 @@ package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
-import com.nhnacademy.frontend.cart.dto.response.BookResponse;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
