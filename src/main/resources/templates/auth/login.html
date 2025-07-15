@@ -74,6 +74,13 @@
             form.style.display = 'none';
         }
     });
+
+    // 로그인 실패 시 alert 창 (URL 쿼리 파라미터에서 읽어옴)
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorCode = urlParams.get('error');
+    if (errorCode === 'login_failed') {
+        alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+    }
 </script>
 </body>
 </html>
