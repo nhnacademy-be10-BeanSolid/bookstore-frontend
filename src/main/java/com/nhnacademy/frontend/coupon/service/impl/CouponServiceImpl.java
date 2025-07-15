@@ -21,7 +21,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public List<UserCouponResponse> getActiveUserCoupons(String userId) {
         // userId를 userNo로 변환
-        Long userNo = userAdapter.getUserIdByUserId(userId).getBody().getUserNo();
+        Long userNo = userAdapter.getUser(userId).getBody().getUserNo();
         log.info("CouponServiceImpl: userNo received from UserAdapter: {}", userNo);
         return couponAdapter.getActiveUserCoupons(String.valueOf(userNo)).getBody();
     }
