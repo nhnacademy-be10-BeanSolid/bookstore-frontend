@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/orders").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/orders/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/orders/*/input-detail").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/orders/non-member-detail").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/books/**").permitAll()
