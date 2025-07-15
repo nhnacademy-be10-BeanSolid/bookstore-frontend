@@ -110,10 +110,9 @@ class SignupControllerTest {
 
         mockMvc.perform(post("/auth/signup/check-user-id")
                         .param("userId", "testuser"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("userId", "testuser"))
-                .andExpect(flash().attribute("duplicateMessage", "이미 사용 중인 아이디입니다."))
-                .andExpect(redirectedUrl("/auth/signup/normal-signup"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("이미 사용 중인 아이디입니다."))
+                .andExpect(jsonPath("$.isAvailable").value(false));
     }
 
     @DisplayName("아이디 중복확인 - 사용 가능한 아이디")
@@ -123,10 +122,9 @@ class SignupControllerTest {
 
         mockMvc.perform(post("/auth/signup/check-user-id")
                         .param("userId", "newuser"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("userId", "newuser"))
-                .andExpect(flash().attribute("duplicateMessage", "사용 가능한 아이디입니다."))
-                .andExpect(redirectedUrl("/auth/signup/normal-signup"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("사용 가능한 아이디입니다."))
+                .andExpect(jsonPath("$.isAvailable").value(true));
     }
 
     @DisplayName("회원가입 처리 - 중복확인 안함")
