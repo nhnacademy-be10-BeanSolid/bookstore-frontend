@@ -30,6 +30,8 @@ public class UpdateOrderRequest {
     @Future(message = "배송 요청 날짜는 주문일 다음 날부터 가능합니다")
     private LocalDate requestedDeliveryDate;
 
+    private String nonMemberPassword;
+
     @Setter
     @Getter
     public static class WrappingRequest {

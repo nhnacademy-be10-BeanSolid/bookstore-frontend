@@ -3,7 +3,7 @@ package com.nhnacademy.frontend.order.dto.response;
 import java.time.LocalDate;
 
 public record OrderResponse(
-
+        Long orderId,
         String orderNumber,
         Long userNo,
         String status,
