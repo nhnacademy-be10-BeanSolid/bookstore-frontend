@@ -85,9 +85,9 @@ public class OrderController {
     }
 
     // 주문 상세 조회 페이지
-    @GetMapping("/list/{orderId}")
-    public String getOrderDetail(@PathVariable String orderId, Model model) {
-        OrderDetailResponse orderDetail = orderService.getOrder(orderId);
+    @GetMapping("/list/{orderNumber}")
+    public String getOrderDetail(@PathVariable String orderNumber, Model model) {
+        OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
         model.addAttribute("order", orderDetail);
 
         return "order/detail";

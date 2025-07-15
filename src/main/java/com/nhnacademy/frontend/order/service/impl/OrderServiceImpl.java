@@ -1,9 +1,9 @@
 package com.nhnacademy.frontend.order.service.impl;
 
-import com.nhnacademy.frontend.order.adapter.GuestAdapter;
+import com.nhnacademy.frontend.common.adapter.GuestAdapter;
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
-import com.nhnacademy.frontend.order.dto.request.GuestCreateRequest;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.GuestCreateRequest;
 import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDetailResponse getOrder(String orderId) {
-        return orderAdapter.getOrder(orderId);
+    public OrderDetailResponse getOrder(String orderNumber) {
+        return orderAdapter.getOrder(orderNumber);
     }
 }
