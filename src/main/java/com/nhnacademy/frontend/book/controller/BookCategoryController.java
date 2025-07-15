@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.book.controller;
 
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class BookCategoryController {
                                @PageableDefault(size = 4) Pageable pageable,
                                Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(categoryId, pageable);
-        List<com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto> categoryTree = bookService.getCategoryTree();
+        List<BookCategoryNodeResponseDto> categoryTree = bookService.getCategoryTree();
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("categoryTree", categoryTree);
         model.addAttribute("page", bookList);

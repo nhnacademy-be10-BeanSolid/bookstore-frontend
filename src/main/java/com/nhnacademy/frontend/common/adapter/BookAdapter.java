@@ -1,6 +1,5 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;

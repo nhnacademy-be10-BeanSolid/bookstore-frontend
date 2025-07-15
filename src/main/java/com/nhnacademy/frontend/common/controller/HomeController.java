@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.common.controller;
 
-import com.nhnacademy.frontend.book.domain.response.BookCategoryNodeResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import lombok.RequiredArgsConstructor;
