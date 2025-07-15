@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.common.adapter;
 
 import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.user.domain.response.UserResponseDto;
+import com.nhnacademy.frontend.user.dto.ResponseUserId;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,4 +17,7 @@ public interface UserAdapter {
 
     @GetMapping("/user-api/users/{userId}")
     ResponseEntity<UserResponseDto> getUser(@PathVariable String userId);
+
+    @GetMapping("/user-api/users/id/{userId}")
+    ResponseEntity<ResponseUserId> getUserIdByUserId(@PathVariable("userId") String userId);
 }
