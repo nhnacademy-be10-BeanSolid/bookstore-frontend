@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
+
 @Controller
 @RequestMapping("/auth/signup")
 @RequiredArgsConstructor
@@ -53,13 +57,13 @@ public class SignupController {
     }
 
     @PostMapping("/check-user-id")
-    public String checkUserId(@ModelAttribute UserIdCheckRequestDto dto,
-                              RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public Map<String, Object> checkUserId(@ModelAttribute UserIdCheckRequestDto dto) {
         boolean exists = signupService.isExistUser(dto.getUserId());
-        redirectAttributes.addFlashAttribute("isAvailable", !exists); // hidden input용 값 전달
-        redirectAttributes.addFlashAttribute("userId", dto.getUserId());
-        redirectAttributes.addFlashAttribute("duplicateMessage", exists ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
-        return "redirect:/auth/signup/normal-signup";
+        return Map.of(
+                "isAvailable", !exists,
+                "message", exists ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다."
+        );
     }
 
     @PostMapping("/normal-signup/register")

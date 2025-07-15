@@ -27,31 +27,24 @@
         <span class="fw-bold">회원정보 입력</span>
     </div>
 
-    <!-- 아이디 입력 + 중복확인 form -->
-    <div class="mb-2 w-100">
-        <label class="form-label mb-1">
-            아이디 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
-        </label>
-        <div class="d-flex">
-            <form action="/auth/signup/check-user-id" method="post" class="d-flex w-100">
-                <input type="text" name="userId"
+    <!-- 회원가입 form -->
+    <form class="w-100" action="/auth/signup/normal-signup/register" method="post">
+        <!-- 아이디 입력 + 중복확인 -->
+        <div class="mb-2 w-100">
+            <label class="form-label mb-1">
+                아이디 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
+            </label>
+            <div class="d-flex">
+                <input type="text" id="userId" name="userId"
                        class="form-control bg-secondary text-white border-0 me-2"
                        placeholder="아이디를 입력해 주세요."
                        th:value="${userId}"
                        required>
-                <button type="submit" class="btn btn-outline-secondary px-3" style="min-width: 90px;">중복확인</button>
-            </form>
+                <button type="button" id="check-duplicate-btn" class="btn btn-outline-secondary px-3" style="min-width: 90px;">중복확인</button>
+            </div>
+            <div id="duplicate-message" class="form-text mt-1"></div>
         </div>
-        <div class="form-text mt-1"
-             th:if="${duplicateMessage}" th:text="${duplicateMessage}"
-             th:classappend="${duplicateMessage.contains('가능')} ? ' text-success' : ' text-danger'">
-        </div>
-    </div>
 
-    <!-- 회원가입 form -->
-    <form class="w-100" action="/auth/signup/normal-signup/register" method="post">
-        <!-- hidden 아이디 (입력값 복원용) -->
-        <input type="hidden" name="userId" th:value="${userId}">
         <!-- 중복체크 결과 hidden input -->
         <input type="hidden" name="isAvailable" th:value="${isAvailable}">
 
@@ -97,5 +90,34 @@
         <button type="submit" class="btn btn-secondary w-100 mb-4">회원가입</button>
     </form>
 </div>
+<script>
+    document.getElementById('check-duplicate-btn').addEventListener('click', function() {
+        var userId = document.getElementById('userId').value;
+        var duplicateMessageDiv = document.getElementById('duplicate-message');
+        var isAvailableInput = document.querySelector('input[name="isAvailable"]');
+
+        fetch('/auth/signup/check-user-id', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'userId=' + encodeURIComponent(userId)
+        })
+        .then(response => response.json())
+        .then(data => {
+            duplicateMessageDiv.textContent = data.message;
+            if (data.available) {
+                duplicateMessageDiv.classList.remove('text-danger');
+                duplicateMessageDiv.classList.add('text-success');
+                isAvailableInput.value = 'true';
+            } else {
+                duplicateMessageDiv.classList.remove('text-success');
+                duplicateMessageDiv.classList.add('text-danger');
+                isAvailableInput.value = 'false';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
 </body>
 </html>
