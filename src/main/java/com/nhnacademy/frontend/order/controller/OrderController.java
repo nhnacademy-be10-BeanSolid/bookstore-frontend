@@ -31,7 +31,8 @@ public class OrderController {
 
     @GetMapping("/{orderNumber}/input-detail")
     public String orderPage(@PathVariable String orderNumber,
-                            Model model) {
+                            Model model,
+                            @ModelAttribute("isLoggedIn") boolean isLoggedIn) {
         CreateOrderResponse unfinishedOrder = orderService.getUnfinishedOrder(orderNumber);
 
         List<CreateOrderResponse.CreateOrderItemResponse> items = unfinishedOrder.getOrderItems();
@@ -41,7 +42,11 @@ public class OrderController {
         model.addAttribute("orderNumber", orderNumber);
         model.addAttribute("items", items);
 
-        return "order/order";
+        if (isLoggedIn) {
+            return "order/order";
+        } else {
+            return "order/non-member-order";
+        }
     }
 
     @PostMapping
