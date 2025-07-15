@@ -54,31 +54,44 @@
         </div>
     </div>
 
-    <!-- 📄 페이지네이션 -->
-    <nav class="mt-5" th:if="${page.totalPages > 1}">
+    <nav class="mt-5" th:if="${page.totalPages > 1}"
+         th:with="sortExists=${param.sort != null and !#strings.isEmpty(param.sort)}">
+
         <ul class="pagination justify-content-center">
+
             <!-- 이전 페이지 -->
             <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-                <a class="page-link"
+                <a class="page-link" th:if="${sortExists}"
                    th:href="@{/search(keyword=${keyword}, page=${page.number - 1}, size=${page.size}, sort=${param.sort})}">&laquo;</a>
+                <a class="page-link" th:unless="${sortExists}"
+                   th:href="@{/search(keyword=${keyword}, page=${page.number - 1}, size=${page.size})}">&laquo;</a>
             </li>
 
             <!-- 페이지 번호 -->
             <li class="page-item"
                 th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                 th:classappend="${i == page.number} ? 'active'">
-                <a class="page-link"
+
+                <a class="page-link" th:if="${sortExists}"
                    th:href="@{/search(keyword=${keyword}, page=${i}, size=${page.size}, sort=${param.sort})}"
+                   th:text="${i + 1}">1</a>
+
+                <a class="page-link" th:unless="${sortExists}"
+                   th:href="@{/search(keyword=${keyword}, page=${i}, size=${page.size})}"
                    th:text="${i + 1}">1</a>
             </li>
 
             <!-- 다음 페이지 -->
             <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-                <a class="page-link"
+                <a class="page-link" th:if="${sortExists}"
                    th:href="@{/search(keyword=${keyword}, page=${page.number + 1}, size=${page.size}, sort=${param.sort})}">&raquo;</a>
+                <a class="page-link" th:unless="${sortExists}"
+                   th:href="@{/search(keyword=${keyword}, page=${page.number + 1}, size=${page.size})}">&raquo;</a>
             </li>
+
         </ul>
     </nav>
+
 
 </div>
 

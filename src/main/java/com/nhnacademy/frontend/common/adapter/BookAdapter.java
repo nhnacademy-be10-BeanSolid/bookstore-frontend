@@ -53,6 +53,15 @@ public interface BookAdapter {
             @RequestParam(name = "sort", required = false) String sort
     );
 
+    // 도서 리스트 - 카테고리 선택
+    @GetMapping("/book-api/books/categories/{categoryId}")
+    Page<SimpleBookResponseDto> getBooks(
+            @PathVariable Long categoryId,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) String sort
+    );
+
     // 도서 상세정보
     @GetMapping("/book-api/books/{bookId}")
     BookDetailResponseDto getBookDetail(@PathVariable Long bookId);
@@ -115,7 +124,7 @@ public interface BookAdapter {
     @GetMapping("/book-api/search")
     Page<SimpleBookResponseDto> searchBooks(
             @RequestParam String keyword,
-            @RequestParam Integer start,
+            @RequestParam Integer page,
             @RequestParam Integer size,
             @RequestParam(name = "sort", required = false) String sort);
 

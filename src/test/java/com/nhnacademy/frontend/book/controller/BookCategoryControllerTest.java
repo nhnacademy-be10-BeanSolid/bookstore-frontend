@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.book.controller;
 
-import com.nhnacademy.frontend.admin.controller.BookCategoryController;
+import com.nhnacademy.frontend.admin.controller.AdminBookCategoryController;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
-        controllers = BookCategoryController.class,
+        controllers = AdminBookCategoryController.class,
         excludeFilters = @ComponentScan.Filter(
                 type = FilterType.ASSIGNABLE_TYPE,
                 classes = JwtAuthenticationFilter.class

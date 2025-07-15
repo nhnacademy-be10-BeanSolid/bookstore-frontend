@@ -32,6 +32,7 @@ public class HomeController {
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("categoryTree", categoryTree);
         model.addAttribute("page", bookList);
+        model.addAttribute("basePath", "/");
         return "home";
     }
 

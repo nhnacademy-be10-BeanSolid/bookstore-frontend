@@ -28,6 +28,8 @@ public interface BookService {
 
     Page<SimpleBookResponseDto> getAllBooks(Pageable pageable);
 
+    Page<SimpleBookResponseDto> getAllBooks(Long categoryId, Pageable pageable);
+
     BookDetailResponseDto getBookDetail(Long bookId);
 
     BookResponseDto createBook(BookCreateRequestDto request);

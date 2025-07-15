@@ -27,7 +27,7 @@
             <div class="col-8">
                 <!-- ✅ 정렬 드롭다운 -->
                 <div class="d-flex justify-content-end mb-3">
-                    <form method="get" th:action="@{/}" id="sortForm">
+                    <form method="get" th:action="@{${basePath}}" id="sortForm">
                         <input type="hidden" name="page" th:value="${page.number}" id="pageInput"/>
                         <input type="hidden" name="size" th:value="${page.size}" />
                         <select id="sortSelect" name="sort" class="form-select w-auto" onchange="this.form.submit()">
@@ -45,8 +45,7 @@
                     <div class="col" th:each="book : ${books}">
                         <div class="card h-100">
                             <a th:href="@{/books/{id}(id=${book.id})}">
-                                <img th:src="${book.image}" class="card-img-top" alt="Book Image"
-                                     style="height:180px; object-fit:cover;">
+                                <img th:src="${book.image}" class="card-img-top" alt="Book Image" style="width: 100%; height: 180px; object-fit: cover;">
                             </a>
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${book.title}">도서 제목</h5>
@@ -63,30 +62,37 @@
             </div>
         </div>
         <!-- 페이지네이션 -->
-        <!-- 페이지네이션 -->
         <div class="d-flex justify-content-center align-items-center mt-4">
-            <nav>
-                <ul class="pagination mb-0">
+            <nav th:if="${page.totalPages > 0}">
+                <ul class="pagination mb-0"
+                    th:with="sortExists=${param.sort != null and !#strings.isEmpty(param.sort)}">
                     <!-- 이전 버튼 -->
                     <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/(page=${page.number - 1}, size=${page.size}, sort=${param.sort})}"
+                        <a class="page-link" th:if="${sortExists}"
+                           th:href="@{${basePath}(page=${page.number - 1}, size=${page.size}, sort=${param.sort})}"
+                           aria-label="Previous">&larr;</a>
+                        <a class="page-link" th:unless="${sortExists}"
+                           th:href="@{${basePath}(page=${page.number - 1}, size=${page.size})}"
                            aria-label="Previous">&larr;</a>
                     </li>
-
                     <!-- 페이지 번호 -->
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
                         th:classappend="${i == page.number} ? 'active'">
-                        <a class="page-link"
-                           th:href="@{/(page=${i}, size=${page.size}, sort=${param.sort})}"
+                        <a class="page-link" th:if="${sortExists}"
+                           th:href="@{${basePath}(page=${i}, size=${page.size}, sort=${param.sort})}"
+                           th:text="${i + 1}">1</a>
+                        <a class="page-link" th:unless="${sortExists}"
+                           th:href="@{${basePath}(page=${i}, size=${page.size})}"
                            th:text="${i + 1}">1</a>
                     </li>
-
                     <!-- 다음 버튼 -->
                     <li class="page-item" th:classappend="${page.number == page.totalPages - 1} ? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/(page=${page.number + 1}, size=${page.size}, sort=${param.sort})}"
+                        <a class="page-link" th:if="${sortExists}"
+                           th:href="@{${basePath}(page=${page.number + 1}, size=${page.size}, sort=${param.sort})}"
+                           aria-label="Next">&rarr;</a>
+                        <a class="page-link" th:unless="${sortExists}"
+                           th:href="@{${basePath}(page=${page.number + 1}, size=${page.size})}"
                            aria-label="Next">&rarr;</a>
                     </li>
                 </ul>

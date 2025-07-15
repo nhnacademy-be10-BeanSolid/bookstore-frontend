@@ -89,6 +89,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Page<SimpleBookResponseDto> getAllBooks(Long categoryId, Pageable pageable) {
+        String sort = null;
+        if (pageable.getSort().isSorted()) {
+            sort = pageable.getSort().stream()
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
+                    .collect(Collectors.joining("&sort="));
+        }
+        return bookAdapter.getBooks(categoryId, pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+
+    @Override
     public BookDetailResponseDto getBookDetail(Long bookId) {
         log.info("BookDetail Get Start : {}", bookId);
         return bookAdapter.getBookDetail(bookId);
