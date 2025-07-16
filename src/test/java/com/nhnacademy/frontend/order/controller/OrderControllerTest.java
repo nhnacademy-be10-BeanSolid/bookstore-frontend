@@ -1,265 +1,266 @@
-//package com.nhnacademy.frontend.order.controller;
-//
-//import com.nhnacademy.frontend.common.exception.ValidationFailedException;
-//import com.nhnacademy.frontend.order.dto.request.OrderRequest;
-//import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
-//import com.nhnacademy.frontend.order.dto.response.OrderResponse;
-//import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
-//import com.nhnacademy.frontend.order.service.OrderService;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageImpl;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-//import org.springframework.validation.BindingResult;
-//import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-//
-//import java.time.LocalDate;
-//import java.util.Collections;
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.eq;
-//import static org.mockito.Mockito.*;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-//@ExtendWith(MockitoExtension.class)
-//@DisplayName("OrderController 단위 테스트")
-//class OrderControllerTest {
-//
-//    @Mock
-//    private OrderService orderService;
-//
-//    @Mock
-//    private BindingResult bindingResult;
-//
-//    @Mock
-//    private RedirectAttributes redirectAttributes;
-//
-//    @InjectMocks
-//    private OrderController orderController;
-//
-//    private MockMvc mockMvc;
-//
-//    @BeforeEach
-//    void setUp() {
-//        mockMvc = MockMvcBuilders.standaloneSetup(orderController)
-//                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-//                .build();
-//    }
-//
-//    @Test
-//    @DisplayName("주문 페이지 조회 - 성공")
-//    void orderPage_Success() throws Exception {
-//        // when & then
-//        mockMvc.perform(get("/orders"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("order/order"));
-//    }
-//
-//    @Test
-//    @DisplayName("주문 생성 - 성공")
-//    void createOrder_Success() {
-//        // given
-//        OrderRequest orderRequest = createOrderRequest();
-//        OrderResponse orderResponse = createOrderResponse();
-//
-//        when(bindingResult.hasErrors()).thenReturn(false);
-//        when(orderService.createOrder(orderRequest)).thenReturn(orderResponse);
-//
-//        // when
-//        String result = orderController.createOrder(orderRequest, bindingResult, redirectAttributes);
-//
-//        // then
-//        assertEquals("redirect:/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount(), result);
-//        verify(orderService).createOrder(orderRequest);
-//        verify(redirectAttributes, never()).addFlashAttribute(eq("errorMessage"), any());
-//    }
-//
-//    @Test
-//    @DisplayName("주문 생성 - 유효성 검증 실패")
-//    void createOrder_ValidationFailed() {
-//        // given
-//        OrderRequest orderRequest = createOrderRequest();
-//        when(bindingResult.hasErrors()).thenReturn(true);
-//
-//        // when & then
-//        assertThrows(ValidationFailedException.class, () ->
-//            orderController.createOrder(orderRequest, bindingResult, redirectAttributes)
-//        );
-//
-//        verify(orderService, never()).createOrder(any());
-//        verify(redirectAttributes, never()).addFlashAttribute(any(), any());
-//    }
-//
-//    @Test
-//    @DisplayName("주문 생성 - 서비스 예외 발생")
-//    void createOrder_ServiceException() {
-//        // given
-//        OrderRequest orderRequest = createOrderRequest();
-//        String errorMessage = "주문 처리 중 오류가 발생했습니다";
-//
-//        when(bindingResult.hasErrors()).thenReturn(false);
-//        when(orderService.createOrder(orderRequest)).thenThrow(new RuntimeException(errorMessage));
-//
-//        // when
-//        String result = orderController.createOrder(orderRequest, bindingResult, redirectAttributes);
-//
-//        // then
-//        assertEquals("redirect:/orders", result);
-//        verify(orderService).createOrder(orderRequest);
-//        verify(redirectAttributes).addFlashAttribute("errorMessage", errorMessage);
-//        verify(redirectAttributes, never()).addFlashAttribute(eq("orderResponse"), any());
-//    }
-//
-//    @Test
-//    @DisplayName("주문 전체 조회 - 성공")
-//    void orderList_Success() throws Exception {
-//        // given
-//        Page<OrderSummaryResponse> orders = createOrderSummaryPage();
-//        Pageable pageable = Pageable.ofSize(20);
-//        when(orderService.getAllOrders(pageable)).thenReturn(orders);
-//
-//        // when & then
-//        mockMvc.perform(get("/orders/list"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("order/list"))
-//                .andExpect(model().attributeExists("orders"))
-//                .andExpect(model().attribute("orders", orders));
-//
-//        verify(orderService).getAllOrders(pageable);
-//    }
-//
-//    @Test
-//    @DisplayName("주문 상세 조회 - 성공")
-//    void getOrderDetail_Success() throws Exception {
-//        // given
-//        String orderId = "190001-abcabc-123123";
-//        OrderDetailResponse orderDetail = createOrderDetailResponse();
-//        when(orderService.getOrder(orderId)).thenReturn(orderDetail);
-//
-//        // when & then
-//        mockMvc.perform(get("/orders/{orderId}", orderId))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("order/detail"))
-//                .andExpect(model().attributeExists("order"))
-//                .andExpect(model().attribute("order", orderDetail));
-//
-//        verify(orderService).getOrder(orderId);
-//    }
-//
-//    @Test
-//    @DisplayName("주문 생성 요청 - POST 매핑 테스트 (Validation 성공)")
-//    void createOrder_PostMapping() throws Exception {
-//        // given
-//        OrderResponse orderResponse = createOrderResponse();
-//        when(orderService.createOrder(any(OrderRequest.class))).thenReturn(orderResponse);
-//
-//        // when & then
-//        mockMvc.perform(post("/orders")
-//                .param("receiverName", "홍길동")
-//                .param("receiverPhoneNumber", "010-1234-5678")
-//                .param("deliveryAddress", "12345 서울시 강남구 101동 101호")
-//                .param("requestedDeliveryDate", "2030-01-04")
-//                .param("orderItems[0].bookId", "1")
-//                .param("orderItems[0].quantity", "2")
-//                .param("orderItems[0].price", "10000")
-//                .param("orderItems[0].wrappingId", "1"))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount()));
-//    }
-//
-//    @Test
-//    @DisplayName("주문 생성 요청 - POST 매핑 Validation 실패")
-//    void createOrder_PostMapping_ValidationFailed() throws Exception {
-//        // when & then - receiverName 누락으로 validation 실패
-//        mockMvc.perform(post("/orders")
-//                .param("receiverPhoneNumber", "01012345678")
-//                .param("zipCode", "12345")
-//                .param("baseAddress", "서울시 강남구")
-//                .param("orderItems[0].bookId", "1")
-//                .param("orderItems[0].quantity", "2")
-//                .param("orderItems[0].price", "10000"))
-//                .andExpect(status().is4xxClientError());
-//    }
-//
-//    private OrderRequest createOrderRequest() {
-//        OrderRequest orderRequest = new OrderRequest();
-//        orderRequest.setReceiverName("홍길동");
-//        orderRequest.setReceiverPhoneNumber("01012345678");
-//        orderRequest.setDeliveryAddress("12345 서울시 강남구 101동 101호");
-//        orderRequest.setRequestedDeliveryDate(LocalDate.of(3000, 1, 1).plusDays(3));
-//
-//        OrderRequest.OrderItem orderItem = new OrderRequest.OrderItem();
-//        orderItem.setBookId(1L);
-//        orderItem.setQuantity(2);
-//        orderItem.setPrice(10000L);
-//        orderItem.setWrappingId(1L);
-//
-//        orderRequest.setOrderItems(Collections.singletonList(orderItem));
-//        return orderRequest;
-//    }
-//
-//    private OrderResponse createOrderResponse() {
-//        return new OrderResponse(
-//                1L,
-//                "190001-abcabc-123123",
-//                "PENDING",
-//                LocalDate.of(3000, 1, 1),
-//                "홍길동",
-//                "010-1234-5678",
-//                "서울시 강남구 101동 101호",
-//                LocalDate.of(3000, 1, 1).plusDays(3),
-//                3000,
-//                23000L
-//        );
-//    }
-//
-//    private OrderDetailResponse createOrderDetailResponse() {
-//        return new OrderDetailResponse(
-//                LocalDate.now().minusDays(1),
-//                "202507-abcabc-123123",
-//                "PENDING",
-//                10_000L,
-//                null,
-//                "홍길동",
-//                "010-1234-5678",
-//                "서울시 강남구 101동 101호",
-//                LocalDate.of(2025, 12, 31),
-//                5_000
-//        );
-//    }
-//
-//    private Page<OrderSummaryResponse> createOrderSummaryPage() {
-//        List<OrderSummaryResponse> orderSummaries = List.of(
-//                new OrderSummaryResponse(
-//                        LocalDate.of(3000, 1, 1),
-//                        "190001-abcabc-123123",
-//                        "홍길동",
-//                        23000L
-//                ),
-//                new OrderSummaryResponse(
-//                        LocalDate.of(3000, 1, 2),
-//                        "190002-defdef-456456",
-//                        "김철수",
-//                        15000L
-//                )
-//        );
-//
-//        Pageable pageable = PageRequest.of(0, 10);
-//        return new PageImpl<>(orderSummaries, pageable, orderSummaries.size());
-//    }
-//}
+package com.nhnacademy.frontend.order.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
+import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
+import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
+import com.nhnacademy.frontend.order.exception.OrderNotFoundException;
+import com.nhnacademy.frontend.order.service.OrderService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(
+    controllers = OrderController.class,
+    excludeFilters = @ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        classes = JwtAuthenticationFilter.class
+    )
+)
+@AutoConfigureMockMvc(addFilters = false)
+class OrderControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private OrderService orderService;
+    @MockBean
+    private UserAdapter userAdapter;
+    @MockBean
+    private RedisConnectionFactory redisConnectionFactory;
+
+    @Test
+    @DisplayName("회원의 주문서 작성 페이지 응답에 성공하면 200을 응답한다")
+    void orderPage_LoggedInUser_Success() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        CreateOrderResponse.CreateOrderItemResponse item = CreateOrderResponse.CreateOrderItemResponse.builder()
+                .bookId(1L)
+                .bookTitle("Test Book")
+                .quantity(2)
+                .unitPrice(15000)
+                .wrappable(true)
+                .build();
+        CreateOrderResponse orderResponse = new CreateOrderResponse(orderNumber, List.of(item));
+        ResponseUser user = ResponseUser.builder()
+                .userName("테스트사용자")
+                .userPhoneNumber("010-1234-5678")
+                .build();
+
+        given(orderService.getUnfinishedOrder(orderNumber)).willReturn(orderResponse);
+        given(userAdapter.getUserInfo()).willReturn(ResponseEntity.ok(user));
+
+        // When & Then
+        mockMvc.perform(get("/orders/{orderNumber}/input-detail", orderNumber)
+                .flashAttr("isLoggedIn", true))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/order"))
+                .andExpect(model().attribute("orderNumber", orderNumber))
+                .andExpect(model().attribute("items", List.of(item)))
+                .andExpect(model().attribute("user", user));
+
+        verify(orderService, times(1)).getUnfinishedOrder(orderNumber);
+        verify(userAdapter, times(1)).getUserInfo();
+    }
+
+    @Test
+    @DisplayName("비회원의 주문서 작성 페이지 응답에 성공하면 200을 응답한다")
+    void orderPage_NonMemberUser_Success() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        CreateOrderResponse orderResponse = new CreateOrderResponse(orderNumber, List.of());
+
+        given(orderService.getUnfinishedOrder(orderNumber)).willReturn(orderResponse);
+
+        // When & Then
+        mockMvc.perform(get("/orders/{orderNumber}/input-detail", orderNumber)
+                        .flashAttr("isLoggedIn", false))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/non-member-order"))
+                .andExpect(model().attribute("orderNumber", orderNumber))
+                .andExpect(model().attribute("items", List.of()));
+
+        verify(orderService).getUnfinishedOrder(orderNumber);
+    }
+
+    @Test
+    @DisplayName("주문 생성에 성공하면 리다이렉트를 응답한다")
+    void createOrder_Success() throws Exception {
+        // Given
+        CreateOrderRequest request = new CreateOrderRequest();
+        CreateOrderRequest.CreateOrderItemRequest itemRequest = new CreateOrderRequest.CreateOrderItemRequest(1L, 1);
+        request.setCreateItemRequests(List.of(itemRequest));
+        CreateOrderResponse response = new CreateOrderResponse("202507-abcdef-123456", null);
+
+        given(orderService.createOrder(any(CreateOrderRequest.class))).willReturn(response);
+
+        // When & Then
+        mockMvc.perform(post("/orders")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .flashAttr("createOrderRequest", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/orders/202507-abcdef-123456/input-detail"));
+
+        verify(orderService).createOrder(any(CreateOrderRequest.class));
+    }
+
+    @Test
+    @DisplayName("주문서 작성이 끝나고 버튼을 누르면 결제 페이지 리다이렉트를 응답한다")
+    void updateOrder_Success() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        UpdateOrderRequest request = UpdateOrderRequest.builder()
+                .receiverName("테스트사용자")
+                .receiverPhoneNumber("010-1234-5678")
+                .address("서울시 강남구")
+                .wrappingRequests(List.of(new UpdateOrderRequest.WrappingRequest(1L, 1L)))
+                .build();
+        OrderResponse response = new OrderResponse(
+                1L,
+                orderNumber,
+                1L,
+                "PENDING",
+                LocalDate.now(),
+                10000L,
+                "테스트사용자",
+                "010-1234-5678",
+                "서울시 강남구",
+                LocalDate.now(),
+                100);
+
+        given(orderService.updateOrder(eq(orderNumber), any(UpdateOrderRequest.class))).willReturn(response);
+
+        // When & Then
+        mockMvc.perform(put("/orders/{orderNumber}", orderNumber)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .flashAttr("updateOrderRequest", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/payments/form?orderId=" + orderNumber + "&amount=10000"));
+
+        verify(orderService).updateOrder(eq(orderNumber), any(UpdateOrderRequest.class));
+    }
+
+    @Test
+    @DisplayName("주문 목록 조회에 성공하면 200을 응답한다")
+    void orderList_Success() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        OrderSummaryResponse summary = new OrderSummaryResponse(LocalDate.now(), "202507-abcdef-123456", "받는 사람", 30000L, "PENDING");
+        Page<OrderSummaryResponse> orderPage = new PageImpl<>(List.of(summary), pageable, 1);
+
+        given(orderService.getAllOrders(any(Pageable.class))).willReturn(orderPage);
+
+        // When & Then
+        mockMvc.perform(get("/orders/list")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/list"))
+                .andExpect(model().attribute("orders", orderPage));
+
+        verify(orderService).getAllOrders(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회에 성공하면 200을 응답한다")
+    void getOrderDetail_Success() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        OrderDetailResponse orderDetail = OrderDetailResponse.builder()
+                .orderNumber(orderNumber)
+                .totalAmount(30_000L)
+                .build();
+
+        given(orderService.getOrder(orderNumber)).willReturn(orderDetail);
+
+        // When & Then
+        mockMvc.perform(get("/orders/list/{orderNumber}", orderNumber))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/detail"))
+                .andExpect(model().attribute("order", orderDetail));
+
+        verify(orderService).getOrder(orderNumber);
+    }
+
+    @Test
+    @DisplayName("비회원 주문 조회에 성공하면 200을 응답한다")
+    void nonMemberOrderDetail_Success() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        OrderDetailResponse orderDetail = OrderDetailResponse.builder()
+                .orderNumber(orderNumber)
+                .totalAmount(30_000L)
+                .build();
+
+        given(orderService.getOrder(orderNumber)).willReturn(orderDetail);
+
+        // When & Then
+        mockMvc.perform(get("/orders/non-member-detail")
+                        .flashAttr("nonMemberOrderNumber", orderNumber))
+                .andExpect(status().isOk())
+                .andExpect(view().name("order/non-member-order-detail"))
+                .andExpect(model().attribute("order", orderDetail));
+
+        verify(orderService).getOrder(orderNumber);
+    }
+
+    @Test
+    @DisplayName("비회원 주문 조회에 실패하면 로그인 화면으로 리다이렉트를 응답한다(이유: orderNumber 전달 안됨)")
+    void nonMemberOrderDetail_NoOrderNumber_RedirectToLogin() throws Exception {
+        // When & Then
+        mockMvc.perform(get("/orders/non-member-detail"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다."));
+    }
+
+    @Test
+    @DisplayName("비회원 주문 조회에 실패하면 로그인 화면으로 리다이렉트를 응답한다(이유: 주문이 존재하지 않음)")
+    void nonMemberOrderDetail_Exception_RedirectToLogin() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        given(orderService.getOrder(orderNumber)).willThrow(new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+
+        // When & Then
+        mockMvc.perform(get("/orders/non-member-detail")
+                        .flashAttr("nonMemberOrderNumber", orderNumber))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다."));
+
+        verify(orderService).getOrder(orderNumber);
+    }
+}

@@ -2,6 +2,8 @@ package com.nhnacademy.frontend.order.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class UpdateOrderRequest {
 
     @NotEmpty(message = "구매할 상품을 추가해주세요(현재: 구매할 상품 없음)")
@@ -34,6 +37,7 @@ public class UpdateOrderRequest {
 
     @Setter
     @Getter
+    @AllArgsConstructor
     public static class WrappingRequest {
 
         @NotNull @Positive

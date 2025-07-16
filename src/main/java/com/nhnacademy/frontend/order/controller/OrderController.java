@@ -55,7 +55,7 @@ public class OrderController {
                     model.addAttribute("user", userResponse.getBody());
                 }
             } catch (Exception e) {
-                log.warn("Failed to get user info: {}", e.getMessage());
+                log.warn("회원 정보를 불러오는데 실패했습니다: {}", e.getMessage());
             }
             return "order/order";
         } else {
