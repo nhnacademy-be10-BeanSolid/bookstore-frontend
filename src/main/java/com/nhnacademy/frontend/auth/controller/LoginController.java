@@ -39,12 +39,15 @@ public class LoginController {
     private String redirectUri;
 
     @GetMapping()
-    public String showLoginForm() {
+    public String showLoginForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null
             && auth.isAuthenticated()
             && !(auth instanceof AnonymousAuthenticationToken)) {
             return "redirect:/";
+        }
+        if (model.containsAttribute("signupSuccess")) {
+            model.addAttribute("signupSuccess", true);
         }
         return "auth/login";
     }

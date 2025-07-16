@@ -2,25 +2,19 @@ package com.nhnacademy.frontend.auth.controller;
 
 
 import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.UserIdCheckRequestDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.service.SignupService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.auth.dto.request.UserIdCheckRequestDto;
-import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
 
@@ -47,6 +41,9 @@ public class SignupController {
         if (!model.containsAttribute("userIdCheckRequestDto")) {
             model.addAttribute("userIdCheckRequestDto", new UserIdCheckRequestDto());
         }
+        if (!model.containsAttribute("userCreateRequestDto")) {
+            model.addAttribute("userCreateRequestDto", new UserCreateRequestDto(null, null, null, null, null, null, null));
+        }
         return "auth/normal-signup";
     }
 
@@ -69,24 +66,26 @@ public class SignupController {
     @PostMapping("/normal-signup/register")
     public String registerUser(@ModelAttribute UserCreateRequestDto request,
                                BindingResult bindingResult,
+                               Model model,
                                RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            throw new ValidationFailedException(bindingResult);
+            model.addAttribute("userCreateRequestDto", request);
+            return "auth/normal-signup";
         }
 
         Boolean isAvailable = request.isAvailable();
         if (isAvailable == null || !isAvailable) {
-            redirectAttributes.addFlashAttribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요.");
-            redirectAttributes.addFlashAttribute("userId", request.userId());
-            return "redirect:/auth/signup/normal-signup";
+            model.addAttribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요.");
+            model.addAttribute("userCreateRequestDto", request);
+            return "auth/normal-signup";
         }
 
         boolean exists = signupService.isExistUser(request.userId());
         if (exists) {
-            redirectAttributes.addFlashAttribute("duplicateMessage", "이미 사용 중인 아이디입니다.");
-            redirectAttributes.addFlashAttribute("userId", request.userId());
-            return "redirect:/auth/signup/normal-signup";
+            model.addAttribute("duplicateMessage", "이미 사용 중인 아이디입니다.");
+            model.addAttribute("userCreateRequestDto", request);
+            return "auth/normal-signup";
         }
 
         signupService.register(request);

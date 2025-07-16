@@ -28,7 +28,7 @@
     </div>
 
     <!-- 회원가입 form -->
-    <form class="w-100" action="/auth/signup/normal-signup/register" method="post">
+    <form class="w-100" action="/auth/signup/normal-signup/register" method="post" th:object="${userCreateRequestDto}">
         <!-- 아이디 입력 + 중복확인 -->
         <div class="mb-2 w-100">
             <label class="form-label mb-1">
@@ -38,11 +38,12 @@
                 <input type="text" id="userId" name="userId"
                        class="form-control bg-secondary text-white border-0 me-2"
                        placeholder="아이디를 입력해 주세요."
-                       th:value="${userId}"
+                       th:value="*{userId}"
                        required>
                 <button type="button" id="check-duplicate-btn" class="btn btn-outline-secondary px-3" style="min-width: 90px;">중복확인</button>
             </div>
-            <div id="duplicate-message" class="form-text mt-1"></div>
+            <div id="duplicate-message" class="form-text mt-1" th:text="${duplicateMessage}" th:classappend="${duplicateMessage != null ? 'text-danger' : ''}"></div>
+            <div th:errors="*{userId}" class="text-danger"></div>
         </div>
 
         <!-- 중복체크 결과 hidden input -->
@@ -54,6 +55,7 @@
             </label>
             <input type="password" name="userPassword" class="form-control bg-secondary text-white border-0"
                    placeholder="비밀번호를 입력해 주세요." required>
+            <div th:errors="*{userPassword}" class="text-danger"></div>
         </div>
 
         <div class="mb-2">
@@ -61,7 +63,8 @@
                 이름 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
             <input type="text" name="userName" class="form-control bg-secondary text-white border-0"
-                   placeholder="이름을 입력해 주세요." required>
+                   placeholder="이름을 입력해 주세요." th:value="*{userName}" required>
+            <div th:errors="*{userName}" class="text-danger"></div>
         </div>
 
         <div class="mb-2">
@@ -69,7 +72,8 @@
                 전화번호 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
             <input type="text" name="userPhoneNumber" class="form-control bg-secondary text-white border-0"
-                   placeholder="전화번호를 입력해 주세요." required>
+                   placeholder="전화번호를 입력해 주세요." th:value="*{userPhoneNumber}" required>
+            <div th:errors="*{userPhoneNumber}" class="text-danger"></div>
         </div>
 
         <div class="mb-2">
@@ -77,14 +81,16 @@
                 이메일 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
             <input type="email" name="userEmail" class="form-control bg-secondary text-white border-0"
-                   placeholder="이메일을 입력해 주세요." required>
+                   placeholder="이메일을 입력해 주세요." th:value="*{userEmail}" required>
+            <div th:errors="*{userEmail}" class="text-danger"></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label mb-1">
                 생일 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
-            <input type="date" name="userBirth" class="form-control bg-secondary text-white border-0" required>
+            <input type="date" name="userBirth" class="form-control bg-secondary text-white border-0" th:value="*{userBirth}" required>
+            <div th:errors="*{userBirth}" class="text-danger"></div>
         </div>
 
         <button type="submit" class="btn btn-secondary w-100 mb-4">회원가입</button>
