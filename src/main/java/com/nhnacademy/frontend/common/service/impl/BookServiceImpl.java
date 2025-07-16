@@ -1,7 +1,6 @@
 package com.nhnacademy.frontend.common.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import com.nhnacademy.frontend.common.service.BookService;
@@ -10,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -66,12 +68,35 @@ public class BookServiceImpl implements BookService {
         bookAdapter.deleteCategory(categoryId);
     }
 
-    // 여기서 시작
     @Override
     public Page<SimpleBookResponseDto> getAllBooks(Pageable pageable) {
-        log.info("BookList Get Start - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        return bookAdapter.getBooks(pageable.getPageNumber(), pageable.getPageSize());
+        log.info("BookList Get Start - page: {}, size: {}, sort: {}",
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort());
+
+        // 정렬 정보 추출
+        String sort = null;
+        if (pageable.getSort().isSorted()) {
+            sort = pageable.getSort().stream()
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
+                    .collect(Collectors.joining("&sort="));
+        }
+
+        return bookAdapter.getBooks(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
+
+    @Override
+    public Page<SimpleBookResponseDto> getAllBooks(Long categoryId, Pageable pageable) {
+        String sort = null;
+        if (pageable.getSort().isSorted()) {
+            sort = pageable.getSort().stream()
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
+                    .collect(Collectors.joining("&sort="));
+        }
+        return bookAdapter.getBooks(categoryId, pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
 
     @Override
     public BookDetailResponseDto getBookDetail(Long bookId) {
@@ -121,7 +146,6 @@ public class BookServiceImpl implements BookService {
         bookAdapter.deleteBookTagMap(bookId, tagId);
     }
 
-    // 시작
     @Override
     public void createBookCategoryMap(Long bookId, BookCategoryMapCreateRequestDto request) {
         log.info("BookCategoryMap Create Start - bookId {}", bookId);
@@ -150,5 +174,24 @@ public class BookServiceImpl implements BookService {
     public void deleteBookLike(Long bookId, String userId) {
         log.info("BookLike Delete Start - bookId: {}, userId: {}", bookId, userId);
         bookAdapter.deleteBookLike(bookId, userId);
+    }
+
+    @Override
+    public Page<SimpleBookResponseDto> elasticSearchBooks(String keyword, Pageable pageable) {
+        log.info("Book Search Start - keyword: {}", keyword);
+
+        String sort = null;
+        if (pageable.getSort().isSorted()) {
+            sort = pageable.getSort().stream()
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
+                    .collect(Collectors.joining("&sort="));
+        }
+
+        return bookAdapter.searchBooks(keyword, pageable.getPageNumber(), pageable.getPageSize(), sort);
+    }
+
+    @Override
+    public List<BookCategoryNodeResponseDto> getCategoryTree(){
+        return bookAdapter.getCategoryTree();
     }
 }

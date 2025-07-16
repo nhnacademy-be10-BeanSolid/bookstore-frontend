@@ -11,7 +11,7 @@
 <body class="bg-white">
 <div class="container d-flex flex-column align-items-center" style="max-width: 400px; min-height: 100vh; margin-top: 30px;">
     <!-- 로고 박스 -->
-    <a href="/" class="border d-flex justify-content-center align-items-center" style="width:140px; height:120px;">
+    <a href="/" class="d-flex justify-content-center align-items-center" style="width:140px; height:120px;">
         <img src="/images/BeanSolid-Logo.png" alt="로고" style="max-width:120px; max-height:100px;">
     </a>
     <!-- 로그인 타이틀 -->
@@ -26,6 +26,10 @@
         <input type="password" class="form-control mb-2 bg-secondary text-white border-0" placeholder="비밀번호를 입력해 주세요." id="password" name="password" required>
         <button type="submit" class="btn btn-secondary w-100 mb-2">로그인</button>
     </form>
+    <!-- 비회원 로그인 에러 메시지 -->
+    <div th:if="${nonMemberLoginError}" class="alert alert-danger" role="alert">
+        <p th:text="${nonMemberLoginError}"></p>
+    </div>
     <!-- 아이디/비밀번호 찾기 -->
     <div class="w-100 mb-4 text-end" style="font-size: 0.95rem;">
         <a href="#" class="text-decoration-none text-dark">아이디 찾기</a> |
@@ -47,7 +51,13 @@
 
     <!-- 회원가입, 비회원 주문조회 버튼 -->
     <a href="/auth/signup/select-signup" class="btn btn-secondary w-100 mb-2">회원가입</a>
-    <button class="btn btn-secondary w-100 mb-4">비회원 주문조회</button>
+    <button id="nonMemberOrderLookupBtn" class="btn btn-secondary w-100 mb-4">비회원 주문조회</button>
+
+    <form id="nonMemberLookupForm" style="display: none;" class="w-100 mb-4" method="post" th:action="@{/auth/login/non-member}" enctype="application/x-www-form-urlencoded">
+        <input type="text" class="form-control mb-2 bg-secondary text-white border-0" placeholder="주문번호를 입력해 주세요." id="nonMemberOrderNumber" name="orderNumber" required>
+        <input type="password" class="form-control mb-2 bg-secondary text-white border-0" placeholder="비밀번호를 입력해 주세요." id="nonMemberPassword" name="password" required>
+        <button id="lookupOrderBtn" class="btn btn-primary w-100 mb-2" type="submit">조회</button>
+    </form>
 </div>
 <!-- 회원가입 성공 시 alert 창 -->
 <div th:if="${signupSuccess}">
@@ -55,5 +65,22 @@
         alert('회원가입이 완료되었습니다!');
     </script>
 </div>
+<script>
+    document.getElementById('nonMemberOrderLookupBtn').addEventListener('click', function() {
+        var form = document.getElementById('nonMemberLookupForm');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    });
+
+    // 로그인 실패 시 alert 창 (URL 쿼리 파라미터에서 읽어옴)
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorCode = urlParams.get('error');
+    if (errorCode === 'login_failed') {
+        alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+    }
+</script>
 </body>
 </html>

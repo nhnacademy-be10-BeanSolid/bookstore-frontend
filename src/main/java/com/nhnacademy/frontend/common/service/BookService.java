@@ -1,10 +1,11 @@
 package com.nhnacademy.frontend.common.service;
 
-import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface BookService {
     BookTagResponseDto createTag(BookTagCreateRequestDto request);
@@ -24,6 +25,8 @@ public interface BookService {
     void deleteCategory(Long id);
 
     Page<SimpleBookResponseDto> getAllBooks(Pageable pageable);
+
+    Page<SimpleBookResponseDto> getAllBooks(Long categoryId, Pageable pageable);
 
     BookDetailResponseDto getBookDetail(Long bookId);
 
@@ -50,4 +53,8 @@ public interface BookService {
     void createBookLike(Long bookId, String tagId);
 
     void deleteBookLike(Long bookId, String userId);
+
+    Page<SimpleBookResponseDto> elasticSearchBooks(String keyword, Pageable pageable);
+
+    List<BookCategoryNodeResponseDto> getCategoryTree();
 }

@@ -56,13 +56,13 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="receiverName" class="form-label">받는 분</label>
-                                <input type="text" class="form-control" id="receiverName" name="receiverName" placeholder="이름을 입력하세요" required>
+                                <input type="text" class="form-control" id="receiverName" name="receiverName" placeholder="이름을 입력하세요" th:value="${user != null ? user.userName : ''}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="receiverPhoneNumber" class="form-label">휴대폰번호</label>
-                                <input type="text" class="form-control" id="receiverPhoneNumber" name="receiverPhoneNumber" placeholder="연락처를 입력하세요" required>
+                                <input type="text" class="form-control" id="receiverPhoneNumber" name="receiverPhoneNumber" placeholder="'-'를 포함하여 연락처를 입력하세요(예시: 010-1234-5678)" th:value="${user != null ? user.userPhoneNumber : ''}" required>
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                                 <label for="deliveryAddress" class="form-label">배송지</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="deliveryAddress" name="address" placeholder="배송지를 선택하세요" readonly required>
-                                    <button class="btn btn-outline-secondary" type="button" onclick="searchAddress()">변경</button>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="openAddressPopup()">주소록 보기</button>
                                 </div>
                             </div>
                         </div>
@@ -97,12 +97,8 @@
 <div layout:fragment="scripts">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
-        function searchAddress() {
-            new daum.Postcode({
-                oncomplete: function(data) {
-                    document.getElementById('deliveryAddress').value = `[${data.zonecode}] ${data.address}`;
-                }
-            }).open();
+        function openAddressPopup() {
+            window.open('/mypage/address', 'addressPopup', 'width=800,height=600,scrollbars=yes,resizable=yes');
         }
 
         function updateWrappingId(index, wrappingId) {

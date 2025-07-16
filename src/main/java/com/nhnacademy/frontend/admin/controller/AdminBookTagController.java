@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/tags")
-public class BookTagController {
+public class AdminBookTagController {
 
     private final BookService bookService;
 
