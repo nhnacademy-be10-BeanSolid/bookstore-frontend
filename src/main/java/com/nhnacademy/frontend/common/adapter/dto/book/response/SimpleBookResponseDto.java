@@ -7,6 +7,8 @@ public record SimpleBookResponseDto(
         Integer salePrice,
         Integer stock,
         String image,
-        Long viewCount
+        Long viewCount,
+        Long reviewCount,
+        Double rating
 ) {
 }
