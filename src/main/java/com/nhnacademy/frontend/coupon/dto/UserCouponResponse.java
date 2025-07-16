@@ -21,13 +21,13 @@ public class UserCouponResponse {
     private String couponName;
     private int couponDiscountAmount; // 추가
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime issuedAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime expiredAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime usedAt;
 
     private UserCouponStatus status;
