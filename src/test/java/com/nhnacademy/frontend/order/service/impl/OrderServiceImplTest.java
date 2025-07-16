@@ -1,11 +1,14 @@
 package com.nhnacademy.frontend.order.service.impl;
 
-import com.nhnacademy.frontend.common.adapter.OrderAdapter;
-import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.common.adapter.GuestAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.GuestCreateRequest;
+import com.nhnacademy.frontend.order.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
+import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
-import feign.FeignException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,259 +21,288 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("OrderServiceImpl 단위 테스트")
 class OrderServiceImplTest {
 
     @Mock
     private OrderAdapter orderAdapter;
 
+    @Mock
+    private GuestAdapter guestAdapter;
+
     @InjectMocks
     private OrderServiceImpl orderService;
 
-    private OrderRequest orderRequest;
-    private OrderResponse expectedResponse;
-
-    @BeforeEach
-    void setUp() {
-        orderRequest = createOrderRequest();
-        expectedResponse = createOrderResponse();
-    }
-
     @Test
-    @DisplayName("주문 생성 - 성공")
+    @DisplayName("주문 생성에 성공한다")
     void createOrder_Success() {
-        // given
-        when(orderAdapter.createOrder(orderRequest)).thenReturn(expectedResponse);
+        // Given
+        CreateOrderRequest request = new CreateOrderRequest();
+        request.setCreateItemRequests(List.of(new CreateOrderRequest.CreateOrderItemRequest(1L, 1)));
 
-        // when
-        OrderResponse result = orderService.createOrder(orderRequest);
+        String orderNumber = "202507-abcdef-123456";
+        CreateOrderResponse expectedResponse = new CreateOrderResponse(orderNumber, List.of(new CreateOrderResponse.CreateOrderItemResponse(1L, "책제목", 100, 1, true)));
 
-        // then
-        assertNotNull(result);
-        assertEquals(expectedResponse.id(), result.id());
-        assertEquals(expectedResponse.orderId(), result.orderId());
-        assertEquals(expectedResponse.status(), result.status());
-        assertEquals(expectedResponse.receiverName(), result.receiverName());
-        assertEquals(expectedResponse.totalAmount(), result.totalAmount());
-        
-        verify(orderAdapter).createOrder(orderRequest);
+        given(orderAdapter.createOrder(request)).willReturn(expectedResponse);
+
+        // When
+        CreateOrderResponse result = orderService.createOrder(request);
+
+        // Then
+        assertThat(result).isEqualTo(expectedResponse);
+        verify(orderAdapter, times(1)).createOrder(request);
     }
 
     @Test
-    @DisplayName("주문 생성 - OrderAdapter 호출 실패")
-    void createOrder_AdapterCallFailed() {
-        // given
-        when(orderAdapter.createOrder(orderRequest))
-                .thenThrow(new RuntimeException("Network error"));
+    @DisplayName("미완료된 주문 조회에 성공한다")
+    void getUnfinishedOrder_Success() {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        CreateOrderResponse expectedResponse = new CreateOrderResponse(orderNumber, List.of(new CreateOrderResponse.CreateOrderItemResponse(1L, "책제목", 100, 1, true)));
 
-        // when & then
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-            orderService.createOrder(orderRequest)
-        );
-        
-        assertEquals("Network error", exception.getMessage());
-        verify(orderAdapter).createOrder(orderRequest);
+        given(orderAdapter.getUnfinishedOrder(orderNumber)).willReturn(expectedResponse);
+
+        // When
+        CreateOrderResponse result = orderService.getUnfinishedOrder(orderNumber);
+
+        // Then
+        assertThat(result).isEqualTo(expectedResponse);
+        assertThat(result.getOrderNumber()).isEqualTo(orderNumber);
+        assertThat(result.getOrderItems()).hasSize(1);
+        verify(orderAdapter).getUnfinishedOrder(orderNumber);
     }
 
     @Test
-    @DisplayName("주문 생성 - FeignException 발생")
-    void createOrder_FeignExceptionThrown() {
-        // given
-        FeignException feignException = mock(FeignException.class);
-        when(feignException.getMessage()).thenReturn("Backend service error");
-        when(orderAdapter.createOrder(orderRequest)).thenThrow(feignException);
+    @DisplayName("주문서 작성 페이지 완료 후 주문 업데이트에 성공한다")
+    void updateOrder_MemberOrder_Success() {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        UpdateOrderRequest request = UpdateOrderRequest.builder()
+                .receiverName("테스트사용자")
+                .receiverPhoneNumber("010-1234-5678")
+                .address("서울시 강남구")
+                .wrappingRequests(List.of(new UpdateOrderRequest.WrappingRequest(1L, 1L)))
+                .build();
 
-        // when & then
-        FeignException exception = assertThrows(FeignException.class, () -> 
-            orderService.createOrder(orderRequest)
-        );
-        
-        assertEquals("Backend service error", exception.getMessage());
-        verify(orderAdapter).createOrder(orderRequest);
-    }
-
-    @Test
-    @DisplayName("주문 생성 - 메서드 호출 횟수 검증")
-    void createOrder_MethodCallCount() {
-        // given
-        when(orderAdapter.createOrder(orderRequest)).thenReturn(expectedResponse);
-
-        // when
-        orderService.createOrder(orderRequest);
-        orderService.createOrder(orderRequest);
-
-        // then
-        verify(orderAdapter, times(2)).createOrder(orderRequest);
-    }
-
-    @Test
-    @DisplayName("주문 생성 - 정확한 파라미터 전달 검증")
-    void createOrder_ParameterValidation() {
-        // given
-        OrderRequest specificRequest = createOrderRequest();
-        specificRequest.setReceiverName("테스트 사용자");
-        
-        when(orderAdapter.createOrder(any(OrderRequest.class))).thenReturn(expectedResponse);
-
-        // when
-        orderService.createOrder(specificRequest);
-
-        // then
-        verify(orderAdapter).createOrder(argThat(request -> 
-            "테스트 사용자".equals(request.getReceiverName()) &&
-            request.getOrderItems().size() == 1 &&
-            request.getZipCode().equals("12345")
-        ));
-    }
-
-    @Test
-    @DisplayName("주문 전체 조회 - 성공")
-    void getAllOrders_Success() {
-        // given
-        Page<OrderSummaryResponse> expectedPage = createOrderSummaryPage();
-        when(orderAdapter.getAllOrdersByUserId()).thenReturn(expectedPage);
-
-        // when
-        Page<OrderSummaryResponse> result = orderService.getAllOrders();
-
-        // then
-        assertNotNull(result);
-        assertEquals(expectedPage.getTotalElements(), result.getTotalElements());
-        assertEquals(expectedPage.getContent().size(), result.getContent().size());
-        assertEquals(expectedPage.getContent().get(0).orderId(), result.getContent().get(0).orderId());
-        assertEquals(expectedPage.getContent().get(0).receiverName(), result.getContent().get(0).receiverName());
-        
-        verify(orderAdapter).getAllOrdersByUserId();
-    }
-
-    @Test
-    @DisplayName("주문 전체 조회 - OrderAdapter 호출 실패")
-    void getAllOrders_AdapterCallFailed() {
-        // given
-        when(orderAdapter.getAllOrdersByUserId()).thenThrow(new RuntimeException("Network error"));
-
-        // when & then
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-            orderService.getAllOrders()
-        );
-        
-        assertEquals("Network error", exception.getMessage());
-        verify(orderAdapter).getAllOrdersByUserId();
-    }
-
-    @Test
-    @DisplayName("주문 상세 조회 - 성공")
-    void getOrder_Success() {
-        // given
-        String orderId = "190001-abcabc-123123";
-        OrderResponse expectedOrder = createOrderResponse();
-        when(orderAdapter.getOrder(orderId)).thenReturn(expectedOrder);
-
-        // when
-        OrderResponse result = orderService.getOrder(orderId);
-
-        // then
-        assertNotNull(result);
-        assertEquals(expectedOrder.id(), result.id());
-        assertEquals(expectedOrder.orderId(), result.orderId());
-        assertEquals(expectedOrder.status(), result.status());
-        assertEquals(expectedOrder.receiverName(), result.receiverName());
-        assertEquals(expectedOrder.totalAmount(), result.totalAmount());
-        
-        verify(orderAdapter).getOrder(orderId);
-    }
-
-    @Test
-    @DisplayName("주문 상세 조회 - OrderAdapter 호출 실패")
-    void getOrder_AdapterCallFailed() {
-        // given
-        String orderId = "190001-abcabc-123123";
-        when(orderAdapter.getOrder(orderId)).thenThrow(new RuntimeException("Order not found"));
-
-        // when & then
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-            orderService.getOrder(orderId)
-        );
-        
-        assertEquals("Order not found", exception.getMessage());
-        verify(orderAdapter).getOrder(orderId);
-    }
-
-    @Test
-    @DisplayName("주문 상세 조회 - 올바른 파라미터 전달 검증")
-    void getOrder_ParameterValidation() {
-        // given
-        String orderId = "test-order-id-123";
-        OrderResponse expectedOrder = createOrderResponse();
-        when(orderAdapter.getOrder(orderId)).thenReturn(expectedOrder);
-
-        // when
-        orderService.getOrder(orderId);
-
-        // then
-        verify(orderAdapter).getOrder(orderId);
-    }
-
-    private OrderRequest createOrderRequest() {
-        OrderRequest orderRequest = new OrderRequest();
-        orderRequest.setReceiverName("홍길동");
-        orderRequest.setReceiverPhoneNumber("01012345678");
-        orderRequest.setZipCode("12345");
-        orderRequest.setBaseAddress("서울시 강남구");
-        orderRequest.setDetailAddress("101동 101호");
-        orderRequest.setRequestedDeliveryDate(LocalDate.now().plusDays(3));
-        
-        OrderRequest.OrderItem orderItem = new OrderRequest.OrderItem();
-        orderItem.setBookId(1L);
-        orderItem.setQuantity(2);
-        orderItem.setPrice(10000L);
-        orderItem.setWrappingId(1L);
-        
-        orderRequest.setOrderItems(Collections.singletonList(orderItem));
-        return orderRequest;
-    }
-
-    private OrderResponse createOrderResponse() {
-        return new OrderResponse(
+        OrderResponse response = new OrderResponse(
                 1L,
-                "190001-abcabc-123123",
+                orderNumber,
+                1L,
                 "PENDING",
-                LocalDate.of(3000, 1, 1),
-                "홍길동",
-                "01012345678",
-                "서울시 강남구 101동 101호",
-                LocalDate.of(3000, 1, 1).plusDays(3),
-                3000,
-                23000L
-        );
+                LocalDate.now(),
+                10000L,
+                "테스트사용자",
+                "010-1234-5678",
+                "서울시 강남구",
+                LocalDate.now(),
+                100);
+
+        given(orderAdapter.updateOrder(orderNumber, request)).willReturn(response);
+
+        // When
+        OrderResponse result = orderService.updateOrder(orderNumber, request);
+
+        // Then
+        assertThat(result).isEqualTo(response);
+        assertThat(result.orderNumber()).isEqualTo(orderNumber);
+        assertThat(result.totalPrice()).isEqualTo(10000L);
+        verify(orderAdapter).updateOrder(orderNumber, request);
+        verifyNoInteractions(guestAdapter);
     }
 
-    private Page<OrderSummaryResponse> createOrderSummaryPage() {
-        List<OrderSummaryResponse> orderSummaries = List.of(
-                new OrderSummaryResponse(
-                        LocalDate.of(3000, 1, 1),
-                        "190001-abcabc-123123",
-                        "홍길동",
-                        23000L
-                ),
-                new OrderSummaryResponse(
-                        LocalDate.of(3000, 1, 2),
-                        "190002-defdef-456456",
-                        "김철수",
-                        15000L
-                )
-        );
-        
+    @Test
+    @DisplayName("비회원 주문 수정에 성공한다 - 비회원 등록까지 완료")
+    void updateOrder_GuestOrder_Success() {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        String guestPassword = "guest123";
+        UpdateOrderRequest request = UpdateOrderRequest.builder()
+                .receiverName("테스트사용자")
+                .receiverPhoneNumber("010-1234-5678")
+                .address("서울시 강남구")
+                .wrappingRequests(List.of(new UpdateOrderRequest.WrappingRequest(1L, 1L)))
+                .nonMemberPassword(guestPassword)
+                .build();
+
+        OrderResponse response = new OrderResponse(
+                1L,
+                orderNumber,
+                1L,
+                "PENDING",
+                LocalDate.now(),
+                10000L,
+                "테스트사용자",
+                "010-1234-5678",
+                "서울시 강남구",
+                LocalDate.now(),
+                100);
+
+        GuestCreateRequest expectedGuestRequest = new GuestCreateRequest(guestPassword, response.orderId());
+
+        given(orderAdapter.updateOrder(anyString(), any(UpdateOrderRequest.class))).willReturn(response);
+        willDoNothing().given(guestAdapter).registerGuest(expectedGuestRequest);
+
+        // When
+        OrderResponse result = orderService.updateOrder(orderNumber, request);
+
+        // Then
+        assertThat(result).isEqualTo(response);
+        assertThat(result.orderNumber()).isEqualTo(orderNumber);
+        assertThat(result.totalPrice()).isEqualTo(10000L);
+        verify(orderAdapter).updateOrder(orderNumber, request);
+        verify(guestAdapter).registerGuest(any(GuestCreateRequest.class));
+    }
+
+    @Test
+    @DisplayName("모든 주문 조회에 성공한다")
+    void getAllOrders_Success() {
+        // Given
+        String orderNumber1 = "202507-abcdef-123456";
+        String orderNumber2 = "202508-abcdef-123456";
         Pageable pageable = PageRequest.of(0, 10);
-        return new PageImpl<>(orderSummaries, pageable, orderSummaries.size());
+        OrderSummaryResponse summary1 = new OrderSummaryResponse(LocalDate.now(), orderNumber1, "받는사람", 10_000L, "PENDING");
+        OrderSummaryResponse summary2 = new OrderSummaryResponse(LocalDate.now(), orderNumber2, "받는사람", 20_000L, "PENDING");
+
+        Page<OrderSummaryResponse> expectedPage = new PageImpl<>(
+                List.of(summary1, summary2), pageable, 2);
+
+        given(orderAdapter.getAllOrdersByUserId(pageable)).willReturn(expectedPage);
+
+        // When
+        Page<OrderSummaryResponse> result = orderService.getAllOrders(pageable);
+
+        // Then
+        assertThat(result).isEqualTo(expectedPage);
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getContent().get(0).orderNumber()).isEqualTo(orderNumber1);
+        assertThat(result.getContent().get(1).orderNumber()).isEqualTo(orderNumber2);
+        verify(orderAdapter).getAllOrdersByUserId(pageable);
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회 성공")
+    void getOrder_Success() {
+        // Given
+        String orderNumber = "ORDER123";
+        OrderDetailResponse expectedResponse = OrderDetailResponse.builder()
+                .orderNumber(orderNumber)
+                .totalAmount(10_000L)
+                .receiverName("테스트사용자")
+                .receiverPhoneNumber("010-1234-5678")
+                .address("서울시 강남구")
+                .build();
+
+        given(orderAdapter.getOrder(orderNumber)).willReturn(expectedResponse);
+
+        // When
+        OrderDetailResponse result = orderService.getOrder(orderNumber);
+
+        // Then
+        assertThat(result).isEqualTo(expectedResponse);
+        assertThat(result.getOrderNumber()).isEqualTo(orderNumber);
+        assertThat(result.getTotalAmount()).isEqualTo(10_000L);
+        assertThat(result.getReceiverName()).isEqualTo("테스트사용자");
+        assertThat(result.getReceiverPhoneNumber()).isEqualTo("010-1234-5678");
+        assertThat(result.getAddress()).isEqualTo("서울시 강남구");
+        verify(orderAdapter).getOrder(orderNumber);
+    }
+
+    @Test
+    @DisplayName("빈 주문 목록 조회")
+    void getAllOrders_EmptyResult() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<OrderSummaryResponse> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+
+        given(orderAdapter.getAllOrdersByUserId(pageable)).willReturn(emptyPage);
+
+        // When
+        Page<OrderSummaryResponse> result = orderService.getAllOrders(pageable);
+
+        // Then
+        assertThat(result).isEqualTo(emptyPage);
+        assertThat(result.getContent()).isEmpty();
+        assertThat(result.getTotalElements()).isZero();
+        verify(orderAdapter).getAllOrdersByUserId(pageable);
+    }
+
+    @Test
+    @DisplayName("주문 수정 - 비회원 비밀번호가 null인 경우")
+    void updateOrder_NonMemberPasswordNull_NoGuestRegistration() {
+        // Given
+        String orderNumber = "ORDER123";
+        UpdateOrderRequest request = UpdateOrderRequest.builder()
+                .receiverName("테스트사용자")
+                .receiverPhoneNumber("010-1234-5678")
+                .address("서울시 강남구")
+                .nonMemberPassword(null)
+                .build();
+        OrderResponse response = new OrderResponse(
+                1L,
+                orderNumber,
+                1L,
+                "PENDING",
+                LocalDate.now(),
+                10000L,
+                "테스트사용자",
+                "010-1234-5678",
+                "서울시 강남구",
+                LocalDate.now(),
+                100);
+
+        given(orderAdapter.updateOrder(orderNumber, request)).willReturn(response);
+
+        // When
+        OrderResponse result = orderService.updateOrder(orderNumber, request);
+
+        // Then
+        assertThat(result).isEqualTo(response);
+        verify(orderAdapter).updateOrder(orderNumber, request);
+        verifyNoInteractions(guestAdapter);
+    }
+
+    @Test
+    @DisplayName("주문 수정 - 비회원 비밀번호가 빈 문자열인 경우")
+    void updateOrder_NonMemberPasswordEmpty_NoGuestRegistration() {
+        // Given
+        String orderNumber = "ORDER123";
+        UpdateOrderRequest request = UpdateOrderRequest.builder()
+                .receiverName("테스트사용자")
+                .receiverPhoneNumber("010-1234-5678")
+                .address("서울시 강남구")
+                .nonMemberPassword("")
+                .build();
+
+        OrderResponse response = new OrderResponse(
+                1L,
+                orderNumber,
+                1L,
+                "PENDING",
+                LocalDate.now(),
+                10000L,
+                "테스트사용자",
+                "010-1234-5678",
+                "서울시 강남구",
+                LocalDate.now(),
+                100);
+
+        given(orderAdapter.updateOrder(orderNumber, request)).willReturn(response);
+
+        // When
+        OrderResponse result = orderService.updateOrder(orderNumber, request);
+
+        // Then
+        assertThat(result).isEqualTo(response);
+        verify(orderAdapter).updateOrder(orderNumber, request);
+        verifyNoInteractions(guestAdapter);
     }
 }

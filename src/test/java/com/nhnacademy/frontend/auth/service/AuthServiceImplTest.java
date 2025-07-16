@@ -1,11 +1,12 @@
 package com.nhnacademy.frontend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.common.adapter.AuthAdapter;
-import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2LoginRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.*;
 import com.nhnacademy.frontend.auth.service.impl.AuthServiceImpl;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ class AuthServiceImplTest {
     @Test
     void parse_success_returnsTokenParseResponseDto() {
         String token = "token";
-        TokenParseResponseDto responseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"));
+        TokenParseResponseDto responseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"), "LOCAL");
         when(authAdapter.parse(token)).thenReturn(responseDto);
 
         TokenParseResponseDto result = authService.parse(token);
@@ -150,5 +151,27 @@ class AuthServiceImplTest {
 
         verify(authAdapter, times(1)).additionalSignup(any(OAuth2AdditionalSignupRequestDto.class));
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    void nonMemberLogin_success_returnsTrue() {
+        NonMemberLoginRequest request = new NonMemberLoginRequest("order123", "password123");
+        when(authAdapter.nonMemberLogin(request)).thenReturn(true);
+
+        boolean result = authService.nonMemberLogin(request);
+
+        assertThat(result).isTrue();
+        verify(authAdapter, times(1)).nonMemberLogin(request);
+    }
+
+    @Test
+    void nonMemberLogin_feignException_returnsFalse() {
+        NonMemberLoginRequest request = new NonMemberLoginRequest("order123", "password123");
+        when(authAdapter.nonMemberLogin(request)).thenThrow(FeignException.class);
+
+        boolean result = authService.nonMemberLogin(request);
+
+        assertThat(result).isFalse();
+        verify(authAdapter, times(1)).nonMemberLogin(request);
     }
 }

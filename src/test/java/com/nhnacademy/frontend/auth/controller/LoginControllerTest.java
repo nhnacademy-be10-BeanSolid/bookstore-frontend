@@ -1,9 +1,10 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.auth.domain.response.AdditionalSignupRequiredDto;
-import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
-import com.nhnacademy.frontend.auth.domain.response.ResponseDto;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
+import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
+import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
@@ -24,7 +25,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -155,5 +158,31 @@ class LoginControllerTest {
                 .params(params))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/auth/login"));
+    }
+
+    @Test
+    @DisplayName("비회원 로그인 - 성공")
+    void nonMemberLogin_success() throws Exception {
+        NonMemberLoginRequest request = new NonMemberLoginRequest("order123", "password123");
+        when(authService.nonMemberLogin(request)).thenReturn(true);
+
+        mockMvc.perform(post("/auth/login/non-member")
+                        .flashAttr("nonMemberLoginRequest", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/orders/non-member-detail"))
+                .andExpect(flash().attribute("nonMemberOrderNumber", "order123"));
+    }
+
+    @Test
+    @DisplayName("비회원 로그인 - 실패")
+    void nonMemberLogin_failure() throws Exception {
+        NonMemberLoginRequest request = new NonMemberLoginRequest("order123", "wrongpassword");
+        when(authService.nonMemberLogin(request)).thenReturn(false);
+
+        mockMvc.perform(post("/auth/login/non-member")
+                        .flashAttr("nonMemberLoginRequest", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다."));
     }
 }

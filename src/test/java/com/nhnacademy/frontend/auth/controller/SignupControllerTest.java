@@ -1,12 +1,12 @@
 package com.nhnacademy.frontend.auth.controller;
 
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.OAuth2LoginResponseDto;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.user.service.UserService;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.auth.service.SignupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -47,7 +47,7 @@ class SignupControllerTest {
     private AuthService authService;
 
     @MockBean
-    private UserService userService;
+    private SignupService signupService;
 
     @MockBean
     private JwtCookieUtil jwtCookieUtil;
@@ -106,27 +106,25 @@ class SignupControllerTest {
     @DisplayName("아이디 중복확인 - 이미 존재하는 아이디")
     @Test
     void checkUserId_duplicate() throws Exception {
-        given(userService.isExistUser("testuser")).willReturn(true);
+        given(signupService.isExistUser("testuser")).willReturn(true);
 
         mockMvc.perform(post("/auth/signup/check-user-id")
                         .param("userId", "testuser"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("userId", "testuser"))
-                .andExpect(flash().attribute("duplicateMessage", "이미 사용 중인 아이디입니다."))
-                .andExpect(redirectedUrl("/auth/signup/normal-signup"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("이미 사용 중인 아이디입니다."))
+                .andExpect(jsonPath("$.isAvailable").value(false));
     }
 
     @DisplayName("아이디 중복확인 - 사용 가능한 아이디")
     @Test
     void checkUserId_available() throws Exception {
-        given(userService.isExistUser("newuser")).willReturn(false);
+        given(signupService.isExistUser("newuser")).willReturn(false);
 
         mockMvc.perform(post("/auth/signup/check-user-id")
                         .param("userId", "newuser"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("userId", "newuser"))
-                .andExpect(flash().attribute("duplicateMessage", "사용 가능한 아이디입니다."))
-                .andExpect(redirectedUrl("/auth/signup/normal-signup"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("사용 가능한 아이디입니다."))
+                .andExpect(jsonPath("$.isAvailable").value(true));
     }
 
     @DisplayName("회원가입 처리 - 중복확인 안함")
@@ -137,16 +135,16 @@ class SignupControllerTest {
                         .param("userPassword", "pw1234")
                         .param("userName", "홍길동")
                         .param("isAvailable", "false"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요."))
-                .andExpect(flash().attribute("userId", "user1"))
-                .andExpect(redirectedUrl("/auth/signup/normal-signup"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/normal-signup"))
+                .andExpect(model().attribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요."))
+                .andExpect(model().attributeExists("userCreateRequestDto"));
     }
 
     @DisplayName("회원가입 처리 - 정상 플로우")
     @Test
     void registerUser_success() throws Exception {
-        doNothing().when(userService).register(ArgumentMatchers.any(UserCreateRequestDto.class));
+        doNothing().when(signupService).register(ArgumentMatchers.any(UserCreateRequestDto.class));
 
         mockMvc.perform(post("/auth/signup/normal-signup/register")
                         .param("userId", "user2")

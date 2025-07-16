@@ -1,38 +1,51 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>카테고리 상세</title>
+  <meta charset="UTF-8">
+  <title>카테고리 상세</title>
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-  <h1>카테고리 상세 정보</h1>
-
-  <table border="1" cellpadding="8" cellspacing="0">
-    <tr>
-      <th>카테고리 ID</th>
-      <td th:text="${category.categoryId}"></td>
-    </tr>
-    <tr>
-      <th>카테고리 이름</th>
-      <td th:text="${category.categoryName}"></td>
-    </tr>
-    <tr>
-      <th>부모 카테고리</th>
-      <td th:text="${category.parentCategoryName != null ? category.parentCategoryName : '-'}"></td>
-    </tr>
-    <tr>
-      <th>생성일</th>
-      <td th:text="${category.createdAt != null ? #temporals.format(category.createdAt, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
-    </tr>
-    <tr>
-      <th>수정일</th>
-      <td th:text="${category.updatedAt != null ? #temporals.format(category.updatedAt, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
-    </tr>
-  </table>
-
-  <p>
-    <a href="/admin/categories">목록으로 돌아가기</a>
-  </p>
-
+<body class="bg-light">
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="card-title text-center mb-4">카테고리 상세 정보</h1>
+          <table class="table table-bordered align-middle">
+            <tbody>
+            <tr>
+              <th class="table-light" style="width: 30%;">카테고리 ID</th>
+              <td th:text="${category.categoryId}"></td>
+            </tr>
+            <tr>
+              <th class="table-light">카테고리 이름</th>
+              <td th:text="${category.categoryName}"></td>
+            </tr>
+            <tr>
+              <th class="table-light">부모 카테고리</th>
+              <td th:text="${category.parentCategoryName != null ? category.parentCategoryName : '-'}"></td>
+            </tr>
+            <tr>
+              <th class="table-light">생성일</th>
+              <td th:text="${category.createdAt != null ? #temporals.format(category.createdAt, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+            </tr>
+            <tr>
+              <th class="table-light">수정일</th>
+              <td th:text="${category.updatedAt != null ? #temporals.format(category.updatedAt, 'yyyy-MM-dd HH:mm:ss') : '-'}"></td>
+            </tr>
+            </tbody>
+          </table>
+          <div class="text-center">
+            <a href="/admin/categories" class="btn btn-secondary">목록으로 돌아가기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

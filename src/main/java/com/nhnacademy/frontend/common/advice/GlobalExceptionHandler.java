@@ -51,10 +51,9 @@ public class GlobalExceptionHandler {
         ResponseStatus responseStatus = e.getClass().getAnnotation(ResponseStatus.class);
         HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-
         String message = e.getMessage();
 
-        log.error(message);
+        log.error("An error occurred: {}", message, e);
 
         int statusCode = extractStatusCode(message, status.value());
         String userFriendlyMessage = getFriendlyMessage(statusCode);

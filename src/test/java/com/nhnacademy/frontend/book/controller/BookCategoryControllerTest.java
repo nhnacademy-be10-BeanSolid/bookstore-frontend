@@ -1,11 +1,9 @@
 package com.nhnacademy.frontend.book.controller;
 
-import com.nhnacademy.frontend.admin.controller.BookCategoryController;
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.request.BookCategoryUpdateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookCategoryResponseDto;
-import com.nhnacademy.frontend.admin.service.BookService;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryNodeResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.common.service.BookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,12 +17,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -47,128 +46,32 @@ class BookCategoryControllerTest {
     private RedisConnectionFactory redisConnectionFactory;
 
     @Test
-    void showCreateForm() throws Exception {
-        mockMvc.perform(get("/admin/categories/new"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin/category/create-form"));
-    }
+    void bookCategory() throws Exception {
+        // 카테고리를 가지고 있는 도서
+        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1L, "제목", "작가", 3000, 20, null, 1L);
+        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2L, "제목", "작가", 3000, 20, null, 1L);
 
-    @Test
-    void showEditForm() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L, "테스트", null, null,
-                LocalDateTime.now(), null);
+        List<SimpleBookResponseDto> books = List.of(response1, response2);
+        Page<SimpleBookResponseDto> page = new PageImpl<>(books);
 
-        when(bookService.getCategory(1L)).thenReturn(response);
+        // 카테고리 트리 정보
+        BookCategoryNodeResponseDto child1 = new BookCategoryNodeResponseDto(2L, "추리소설", new ArrayList<>());
+        BookCategoryNodeResponseDto child2 = new BookCategoryNodeResponseDto(3L, "공포소설", new ArrayList<>());
+        BookCategoryNodeResponseDto root = new BookCategoryNodeResponseDto(1L, "소설", List.of(child1, child2));
 
-        mockMvc.perform(get("/admin/categories/1/edit"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin/category/update-form"))
-                .andExpect(model().attributeExists("category"))
-                .andExpect(model().attributeExists("request"));
-    }
+        BookCategoryNodeResponseDto root1 = new BookCategoryNodeResponseDto(4L, "만화", new ArrayList<>());
 
-    @Test
-    void getCategory() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L,"테스트", null, null,
-                LocalDateTime.now(), null
-        );
+        when(bookService.getCategoryTree()).thenReturn(List.of(root, root1));
+        when(bookService.getAllBooks(eq(1L), any(Pageable.class))).thenReturn(page);
 
-        when(bookService.getCategory(1L)).thenReturn(response);
-
-        mockMvc.perform(get("/admin/categories/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("admin/category/detail"))
-                .andExpect(model().attributeExists("category"));
-    }
-
-    @Test
-    void getAllCategories() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L, "테스트", null, null,
-                LocalDateTime.now(), null
-        );
-        BookCategoryResponseDto response1 = new BookCategoryResponseDto(
-                2L, "테스트 자식", null, null,
-                LocalDateTime.now(), null
-        );
-
-        List<BookCategoryResponseDto> categories = List.of(response, response1);
-        Page<BookCategoryResponseDto> page = new PageImpl<>(categories);
-
-        when(bookService.getAllBookCategories(any(Pageable.class))).thenReturn(page);
-
-        mockMvc.perform(get("/admin/categories")
+        mockMvc.perform(get("/categories/1")
                         .param("page", "0")
-                        .param("size", "10"))
+                        .param("size", "4"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/category/category-list"))
-                .andExpect(model().attributeExists("categories"))
-                .andExpect(model().attributeExists("page"));
-
-        verify(bookService, times(1)).getAllBookCategories(any(Pageable.class));
-    }
-
-    @Test
-    void createCategory_Success() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L, "테스트", null, null,
-                LocalDateTime.now(), null
-        );
-
-        when(bookService.createCategory(any(BookCategoryCreateRequestDto.class))).thenReturn(response);
-
-        mockMvc.perform(post("/admin/categories")
-                .param("categoryName", "테스트"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/categories/1"));
-
-        verify(bookService, times(1)).createCategory(any(BookCategoryCreateRequestDto.class));
-    }
-
-    @Test
-    void createBookCategory_ValidationFail() throws Exception {
-        mockMvc.perform(post("/admin/categories")
-                .param("categoryName", ""))
-                .andExpect(view().name("error/error"))
-                .andExpect(model().attribute("statusCode", 400));
-    }
-
-    @Test
-    void updateCategory_Success() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L, "수정 테스트", null, null,
-                LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.now()
-        );
-
-        when(bookService.updateCategory(eq(1L), any(BookCategoryUpdateRequestDto.class)))
-                .thenReturn(response);
-
-        mockMvc.perform(put("/admin/categories/1")
-                        .param("categoryName", "수정 테스트"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/categories/1"));
-
-        verify(bookService, times(1)).updateCategory(eq(1L), any(BookCategoryUpdateRequestDto.class));
-    }
-
-    @Test
-    void updateCategory_ValidationFail() throws Exception {
-        mockMvc.perform(post("/admin/categories")
-                        .param("categoryName", ""))
-                .andExpect(view().name("error/error"))
-                .andExpect(model().attribute("statusCode", 400));
-    }
-
-    @Test
-    void deleteBookCategory() throws Exception {
-        doNothing().when(bookService).deleteCategory(1L);
-
-        mockMvc.perform(delete("/admin/categories/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/categories"));
-
-        verify(bookService, times(1)).deleteCategory(1L);
+                .andExpect(view().name("home"))
+                .andExpect(model().attributeExists("books"))
+                .andExpect(model().attributeExists("categoryTree"))
+                .andExpect(model().attributeExists("page"))
+                .andExpect(model().attributeExists("basePath"));
     }
 }

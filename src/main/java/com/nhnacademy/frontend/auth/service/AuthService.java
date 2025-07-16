@@ -1,7 +1,8 @@
 package com.nhnacademy.frontend.auth.service;
 
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.*;
 
 public interface AuthService {
     LoginResponseDto login(String username, String password);
@@ -15,4 +16,7 @@ public interface AuthService {
     ResponseDto<?> oauth2Login(String provider, String code);
 
     OAuth2LoginResponseDto oauth2AdditionalSignup(OAuth2AdditionalSignupRequestDto request);
+
+    boolean nonMemberLogin(NonMemberLoginRequest request);
+
 }

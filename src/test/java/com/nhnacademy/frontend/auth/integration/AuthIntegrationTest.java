@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.auth.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.common.adapter.AuthAdapter;
-import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.dto.response.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,7 +41,7 @@ class AuthIntegrationTest {
     @Test
     void login_success_setsCookiesAndRedirects() throws Exception {
         LoginResponseDto loginResponseDto = new LoginResponseDto("access-token", "refresh-token");
-        TokenParseResponseDto parseResponseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"));
+        TokenParseResponseDto parseResponseDto = new TokenParseResponseDto("user1", List.of("ROLE_USER"), "LOCAL");
         when(authAdapter.login(any())).thenReturn(loginResponseDto);
         when(authAdapter.parse(any())).thenReturn(parseResponseDto);
 
@@ -62,7 +62,8 @@ class AuthIntegrationTest {
         mockMvc.perform(post("/auth/login")
                 .param("username", "invalid")
                 .param("password", "wrong"))
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login?error=login_failed"))
                 .andExpect(cookie().doesNotExist("accessToken"))
                 .andExpect(cookie().doesNotExist("refreshToken"));
     }

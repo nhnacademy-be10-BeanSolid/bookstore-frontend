@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.user.service;
 
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.user.domain.request.UserCreateRequestDto;
-import com.nhnacademy.frontend.user.service.impl.UserServiceImpl;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.auth.service.impl.SignupServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +13,12 @@ import static org.assertj.core.api.Assertions.*;
 class UserServiceImplTest {
 
     private UserAdapter userAdapter;
-    private UserServiceImpl userService;
+    private SignupServiceImpl signupService;
 
     @BeforeEach
     void setUp() {
         userAdapter = mock(UserAdapter.class);
-        userService = new UserServiceImpl(userAdapter);
+        signupService = new SignupServiceImpl(userAdapter);
     }
 
     @Test
@@ -28,7 +28,7 @@ class UserServiceImplTest {
         UserCreateRequestDto dto = mock(UserCreateRequestDto.class);
 
         // when
-        userService.register(dto);
+        signupService.register(dto);
 
         // then
         verify(userAdapter, times(1)).registerUser(dto);
@@ -42,7 +42,7 @@ class UserServiceImplTest {
         when(userAdapter.isExistUser(userId)).thenReturn(true);
 
         // when
-        boolean result = userService.isExistUser(userId);
+        boolean result = signupService.isExistUser(userId);
 
         // then
         verify(userAdapter, times(1)).isExistUser(userId);
@@ -57,7 +57,7 @@ class UserServiceImplTest {
         when(userAdapter.isExistUser(userId)).thenReturn(false);
 
         // when
-        boolean result = userService.isExistUser(userId);
+        boolean result = signupService.isExistUser(userId);
 
         // then
         verify(userAdapter, times(1)).isExistUser(userId);

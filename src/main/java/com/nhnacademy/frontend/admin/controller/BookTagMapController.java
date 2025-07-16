@@ -1,10 +1,8 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.domain.request.BookTagMapCreateRequestDto;
-import com.nhnacademy.frontend.admin.domain.response.BookDetailResponseDto;
-import com.nhnacademy.frontend.admin.domain.response.BookTagMapResponseDto;
-import com.nhnacademy.frontend.admin.service.BookService;
-import com.nhnacademy.frontend.book.domain.response.SimpleBookResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.request.BookTagMapCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagMapResponseDto;
+import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

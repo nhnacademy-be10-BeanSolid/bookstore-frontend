@@ -30,7 +30,6 @@ public class FeignJwtInterceptor implements RequestInterceptor {
         }
 
         if(jwtToken != null) {
-            log.debug("Authorization 헤더에 JWT 토큰 추가: {}", jwtToken);
             requestTemplate.header("Authorization", "Bearer " + jwtToken);
         }
     }

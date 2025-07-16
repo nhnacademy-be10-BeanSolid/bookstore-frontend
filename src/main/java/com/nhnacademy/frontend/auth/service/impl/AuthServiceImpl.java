@@ -1,11 +1,12 @@
 package com.nhnacademy.frontend.auth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.frontend.common.adapter.AuthAdapter;
-import com.nhnacademy.frontend.auth.domain.request.LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.domain.request.OAuth2LoginRequestDto;
-import com.nhnacademy.frontend.auth.domain.response.*;
+import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.OAuth2LoginRequestDto;
+import com.nhnacademy.frontend.auth.dto.response.*;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -73,5 +74,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public OAuth2LoginResponseDto oauth2AdditionalSignup(OAuth2AdditionalSignupRequestDto request) {
         return authAdapter.additionalSignup(request);
+    }
+
+    @Override
+    public boolean nonMemberLogin(NonMemberLoginRequest request) {
+        try {
+            return authAdapter.nonMemberLogin(request);
+        } catch (FeignException e) {
+            log.error("비회원 로그인 실패: {}", e.getMessage(), e);
+            return false;
+        }
     }
 }

@@ -1,13 +1,19 @@
 package com.nhnacademy.frontend.order.service.impl;
 
-import com.nhnacademy.frontend.common.adapter.OrderAdapter;
-import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.common.adapter.GuestAdapter;
+import com.nhnacademy.frontend.order.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.GuestCreateRequest;
+import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
+import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -16,25 +22,34 @@ import org.springframework.stereotype.Service;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderAdapter orderAdapter;
+    private final GuestAdapter guestAdapter;
 
     @Override
-    public OrderResponse createOrder(OrderRequest orderRequest) {
-        log.info("주문 생성 요청 - 받는 사람: {}", orderRequest.getReceiverName());
-
-        OrderResponse orderResponse = orderAdapter.createOrder(orderRequest); //TODO: feignclient 실패 처리 필요.
-
-        log.info("주문 생성 성공 - 주문번호: {}", orderResponse.orderId());
-
-        return orderResponse;
+    public CreateOrderResponse createOrder(CreateOrderRequest request) {
+        return orderAdapter.createOrder(request);
     }
 
     @Override
-    public Page<OrderSummaryResponse> getAllOrders() {
-        return orderAdapter.getAllOrdersByUserId();
+    public CreateOrderResponse getUnfinishedOrder(String orderNumber) {
+        return orderAdapter.getUnfinishedOrder(orderNumber);
     }
 
     @Override
-    public OrderResponse getOrder(String orderId) {
-        return orderAdapter.getOrder(orderId);
+    public OrderResponse updateOrder(String orderNumber, UpdateOrderRequest orderRequest) {
+        OrderResponse response = orderAdapter.updateOrder(orderNumber, orderRequest);
+        if (orderRequest.getNonMemberPassword() != null && !orderRequest.getNonMemberPassword().isEmpty()) {
+            guestAdapter.registerGuest(new GuestCreateRequest(orderRequest.getNonMemberPassword(), response.orderId()));
+        }
+        return response;
+    }
+
+    @Override
+    public Page<OrderSummaryResponse> getAllOrders(Pageable pageable) {
+        return orderAdapter.getAllOrdersByUserId(pageable);
+    }
+
+    @Override
+    public OrderDetailResponse getOrder(String orderNumber) {
+        return orderAdapter.getOrder(orderNumber);
     }
 }

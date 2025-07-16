@@ -1,8 +1,8 @@
 package com.nhnacademy.frontend.payment.controller;
 
-import com.nhnacademy.frontend.payment.domain.request.PaymentApprovalRequestDto;
-import com.nhnacademy.frontend.payment.domain.request.PaymentRequestDto;
-import com.nhnacademy.frontend.payment.domain.response.PaymentResponseDto;
+import com.nhnacademy.frontend.payment.dto.request.PaymentApprovalRequestDto;
+import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
+import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +45,7 @@ public class PaymentController {
         dto.setFailUrl(failCallbackUrl);
 
         model.addAttribute("paymentRequest", dto);
+        model.addAttribute("shippingFee",  5000);
         return "payments/form";
     }
 

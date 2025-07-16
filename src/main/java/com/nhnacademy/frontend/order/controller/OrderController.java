@@ -1,22 +1,27 @@
 package com.nhnacademy.frontend.order.controller;
 
-import com.nhnacademy.frontend.order.dto.CartItem;
-import com.nhnacademy.frontend.order.dto.request.OrderRequest;
+import com.nhnacademy.frontend.common.exception.ValidationFailedException;
+import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
+import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
-import com.nhnacademy.frontend.common.exception.ValidationFailedException;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
+import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -25,64 +30,99 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
+    private static final String ORDER = "order";
+
     private final OrderService orderService;
+    private final UserAdapter userAdapter;
 
-    @GetMapping
-    public String orderPage(Model model) {
-        Long bookId = (Long) model.getAttribute("bookId");
-        String title = (String) model.getAttribute("title");
-        Integer salePrice = (Integer) model.getAttribute("salePrice");
-        Boolean wrappable = (Boolean) model.getAttribute("wrappable");
-        Integer quantity = (Integer) model.getAttribute("quantity");
+    @GetMapping("/{orderNumber}/input-detail")
+    public String orderPage(@PathVariable String orderNumber,
+                            Model model,
+                            @ModelAttribute("isLoggedIn") boolean isLoggedIn) {
+        CreateOrderResponse unfinishedOrder = orderService.getUnfinishedOrder(orderNumber);
 
-        List<CartItem> items = new ArrayList<>();
-        if (bookId != null && title != null && salePrice != null && quantity != null) {
-            CartItem item = new CartItem(bookId, title, quantity, salePrice.longValue(), wrappable);
-            items.add(item);
+        List<CreateOrderResponse.CreateOrderItemResponse> items = unfinishedOrder.getOrderItems();
+        if (items == null) {
+            items = List.of();
         }
-
+        model.addAttribute("orderNumber", orderNumber);
         model.addAttribute("items", items);
-        return "order/order";
+
+        if (isLoggedIn) {
+            try {
+                ResponseEntity<ResponseUser> userResponse = userAdapter.getUserInfo();
+                if (userResponse.getBody() != null) {
+                    model.addAttribute("user", userResponse.getBody());
+                }
+            } catch (Exception e) {
+                log.warn("회원 정보를 불러오는데 실패했습니다: {}", e.getMessage());
+            }
+            return "order/order";
+        } else {
+            return "order/non-member-order";
+        }
     }
 
     @PostMapping
-    public String createOrder(@Valid @ModelAttribute OrderRequest orderRequest,
-                                    BindingResult bindingResult,
-                                    RedirectAttributes redirectAttributes) {
-        log.info("POST /orders - 주문 생성 요청 [받는 사람: {}]", orderRequest.getReceiverName());
-
+    public String createOrder(@Valid @ModelAttribute CreateOrderRequest request,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            throw new ValidationFailedException(bindingResult); //TODO: user꺼 가져다 썼는데 나중에 변경 예정.
+            throw new ValidationFailedException(bindingResult);
         }
 
-        try {
-            OrderResponse orderResponse = orderService.createOrder(orderRequest);
-            log.info("POST /orders - 성공 리다이렉트 [주문번호: {}]", orderResponse.orderId());
+        CreateOrderResponse order = orderService.createOrder(request);
+        redirectAttributes.addFlashAttribute(ORDER, order);
 
-            return "redirect:/payments/form?orderId=" + orderResponse.orderId() + "&amount=" + orderResponse.totalAmount();
-        } catch (Exception e) {
-            log.warn("POST /orders - 실패 리다이렉트 [에러: {}]", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        return "redirect:/orders/" + order.getOrderNumber() + "/input-detail";
+    }
 
-            return "redirect:/orders";
+    @PutMapping("/{orderNumber}")
+    public String updateOrder(@Valid @ModelAttribute UpdateOrderRequest request,
+                              BindingResult bindingResult,
+                              @PathVariable String orderNumber) {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationFailedException(bindingResult);
         }
+
+        OrderResponse orderResponse = orderService.updateOrder(orderNumber, request);
+        return "redirect:/payments/form?orderId=" + orderResponse.orderNumber() + "&amount=" + orderResponse.totalPrice();
     }
 
     // 주문 전체 조회 페이지
     @GetMapping("/list")
-    public String orderList(Model model) {
-        Page<OrderSummaryResponse> orders = orderService.getAllOrders();
+    public String orderList(Pageable pageable, Model model) {
+        Page<OrderSummaryResponse> orders = orderService.getAllOrders(pageable);
         model.addAttribute("orders", orders);
 
         return "order/list";
     }
 
     // 주문 상세 조회 페이지
-    @GetMapping("/{orderId}")
-    public String getOrderDetail(@PathVariable String orderId, Model model) {
-        OrderResponse orderDetail = orderService.getOrder(orderId);
-        model.addAttribute("order", orderDetail);
+    @GetMapping("/list/{orderNumber}")
+    public String getOrderDetail(@PathVariable String orderNumber, Model model) {
+        OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
+        model.addAttribute(ORDER, orderDetail);
 
         return "order/detail";
+    }
+
+    @GetMapping("/non-member-detail")
+    public String nonMemberOrderDetail(Model model,
+                                       RedirectAttributes redirectAttributes) {
+        String orderNumber = (String) model.getAttribute("nonMemberOrderNumber");
+        if (orderNumber == null || orderNumber.isEmpty()) {
+            redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+
+        try {
+            OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
+            model.addAttribute(ORDER, orderDetail);
+            return "order/non-member-order-detail";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
     }
 }

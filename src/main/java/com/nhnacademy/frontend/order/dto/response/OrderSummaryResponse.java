@@ -3,8 +3,10 @@ package com.nhnacademy.frontend.order.dto.response;
 import java.time.LocalDate;
 
 public record OrderSummaryResponse(
+
         LocalDate orderDate,
-        String orderId,
+        String orderNumber,
         String receiverName,
-        Long totalPrice
+        Long totalAmount,
+        String status
 ) {}
