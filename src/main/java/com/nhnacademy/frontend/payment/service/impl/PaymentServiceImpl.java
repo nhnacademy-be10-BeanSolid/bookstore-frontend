@@ -1,5 +1,7 @@
 package com.nhnacademy.frontend.payment.service.impl;
 
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.payment.adapter.PaymentAdapter;
 import com.nhnacademy.frontend.payment.dto.request.PaymentApprovalRequestDto;
 import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
@@ -7,6 +9,7 @@ import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentAdapter paymentAdapter;
+    private final UserAdapter userAdapter;
 
 
     @Override
@@ -35,6 +39,15 @@ public class PaymentServiceImpl implements PaymentService {
     public void confirmFail(String paymentKey, String orderId) {
         log.info("[Payment] confirmFail paymentKey={}, orderId={}", paymentKey, orderId);
         paymentAdapter.confirmFail(paymentKey, orderId);
+    }
+
+    @Override
+    public Long getCurrentUserPoints() {
+        ResponseEntity<ResponseUser> userInfoResponse = userAdapter.getUserInfo();
+        if (userInfoResponse != null && userInfoResponse.getBody() != null) {
+            return (long) userInfoResponse.getBody().getUserPoint();
+        }
+        return 0L;
     }
 }
 

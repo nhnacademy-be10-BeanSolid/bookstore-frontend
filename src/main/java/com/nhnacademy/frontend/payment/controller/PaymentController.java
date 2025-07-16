@@ -43,9 +43,11 @@ public class PaymentController {
         dto.setPayAmount(amount);
         dto.setSuccessUrl(successCallbackUrl);
         dto.setFailUrl(failCallbackUrl);
+        dto.setUsedPoint(0);
 
         model.addAttribute("paymentRequest", dto);
         model.addAttribute("shippingFee",  5000);
+        model.addAttribute("currentPoints", paymentService.getCurrentUserPoints());
         return "payments/form";
     }
 

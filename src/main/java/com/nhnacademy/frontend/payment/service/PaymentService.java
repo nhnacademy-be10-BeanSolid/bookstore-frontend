@@ -12,6 +12,5 @@ public interface PaymentService {
 
     void confirmFail(String paymentKey, String orderId);
 
-
-
+    Long getCurrentUserPoints();
 }
