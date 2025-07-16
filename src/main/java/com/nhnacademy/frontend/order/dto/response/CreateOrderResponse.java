@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.order.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ public class CreateOrderResponse implements Serializable {
 
     @Getter
     @AllArgsConstructor
+    @Builder
     public static class CreateOrderItemResponse implements Serializable {
 
         private Long bookId;

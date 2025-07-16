@@ -8,6 +8,9 @@ import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
+import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +30,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
 
+    private static final String ORDER = "order";
+
     private final OrderService orderService;
+    private final UserAdapter userAdapter;
 
     @GetMapping("/{orderNumber}/input-detail")
     public String orderPage(@PathVariable String orderNumber,
@@ -43,6 +49,14 @@ public class OrderController {
         model.addAttribute("items", items);
 
         if (isLoggedIn) {
+            try {
+                ResponseEntity<ResponseUser> userResponse = userAdapter.getUserInfo();
+                if (userResponse.getBody() != null) {
+                    model.addAttribute("user", userResponse.getBody());
+                }
+            } catch (Exception e) {
+                log.warn("회원 정보를 불러오는데 실패했습니다: {}", e.getMessage());
+            }
             return "order/order";
         } else {
             return "order/non-member-order";
@@ -58,7 +72,7 @@ public class OrderController {
         }
 
         CreateOrderResponse order = orderService.createOrder(request);
-        redirectAttributes.addFlashAttribute("order", order);
+        redirectAttributes.addFlashAttribute(ORDER, order);
 
         return "redirect:/orders/" + order.getOrderNumber() + "/input-detail";
     }
@@ -85,10 +99,10 @@ public class OrderController {
     }
 
     // 주문 상세 조회 페이지
-    @GetMapping("/list/{orderId}")
-    public String getOrderDetail(@PathVariable String orderId, Model model) {
-        OrderDetailResponse orderDetail = orderService.getOrder(orderId);
-        model.addAttribute("order", orderDetail);
+    @GetMapping("/list/{orderNumber}")
+    public String getOrderDetail(@PathVariable String orderNumber, Model model) {
+        OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
+        model.addAttribute(ORDER, orderDetail);
 
         return "order/detail";
     }
@@ -104,7 +118,7 @@ public class OrderController {
 
         try {
             OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
-            model.addAttribute("order", orderDetail);
+            model.addAttribute(ORDER, orderDetail);
             return "order/non-member-order-detail";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");

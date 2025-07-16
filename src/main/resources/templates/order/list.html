@@ -25,7 +25,7 @@
                             </thead>
                             <tbody>
                                 <tr th:each="order : ${orders.content}">
-                                    <td><a th:href="@{/orders/{orderId}(orderId=${order.orderId})}" th:text="${order.orderId}" class="text-decoration-none"></a></td>
+                                    <td><a th:href="@{/orders/{orderNumber}(orderNumber=${order.orderNumber})}" th:text="${order.orderNumber}" class="text-decoration-none"></a></td>
                                     <td th:text="${order.orderDate}"></td>
                                     <td th:text="${order.receiverName}"></td>
                                     <td th:text="${order.totalAmount} + '원'" class="text-end"></td>
