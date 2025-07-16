@@ -8,6 +8,6 @@ public record BookItemResponseDto(
         String publisher,
         String pubdate,
         String isbn,
-        String description // 설명은 에디터로 받아와야한다
+        String description
 ) {
 }

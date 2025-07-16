@@ -1,4 +1,4 @@
-package com.nhnacademy.frontend.admin.controller;
+package com.nhnacademy.frontend.common.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
