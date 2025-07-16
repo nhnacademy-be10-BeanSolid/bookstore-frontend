@@ -135,10 +135,10 @@ class SignupControllerTest {
                         .param("userPassword", "pw1234")
                         .param("userName", "홍길동")
                         .param("isAvailable", "false"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요."))
-                .andExpect(flash().attribute("userId", "user1"))
-                .andExpect(redirectedUrl("/auth/signup/normal-signup"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/normal-signup"))
+                .andExpect(model().attribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요."))
+                .andExpect(model().attributeExists("userCreateRequestDto"));
     }
 
     @DisplayName("회원가입 처리 - 정상 플로우")
