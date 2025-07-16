@@ -21,13 +21,9 @@ public class SecurityConfig {
     private static final String LOGIN_URL = "/auth/login";
 
     @Bean
-    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-        return new HiddenHttpMethodFilter();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                   HiddenHttpMethodFilter hiddenHttpMethodFilter,
                                                    AuthService authService,
                                                    LoginSuccessHandler successHandler,
                                                    CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
@@ -74,7 +70,7 @@ public class SecurityConfig {
                         .addLogoutHandler(customCookieClearingLogoutHandler)
                         .logoutSuccessUrl("/")
                 )
-                .addFilterBefore(hiddenHttpMethodFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(hiddenHttpMethodFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session ->
