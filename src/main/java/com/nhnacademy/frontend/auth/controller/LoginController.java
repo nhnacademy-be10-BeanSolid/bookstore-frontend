@@ -7,7 +7,6 @@ import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.PaycoCallbackResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
-import com.nhnacademy.frontend.auth.exception.UserDormantException;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import jakarta.servlet.http.Cookie;
@@ -133,11 +132,10 @@ public class LoginController {
 
         if(authService.verifyDormantUserCode(dto)){
 
-            redirectAttributes.addFlashAttribute("dormantSuccess", "인증성공! 휴면 상태가 해제되었습니다.\n다시 로그인 해주세요.");
+            redirectAttributes.addFlashAttribute("dormantSuccess", "인증성공! 휴면 상태가 해제되었습니다. 다시 로그인 해주세요.");
             return "redirect:/auth/login";
         }
         redirectAttributes.addFlashAttribute("dormantFail", "인증실패! 다시 인증해주세요.");
-
         return "redirect:/auth/login";
     }
 
