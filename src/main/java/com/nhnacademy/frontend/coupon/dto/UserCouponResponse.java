@@ -1,9 +1,6 @@
 package com.nhnacademy.frontend.coupon.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nhnacademy.frontend.common.util.LocalDateTimeDeserializer;
-import com.nhnacademy.frontend.common.util.LocalDateTimeSerializer;
+
 import com.nhnacademy.frontend.coupon.domain.UserCouponStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +24,10 @@ public class UserCouponResponse {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     private LocalDateTime issuedAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     private LocalDateTime expiredAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     private LocalDateTime usedAt;
 
     private UserCouponStatus status;
