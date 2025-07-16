@@ -64,7 +64,6 @@
 
         <form id="buyNowForm" th:action="@{/orders}" method="post" class="mt-3" onsubmit="updateQuantities()">
           <input type="hidden" name="createItemRequests[0].bookId" th:value="${book.id}" />
-          <input type="hidden" name="createItemRequests[0].unitPrice" th:value="${book.salePrice}" />
           <input type="hidden" name="createItemRequests[0].quantity" id="buyNowQuantity" value="1" />
           <button type="submit" class="btn btn-success">구매하기</button>
         </form>

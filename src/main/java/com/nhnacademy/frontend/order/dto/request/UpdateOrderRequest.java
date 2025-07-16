@@ -2,10 +2,7 @@ package com.nhnacademy.frontend.order.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,6 +34,7 @@ public class UpdateOrderRequest {
 
     @Setter
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class WrappingRequest {
 
