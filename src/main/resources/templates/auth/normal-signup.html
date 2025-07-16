@@ -46,7 +46,7 @@
         </div>
 
         <!-- 중복체크 결과 hidden input -->
-        <input type="hidden" name="isAvailable" th:value="${isAvailable}">
+        <input type="hidden" name="isAvailable" value="false">
 
         <div class="mb-2">
             <label class="form-label mb-1">
@@ -106,7 +106,7 @@
         .then(response => response.json())
         .then(data => {
             duplicateMessageDiv.textContent = data.message;
-            if (data.available) {
+            if (data.isAvailable) {
                 duplicateMessageDiv.classList.remove('text-danger');
                 duplicateMessageDiv.classList.add('text-success');
                 isAvailableInput.value = 'true';
