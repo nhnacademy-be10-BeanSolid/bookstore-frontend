@@ -1,0 +1,64 @@
+package com.nhnacademy.frontend.review.domain;
+
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+//@AllArgsConstructor
+public class ResponseReview {
+
+    private long reviewId;
+    private int evaluationScore;
+    private String reviewContent;
+    private List<String> reviewImages = new ArrayList<>();
+    private LocalDateTime reviewedAt;
+    private LocalDateTime updatedAt;
+    private String userId;
+    private long bookId;
+
+//    public static ResponseReview from(Review review) {
+//        List<String> imageUrls = review.getReviewImages().stream()
+//                .map(ReviewImage::getImageUrl)
+//                .toList();
+//
+//        return new ResponseReview(
+//                review.getReviewId(),
+//                review.getEvaluationScore(),
+//                review.getReviewContent(),
+//                imageUrls,
+//                review.getReviewedAt(),
+//                review.getUpdatedAt(),
+//                review.getUser().getUserId(), // 필요 시 null 체크
+//                review.getBookId()
+//        );
+//    }
+
+    @JsonCreator
+    public ResponseReview(
+            @JsonProperty("reviewId") long reviewId,
+            @JsonProperty("evaluationScore") int evaluationScore,
+            @JsonProperty("reviewContent") String reviewContent,
+            @JsonProperty("reviewImages") List<String> reviewImages,
+            @JsonProperty("reviewedAt") LocalDateTime reviewedAt,
+            @JsonProperty("updatedAt") LocalDateTime updatedAt,
+            @JsonProperty("userId") String userId,
+            @JsonProperty("bookId") long bookId
+    ) {
+        this.reviewId = reviewId;
+        this.evaluationScore = evaluationScore;
+        this.reviewContent = reviewContent;
+        this.reviewImages = reviewImages;
+        this.reviewedAt = reviewedAt;
+        this.updatedAt = updatedAt;
+        this.userId = userId;
+        this.bookId = bookId;
+    }
+}

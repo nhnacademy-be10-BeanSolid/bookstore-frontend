@@ -23,6 +23,9 @@
     <li>
         <a href="/mypage/myinfo">내 정보</a>
     </li>
+    <li>
+        <a th:href="@{/reviews/user/{userId}(userId=${loginUserId})}">내 리뷰</a>
+    </li>
 </ul>
 
 <!-- 탈퇴 버튼 -->
