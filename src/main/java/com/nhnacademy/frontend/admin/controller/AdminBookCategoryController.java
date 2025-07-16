@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/categories")
-public class BookCategoryController {
+public class AdminBookCategoryController {
 
     private final BookService bookService;
 

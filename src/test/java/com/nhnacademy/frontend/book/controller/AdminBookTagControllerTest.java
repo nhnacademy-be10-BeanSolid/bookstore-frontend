@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.book.controller;
 
-import com.nhnacademy.frontend.admin.controller.BookTagController;
+import com.nhnacademy.frontend.admin.controller.AdminBookTagController;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookTagCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;
@@ -26,14 +26,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
-        controllers = BookTagController.class,
+        controllers = AdminBookTagController.class,
         excludeFilters = @ComponentScan.Filter(
                 type = FilterType.ASSIGNABLE_TYPE,
                 classes = JwtAuthenticationFilter.class
         )
 )
 @AutoConfigureMockMvc(addFilters = false)
-class BookTagControllerTest {
+class AdminBookTagControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

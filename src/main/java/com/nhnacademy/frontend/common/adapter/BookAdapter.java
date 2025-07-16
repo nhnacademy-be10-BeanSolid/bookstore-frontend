@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.common.adapter;
 
+import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -45,7 +46,20 @@ public interface BookAdapter {
 
     // 도서 리스트
     @GetMapping("/book-api/books")
-    Page<SimpleBookResponseDto> getBooks(@RequestParam int page, @RequestParam int size);
+    Page<SimpleBookResponseDto> getBooks(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(name = "sort", required = false) String sort
+    );
+
+    // 도서 리스트 - 카테고리 선택
+    @GetMapping("/book-api/books/categories/{categoryId}")
+    Page<SimpleBookResponseDto> getBooks(
+            @PathVariable Long categoryId,
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) String sort
+    );
 
     // 도서 상세정보
     @GetMapping("/book-api/books/{bookId}")
@@ -107,8 +121,15 @@ public interface BookAdapter {
 
     // 엘라스틱 서치
     @GetMapping("/book-api/search")
-    void searchBooks(@RequestParam String keyword, @RequestParam Integer start, @RequestParam Integer size);
+    Page<SimpleBookResponseDto> searchBooks(
+            @RequestParam String keyword,
+            @RequestParam Integer page,
+            @RequestParam Integer size,
+            @RequestParam(name = "sort", required = false) String sort);
 
     @GetMapping("/book-api/books/ids")
     List<BookResponse> getBooks(@RequestParam List<Long> ids);
+
+    @GetMapping("/book-api/categories/tree")
+    List<BookCategoryNodeResponseDto> getCategoryTree();
 }
