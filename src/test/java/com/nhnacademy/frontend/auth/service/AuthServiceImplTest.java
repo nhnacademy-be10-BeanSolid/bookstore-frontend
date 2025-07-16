@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.auth.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2LoginRequestDto;
 import com.nhnacademy.frontend.auth.dto.response.*;
@@ -175,5 +176,27 @@ class AuthServiceImplTest {
 
         verify(authAdapter, times(1)).additionalSignup(any(OAuth2AdditionalSignupRequestDto.class));
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    void nonMemberLogin_success_returnsTrue() {
+        NonMemberLoginRequest request = new NonMemberLoginRequest("order123", "password123");
+        when(authAdapter.nonMemberLogin(request)).thenReturn(true);
+
+        boolean result = authService.nonMemberLogin(request);
+
+        assertThat(result).isTrue();
+        verify(authAdapter, times(1)).nonMemberLogin(request);
+    }
+
+    @Test
+    void nonMemberLogin_feignException_returnsFalse() {
+        NonMemberLoginRequest request = new NonMemberLoginRequest("order123", "password123");
+        when(authAdapter.nonMemberLogin(request)).thenThrow(FeignException.class);
+
+        boolean result = authService.nonMemberLogin(request);
+
+        assertThat(result).isFalse();
+        verify(authAdapter, times(1)).nonMemberLogin(request);
     }
 }

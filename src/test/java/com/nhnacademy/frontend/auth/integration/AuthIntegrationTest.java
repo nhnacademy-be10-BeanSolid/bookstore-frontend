@@ -62,7 +62,8 @@ class AuthIntegrationTest {
         mockMvc.perform(post("/auth/login")
                 .param("username", "invalid")
                 .param("password", "wrong"))
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login?error=login_failed"))
                 .andExpect(cookie().doesNotExist("accessToken"))
                 .andExpect(cookie().doesNotExist("refreshToken"));
     }

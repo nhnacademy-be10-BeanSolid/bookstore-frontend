@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
 
         String message = e.getMessage();
 
-        log.error(message);
+        log.error("An error occurred: {}", message, e);
 
         int statusCode = extractStatusCode(message, status.value());
         String userFriendlyMessage = getFriendlyMessage(statusCode);

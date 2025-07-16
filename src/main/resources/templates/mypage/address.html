@@ -10,6 +10,7 @@
 <table border="1">
   <thead>
   <tr>
+    <th>선택</th>
     <th>별칭</th>
     <th>상세 주소</th>
     <th>관리</th>
@@ -17,6 +18,9 @@
   </thead>
   <tbody>
   <tr th:each="address : ${addresses}">
+    <td>
+      <input type="radio" name="selectedAddress" th:value="${address.addressDetail}" th:id="|address_${address.addressId}|">
+    </td>
     <td th:text="${address.addressNickName}">별칭</td>
     <td th:text="${address.addressDetail}">상세 주소</td>
     <td>
@@ -28,6 +32,8 @@
 
 <br>
 <button onclick="location.href='/mypage/address/register'">주소 등록</button>
+<br><br>
+<button type="button" onclick="applySelectedAddress()">적용</button>
 
 <script>
   function deleteAddress(addressId) {
@@ -50,6 +56,24 @@
               console.error('Error:', error);
               alert('삭제 요청 중 오류가 발생했습니다.');
             });
+  }
+
+  function applySelectedAddress() {
+    const selectedRadio = document.querySelector('input[name="selectedAddress"]:checked');
+    if (!selectedRadio) {
+      alert('주소를 선택해주세요.');
+      return;
+    }
+    
+    const selectedAddress = selectedRadio.value;
+    
+    // 부모 창(order.html)의 배송지 필드에 선택된 주소 설정
+    if (window.opener && !window.opener.closed) {
+      window.opener.document.getElementById('deliveryAddress').value = selectedAddress;
+      window.close();
+    } else {
+      alert('부모 창을 찾을 수 없습니다.');
+    }
   }
 </script>
 <script th:if="${errorMessage}" th:inline="javascript">

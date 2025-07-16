@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.order.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -8,10 +9,11 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class OrderDetailResponse {
 
     private LocalDate orderDate;
-    private String orderId;
+    private String orderNumber;
     private String status;
     private Long totalAmount;
     private List<ItemInfo> itemInfos;

@@ -3,14 +3,14 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <head>
-    <title layout:fragment="title">Beansolid - 주문 상세 조회</title>
+    <title layout:fragment="title">Beansolid - 비회원 주문 상세 조회</title>
 </head>
 <body>
 <div layout:fragment="content">
     <div class="container mt-4" style="max-width: 1200px;">
         <div class="row">
             <div class="col-12">
-                <h3 class="mb-4">주문 상세 정보</h3>
+                <h3 class="mb-4">비회원 주문 상세 정보</h3>
     
                 <div th:object="${order}">
                     <div class="row">
@@ -118,7 +118,7 @@
     
                 <div class="row mt-4">
                     <div class="col-12 text-center">
-                        <a href="/orders/list" class="btn btn-secondary">주문 목록으로 돌아가기</a>
+                        <a href="/auth/login" class="btn btn-secondary">로그인 페이지로 돌아가기</a>
                     </div>
                 </div>
             </div>

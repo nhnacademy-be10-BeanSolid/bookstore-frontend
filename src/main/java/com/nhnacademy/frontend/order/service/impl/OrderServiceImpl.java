@@ -1,7 +1,9 @@
 package com.nhnacademy.frontend.order.service.impl;
 
+import com.nhnacademy.frontend.common.adapter.GuestAdapter;
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.GuestCreateRequest;
 import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderAdapter orderAdapter;
+    private final GuestAdapter guestAdapter;
 
     @Override
     public CreateOrderResponse createOrder(CreateOrderRequest request) {
@@ -33,7 +36,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse updateOrder(String orderNumber, UpdateOrderRequest orderRequest) {
-        return orderAdapter.updateOrder(orderNumber, orderRequest);
+        OrderResponse response = orderAdapter.updateOrder(orderNumber, orderRequest);
+        if (orderRequest.getNonMemberPassword() != null && !orderRequest.getNonMemberPassword().isEmpty()) {
+            guestAdapter.registerGuest(new GuestCreateRequest(orderRequest.getNonMemberPassword(), response.orderId()));
+        }
+        return response;
     }
 
     @Override
@@ -42,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDetailResponse getOrder(String orderId) {
-        return orderAdapter.getOrder(orderId);
+    public OrderDetailResponse getOrder(String orderNumber) {
+        return orderAdapter.getOrder(orderNumber);
     }
 }

@@ -27,6 +27,6 @@ public interface OrderAdapter {
     @GetMapping("/order-api/orders")
     Page<OrderSummaryResponse> getAllOrdersByUserId(Pageable pageable);
 
-    @GetMapping("/order-api/orders/{orderId}")
-    OrderDetailResponse getOrder(@PathVariable String orderId);
+    @GetMapping("/order-api/orders/{orderNumber}")
+    OrderDetailResponse getOrder(@PathVariable String orderNumber);
 }

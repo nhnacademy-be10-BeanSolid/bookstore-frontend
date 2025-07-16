@@ -2,14 +2,14 @@ package com.nhnacademy.frontend.order.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class UpdateOrderRequest {
 
     @NotEmpty(message = "구매할 상품을 추가해주세요(현재: 구매할 상품 없음)")
@@ -30,8 +30,12 @@ public class UpdateOrderRequest {
     @Future(message = "배송 요청 날짜는 주문일 다음 날부터 가능합니다")
     private LocalDate requestedDeliveryDate;
 
+    private String nonMemberPassword;
+
     @Setter
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class WrappingRequest {
 
         @NotNull @Positive

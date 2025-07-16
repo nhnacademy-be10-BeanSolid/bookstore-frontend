@@ -10,7 +10,7 @@
 <body class="bg-white">
 <div class="container d-flex flex-column align-items-center" style="max-width: 500px; min-height: 100vh; margin-top: 30px;">
     <!-- 로고 박스 -->
-    <a href="/" class="border d-flex justify-content-center align-items-center" style="width:140px; height:120px;">
+    <a href="/" class="d-flex justify-content-center align-items-center" style="width:140px; height:120px;">
         <img src="/images/BeanSolid-Logo.png" alt="로고" style="max-width:120px; max-height:100px;">
     </a>
 
@@ -27,33 +27,27 @@
         <span class="fw-bold">회원정보 입력</span>
     </div>
 
-    <!-- 아이디 입력 + 중복확인 form -->
-    <div class="mb-2 w-100">
-        <label class="form-label mb-1">
-            아이디 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
-        </label>
-        <div class="d-flex">
-            <form action="/auth/signup/check-user-id" method="post" class="d-flex w-100">
-                <input type="text" name="userId"
+    <!-- 회원가입 form -->
+    <form class="w-100" action="/auth/signup/normal-signup/register" method="post" th:object="${userCreateRequestDto}">
+        <!-- 아이디 입력 + 중복확인 -->
+        <div class="mb-2 w-100">
+            <label class="form-label mb-1">
+                아이디 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
+            </label>
+            <div class="d-flex">
+                <input type="text" id="userId" name="userId"
                        class="form-control bg-secondary text-white border-0 me-2"
                        placeholder="아이디를 입력해 주세요."
-                       th:value="${userId}"
+                       th:value="*{userId}"
                        required>
-                <button type="submit" class="btn btn-outline-secondary px-3" style="min-width: 90px;">중복확인</button>
-            </form>
+                <button type="button" id="check-duplicate-btn" class="btn btn-outline-secondary px-3" style="min-width: 90px;">중복확인</button>
+            </div>
+            <div id="duplicate-message" class="form-text mt-1" th:text="${duplicateMessage}" th:classappend="${duplicateMessage != null ? 'text-danger' : ''}"></div>
+            <div th:errors="*{userId}" class="text-danger"></div>
         </div>
-        <div class="form-text mt-1"
-             th:if="${duplicateMessage}" th:text="${duplicateMessage}"
-             th:classappend="${duplicateMessage.contains('가능')} ? ' text-success' : ' text-danger'">
-        </div>
-    </div>
 
-    <!-- 회원가입 form -->
-    <form class="w-100" action="/auth/signup/normal-signup/register" method="post">
-        <!-- hidden 아이디 (입력값 복원용) -->
-        <input type="hidden" name="userId" th:value="${userId}">
         <!-- 중복체크 결과 hidden input -->
-        <input type="hidden" name="isAvailable" th:value="${isAvailable}">
+        <input type="hidden" name="isAvailable" value="false">
 
         <div class="mb-2">
             <label class="form-label mb-1">
@@ -61,6 +55,7 @@
             </label>
             <input type="password" name="userPassword" class="form-control bg-secondary text-white border-0"
                    placeholder="비밀번호를 입력해 주세요." required>
+            <div th:errors="*{userPassword}" class="text-danger"></div>
         </div>
 
         <div class="mb-2">
@@ -68,7 +63,8 @@
                 이름 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
             <input type="text" name="userName" class="form-control bg-secondary text-white border-0"
-                   placeholder="이름을 입력해 주세요." required>
+                   placeholder="이름을 입력해 주세요." th:value="*{userName}" required>
+            <div th:errors="*{userName}" class="text-danger"></div>
         </div>
 
         <div class="mb-2">
@@ -76,7 +72,8 @@
                 전화번호 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
             <input type="text" name="userPhoneNumber" class="form-control bg-secondary text-white border-0"
-                   placeholder="전화번호를 입력해 주세요." required>
+                   placeholder="전화번호를 입력해 주세요." th:value="*{userPhoneNumber}" required>
+            <div th:errors="*{userPhoneNumber}" class="text-danger"></div>
         </div>
 
         <div class="mb-2">
@@ -84,18 +81,49 @@
                 이메일 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
             <input type="email" name="userEmail" class="form-control bg-secondary text-white border-0"
-                   placeholder="이메일을 입력해 주세요." required>
+                   placeholder="이메일을 입력해 주세요." th:value="*{userEmail}" required>
+            <div th:errors="*{userEmail}" class="text-danger"></div>
         </div>
 
         <div class="mb-4">
             <label class="form-label mb-1">
                 생일 <span class="text-danger fw-normal" style="font-size: 0.9em;">(*필수입력)</span>
             </label>
-            <input type="date" name="userBirth" class="form-control bg-secondary text-white border-0" required>
+            <input type="date" name="userBirth" class="form-control bg-secondary text-white border-0" th:value="*{userBirth}" required>
+            <div th:errors="*{userBirth}" class="text-danger"></div>
         </div>
 
         <button type="submit" class="btn btn-secondary w-100 mb-4">회원가입</button>
     </form>
 </div>
+<script>
+    document.getElementById('check-duplicate-btn').addEventListener('click', function() {
+        var userId = document.getElementById('userId').value;
+        var duplicateMessageDiv = document.getElementById('duplicate-message');
+        var isAvailableInput = document.querySelector('input[name="isAvailable"]');
+
+        fetch('/auth/signup/check-user-id', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'userId=' + encodeURIComponent(userId)
+        })
+        .then(response => response.json())
+        .then(data => {
+            duplicateMessageDiv.textContent = data.message;
+            if (data.isAvailable) {
+                duplicateMessageDiv.classList.remove('text-danger');
+                duplicateMessageDiv.classList.add('text-success');
+                isAvailableInput.value = 'true';
+            } else {
+                duplicateMessageDiv.classList.remove('text-success');
+                duplicateMessageDiv.classList.add('text-danger');
+                isAvailableInput.value = 'false';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
 </body>
 </html>

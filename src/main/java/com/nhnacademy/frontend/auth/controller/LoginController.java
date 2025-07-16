@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.PaycoCallbackResponseDto;
@@ -40,12 +41,15 @@ public class LoginController {
     private String redirectUri;
 
     @GetMapping()
-    public String showLoginForm() {
+    public String showLoginForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null
             && auth.isAuthenticated()
             && !(auth instanceof AnonymousAuthenticationToken)) {
             return "redirect:/";
+        }
+        if (model.containsAttribute("signupSuccess")) {
+            model.addAttribute("signupSuccess", true);
         }
         return "auth/login";
     }
@@ -137,4 +141,19 @@ public class LoginController {
         return "redirect:/auth/login";
     }
 
+
+    @PostMapping("/non-member")
+    public String nonMemberLogin(@ModelAttribute NonMemberLoginRequest request,
+                                 RedirectAttributes redirectAttributes) {
+
+        boolean success = authService.nonMemberLogin(request);
+
+        if (success) {
+            redirectAttributes.addFlashAttribute("nonMemberOrderNumber", request.getOrderNumber());
+            return "redirect:/orders/non-member-detail";
+        } else {
+            redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
+        }
+    }
 }
