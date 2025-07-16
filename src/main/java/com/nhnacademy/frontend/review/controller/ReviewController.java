@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.review.controller;
 import com.nhnacademy.frontend.review.domain.*;
 import com.nhnacademy.frontend.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -14,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
+@Profile("!test")
 @Controller
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
