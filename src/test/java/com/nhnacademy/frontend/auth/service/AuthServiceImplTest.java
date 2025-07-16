@@ -6,6 +6,7 @@ import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2LoginRequestDto;
 import com.nhnacademy.frontend.auth.dto.response.*;
+import com.nhnacademy.frontend.auth.exception.UserDormantException;
 import com.nhnacademy.frontend.auth.service.impl.AuthServiceImpl;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -49,17 +51,40 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void login_feignException_returnsNull() {
+    void login_feignException_dormantUser() {
         String username = "user1";
         String password = "pw123";
         LoginRequestDto requestDto = new LoginRequestDto(username, password);
 
-        when(authAdapter.login(requestDto)).thenThrow(FeignException.class);
+        String dormantErrorMessage = "휴면 상태입니다. 인증이 필요합니다.";
+
+        FeignException feignException = mock(FeignException.class);
+        when(feignException.getMessage()).thenReturn(dormantErrorMessage);
+        when(authAdapter.login(requestDto)).thenThrow(feignException);
+
+        assertThatThrownBy(() -> authService.login(username, password))
+                .isInstanceOf(UserDormantException.class)
+                .hasMessageContaining("휴면");
+    }
+
+    @Test
+    void login_feignExceptionWithoutDormantMessage_returnsNull() {
+
+        String username = "user1";
+        String password = "pw123";
+
+        String nonDormantErrorMessage = "비밀번호가 틀렸습니다.";
+
+        FeignException feignException = mock(FeignException.class);
+        when(feignException.getMessage()).thenReturn(nonDormantErrorMessage);
+
+        when(authAdapter.login(any(LoginRequestDto.class))).thenThrow(feignException);
 
         LoginResponseDto result = authService.login(username, password);
 
         assertThat(result).isNull();
     }
+
 
     @Test
     void validate_success_returnsTrue() {

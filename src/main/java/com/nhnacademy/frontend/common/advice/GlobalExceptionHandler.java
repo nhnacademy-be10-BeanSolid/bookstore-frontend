@@ -2,10 +2,12 @@ package com.nhnacademy.frontend.common.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,11 +48,18 @@ public class GlobalExceptionHandler {
         };
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public String handleBadCredentialsException(BadCredentialsException e, RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("loginFail", e.getMessage());
+
+        return  "redirect:/auth/login";
+    }
+
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
         ResponseStatus responseStatus = e.getClass().getAnnotation(ResponseStatus.class);
         HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
-
 
         String message = e.getMessage();
 

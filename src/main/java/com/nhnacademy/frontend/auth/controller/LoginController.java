@@ -1,10 +1,12 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.PaycoCallbackResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
+import com.nhnacademy.frontend.auth.exception.UserDormantException;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
 import jakarta.servlet.http.Cookie;
@@ -17,9 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -113,4 +114,27 @@ public class LoginController {
             return "auth/oauth2-signup";
         }
     }
+
+    @GetMapping("/dormant")
+    public String showDormantForm(@RequestParam(name = "userId") String userId, Model model) {
+
+        model.addAttribute("userId", userId);
+        model.addAttribute("needVerification", "휴면 계정입니다, 인증코드를 입력해주세요.");
+
+        return "auth/dormant";
+    }
+
+    @PostMapping("/dormant/verify")
+    public String verifyDormantForm(@ModelAttribute DormantUserVerificationRequestDto dto, RedirectAttributes redirectAttributes) {
+
+        if(authService.verifyDormantUserCode(dto)){
+
+            redirectAttributes.addFlashAttribute("dormantSuccess", "인증성공! 휴면 상태가 해제되었습니다.\n다시 로그인 해주세요.");
+            return "redirect:/auth/login";
+        }
+        redirectAttributes.addFlashAttribute("dormantFail", "인증실패! 다시 인증해주세요.");
+
+        return "redirect:/auth/login";
+    }
+
 }

@@ -1,9 +1,6 @@
 package com.nhnacademy.frontend.auth.adapter;
 
-import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
-import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
-import com.nhnacademy.frontend.auth.dto.request.OAuth2LoginRequestDto;
-import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
+import com.nhnacademy.frontend.auth.dto.request.*;
 import com.nhnacademy.frontend.auth.dto.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,4 +28,7 @@ public interface AuthAdapter {
 
     @PostMapping("/auth-service/auth/verify-password")
     Boolean verifyPassword(@RequestBody PasswordVerificationRequestDto request);
+
+    @PostMapping("/auth-service/auth/dormant/verify")
+    Boolean verifyDormantUserCode(@RequestBody DormantUserVerificationRequestDto request);
 }

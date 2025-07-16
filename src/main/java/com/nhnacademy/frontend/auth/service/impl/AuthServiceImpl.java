@@ -2,14 +2,17 @@ package com.nhnacademy.frontend.auth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2LoginRequestDto;
 import com.nhnacademy.frontend.auth.dto.response.*;
+import com.nhnacademy.frontend.auth.exception.UserDormantException;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +29,10 @@ public class AuthServiceImpl implements AuthService {
             return authAdapter.login(request);
         } catch (FeignException e) {
             log.error("Login failed for user {}: {}", username, e.getMessage(), e);
+
+            if(e.getMessage().contains("휴면")) {
+                throw new UserDormantException(e.getMessage());
+            }
             return null;
         }
     }
@@ -74,4 +81,11 @@ public class AuthServiceImpl implements AuthService {
     public OAuth2LoginResponseDto oauth2AdditionalSignup(OAuth2AdditionalSignupRequestDto request) {
         return authAdapter.additionalSignup(request);
     }
+
+    @Override
+    public boolean verifyDormantUserCode(DormantUserVerificationRequestDto dto) {
+
+        return authAdapter.verifyDormantUserCode(dto);
+    }
+
 }
