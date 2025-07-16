@@ -15,5 +15,5 @@ public interface OrderService {
     CreateOrderResponse getUnfinishedOrder(String orderNumber);
     OrderResponse updateOrder(String orderNumber, UpdateOrderRequest orderRequest);
     Page<OrderSummaryResponse> getAllOrders(Pageable pageable);
-    OrderDetailResponse getOrder(String orderId);
+    OrderDetailResponse getOrder(String orderNumber);
 }

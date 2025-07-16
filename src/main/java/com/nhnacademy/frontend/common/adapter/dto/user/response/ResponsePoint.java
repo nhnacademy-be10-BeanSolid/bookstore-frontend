@@ -14,7 +14,7 @@ public class ResponsePoint {
     private Long pointId;
     private String userId;
     private Long typeId;
-    private Long orderNo;
+    private Long orderId;
     private LocalDateTime earnedAndUsedAt;
     private String earnedAndUsedPoint;
 }

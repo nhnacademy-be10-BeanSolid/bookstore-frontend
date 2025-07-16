@@ -4,16 +4,29 @@
       layout:decorate="~{layout/layout}">
 <head>
     <title>장바구니</title>
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <h1>장바구니</h1>
+    <h1 class="display-5 text-center mb-4">장바구니</h1>
 
     <!-- 장바구니 목록 -->
     <form id="cartForm" th:action="@{/cart/update}" th:object="${cartUpdateQuantitiesRequest}" method="post">
         <table class="table">
             <thead>
-            <tr>
+            <tr class="text-center">
                 <th><input type="checkbox" id="selectAll"/></th>
                 <th>상품명</th>
                 <th>수량</th>
@@ -22,21 +35,23 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item, stat : ${cartItems}">
-                <td><input type="hidden" th:name="|updates[__${stat.index}__].bookId|" th:value="${item.bookId}"/></td>
-                <td><input type="checkbox" name="bookIdToDelete" th:value="${item.bookId}"/></td>
+            <tr th:each="item, stat : ${cartItems}" class="text-center">
+                <td>
+                    <input type="hidden" th:name="|updates[__${stat.index}__].bookId|" th:value="${item.bookId}"/>
+                    <input type="checkbox" name="bookIdToDelete" th:value="${item.bookId}"/>
+                </td>
                 <td th:text="${item.bookTitle}">상품명</td>
                 <td>
-                    <div class="input-group" style="width: 120px;">
+                    <div class="input-group mx-auto" style="width: 120px;">
                         <button type="button" class="btn btn-outline-secondary btn-sm decrease-quantity" data-book-id="${item.bookId}">-</button>
-                        <input type="number" class="form-control form-control-sm quantity-input"
+                        <input type="number" class="form-control form-control-sm quantity-input text-center"
                                th:field="*{updates[__${stat.index}__].quantity}"
-                               min="1" data-price="${item.price}" />
+                               min="1" th:data-price="${item.price != null ? item.price : 0}" />
                         <button type="button" class="btn btn-outline-secondary btn-sm increase-quantity" data-book-id="${item.bookId}">+</button>
                     </div>
                 </td>
-                <td th:text="${item.price}">10000</td>
-                <td class="item-total-price" th:text="${item.price * item.quantity}"></td>
+                <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}">10000</td>
+                <td class="item-total-price" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')}"></td>
             </tr>
             </tbody>
         </table>
@@ -52,9 +67,7 @@
         </div>
     </form>
 
-    <hr/>
-
-</div>
+    </div>
 
 <th:block layout:fragment="scripts">
 <script>

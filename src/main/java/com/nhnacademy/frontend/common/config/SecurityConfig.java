@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.common.config;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.filter.LoginFilter;
 import com.nhnacademy.frontend.auth.handler.CustomCookieClearingLogoutHandler;
+import com.nhnacademy.frontend.auth.handler.LoginFailureHandler;
 import com.nhnacademy.frontend.auth.handler.LoginSuccessHandler;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -20,15 +20,21 @@ public class SecurityConfig {
     private static final String LOGIN_URL = "/auth/login";
 
     @Bean
+    public LoginFailureHandler loginFailureHandler() {
+        return new LoginFailureHandler();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    AuthService authService,
                                                    LoginSuccessHandler successHandler,
+                                                   LoginFailureHandler failureHandler,
                                                    CustomCookieClearingLogoutHandler customCookieClearingLogoutHandler) throws Exception {
 
         LoginFilter loginFilter = new LoginFilter(
                 LOGIN_URL, authService, successHandler,
-                new SimpleUrlAuthenticationFailureHandler()
+                failureHandler
         );
 
         http
@@ -49,7 +55,10 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/orders").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/orders").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/orders/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/orders/*/input-detail").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/orders/non-member-detail").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/books/**").permitAll()

@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.PaycoCallbackResponseDto;
@@ -17,9 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -39,12 +39,15 @@ public class LoginController {
     private String redirectUri;
 
     @GetMapping()
-    public String showLoginForm() {
+    public String showLoginForm(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null
             && auth.isAuthenticated()
             && !(auth instanceof AnonymousAuthenticationToken)) {
             return "redirect:/";
+        }
+        if (model.containsAttribute("signupSuccess")) {
+            model.addAttribute("signupSuccess", true);
         }
         return "auth/login";
     }
@@ -111,6 +114,21 @@ public class LoginController {
                 model.addAttribute("mobile3", signupData.getMobileParts()[2]);
             }
             return "auth/oauth2-signup";
+        }
+    }
+
+    @PostMapping("/non-member")
+    public String nonMemberLogin(@ModelAttribute NonMemberLoginRequest request,
+                                 RedirectAttributes redirectAttributes) {
+
+        boolean success = authService.nonMemberLogin(request);
+
+        if (success) {
+            redirectAttributes.addFlashAttribute("nonMemberOrderNumber", request.getOrderNumber());
+            return "redirect:/orders/non-member-detail";
+        } else {
+            redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
+            return "redirect:/auth/login";
         }
     }
 }

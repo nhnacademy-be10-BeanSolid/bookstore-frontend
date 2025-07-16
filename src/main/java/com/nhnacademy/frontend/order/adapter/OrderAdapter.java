@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "gateway-service", contextId = "orderAdapter1")
+@FeignClient(name = "gateway-service", contextId = "orderAdapter")
 public interface OrderAdapter {
     
     @PostMapping("/order-api/orders")
@@ -27,6 +27,6 @@ public interface OrderAdapter {
     @GetMapping("/order-api/orders")
     Page<OrderSummaryResponse> getAllOrdersByUserId(Pageable pageable);
 
-    @GetMapping("/order-api/orders/{orderId}")
-    OrderDetailResponse getOrder(@PathVariable String orderId);
+    @GetMapping("/order-api/orders/{orderNumber}")
+    OrderDetailResponse getOrder(@PathVariable String orderNumber);
 }
