@@ -7,6 +7,8 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.mypage.service.MypageService;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -204,5 +206,19 @@ public class MypageController {
     public String updateUserGrade() {
         mypageService.bulkUpdateUserGrades();
         return "redirect:/mypage/grade";
+    }
+
+    @GetMapping("/orders")
+    public String mypageOrdersForm(Pageable pageable, Model model) {
+        Page<OrderSummaryResponse> orders = mypageService.getAllOrders(pageable);
+        model.addAttribute("orders", orders);
+        return "mypage/order-list";
+    }
+
+    @GetMapping("/orders/{orderNumber}")
+    public String getOrderDetail(@PathVariable String orderNumber, Model model) {
+        OrderDetailResponse orderDetail = mypageService.getOrderDetail(orderNumber);
+        model.addAttribute("order", orderDetail);
+        return "mypage/order-detail";
     }
 }
