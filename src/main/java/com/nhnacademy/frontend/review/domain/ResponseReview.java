@@ -23,6 +23,7 @@ public class ResponseReview {
     private LocalDateTime updatedAt;
     private String userId;
     private long bookId;
+    private String bookTitle; // Added field
 
 //    public static ResponseReview from(Review review) {
 //        List<String> imageUrls = review.getReviewImages().stream()
@@ -50,7 +51,8 @@ public class ResponseReview {
             @JsonProperty("reviewedAt") LocalDateTime reviewedAt,
             @JsonProperty("updatedAt") LocalDateTime updatedAt,
             @JsonProperty("userId") String userId,
-            @JsonProperty("bookId") long bookId
+            @JsonProperty("bookId") long bookId,
+            @JsonProperty("bookTitle") String bookTitle // Added parameter
     ) {
         this.reviewId = reviewId;
         this.evaluationScore = evaluationScore;
@@ -60,5 +62,6 @@ public class ResponseReview {
         this.updatedAt = updatedAt;
         this.userId = userId;
         this.bookId = bookId;
+        this.bookTitle = bookTitle;
     }
 }

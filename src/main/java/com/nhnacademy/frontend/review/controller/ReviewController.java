@@ -24,8 +24,12 @@ public class ReviewController {
 
     @GetMapping("/form")
     public String showReviewForm(@RequestParam("bookId") long bookId,
+                                 @ModelAttribute("loginUserId") String loginUserId,
                                  Model model) {
+
+        boolean hasPurchased = reviewService.validatePurchase(loginUserId, bookId);
         model.addAttribute("bookId", bookId);
+        model.addAttribute("hasPurchased", hasPurchased);
         return "review/reviewForm";
     }
 
@@ -83,6 +87,7 @@ public class ReviewController {
     public String getReviewsFragment(@PathVariable long bookId, Pageable pageable, Model model) {
         Page<ResponseSimpleReview> reviews = reviewService.getReviewsByBookId(bookId, pageable);
         model.addAttribute("reviews", reviews.getContent());
+        model.addAttribute("bookId", bookId);
         model.addAttribute("page", reviews);
         return "review/reviewListFragment :: reviewList";
     }

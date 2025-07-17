@@ -7,7 +7,12 @@
 <body>
 <h1>리뷰 작성</h1>
 
-<form id="reviewForm" enctype="multipart/form-data" th:action="@{/reviews/create}" method="post">
+<div th:if="${!hasPurchased}">
+    <p>이 도서에 대한 구매 기록이 없어 리뷰를 작성할 수 없습니다.</p>
+    <button type="button" onclick="history.back()">뒤로 가기</button>
+</div>
+
+<form id="reviewForm" enctype="multipart/form-data" th:action="@{/reviews/create}" method="post" th:if="${hasPurchased}">
     <!-- 사용자 ID (숨김) -->
     <input type="hidden" id="userId" name="userId" th:value="${loginUserId}"/>
 
@@ -31,7 +36,7 @@
     <button type="submit">리뷰 등록</button>
 </form>
 
-<script>
+<script th:if="${hasPurchased}">
     const imageInput = document.getElementById("images");
     const previewContainer = document.getElementById("previewContainer");
     let selectedFiles = [];

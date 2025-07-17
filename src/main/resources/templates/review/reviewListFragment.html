@@ -19,7 +19,7 @@
             </thead>
             <tbody>
             <tr th:each="review : ${reviews}">
-                <td th:text="${review.userId}"></td>
+                <td><a th:href="@{/reviews/user/{userId}(userId=${review.userId})}" th:text="${review.userId}"></a></td>
                 <td th:text="${review.evaluationScore} + '점'"></td>
                 <td th:text="${#strings.abbreviate(review.reviewContent, 40)}"></td>
                 <td th:text="${#temporals.format(review.reviewedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>

@@ -19,4 +19,8 @@ public interface ReviewService {
 
     ResponseReview editReview(long reviewId, ReviewUpdateRequest review,
                               List<MultipartFile> images);
+
+    String getTitleByBookId(long bookId);
+
+    boolean validatePurchase(String userId, Long bookId);
 }

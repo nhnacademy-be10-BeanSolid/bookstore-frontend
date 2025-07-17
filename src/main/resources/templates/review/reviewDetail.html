@@ -5,7 +5,7 @@
 <h1>리뷰 상세</h1>
 
 <p><strong>작성자:</strong> <span th:text="${review.userId}"></span></p>
-<p><strong>도서 ID:</strong> <span th:text="${review.bookId}"></span></p>
+<p><strong>도서 제목:</strong> <span th:text="${review.bookTitle}"></span></p>
 <p><strong>평점:</strong> <span th:text="${review.evaluationScore}"></span></p>
 <p><strong>내용:</strong> <span th:text="${review.reviewContent}"></span></p>
 <p><strong>작성일:</strong> <span th:text="${#temporals.format(review.reviewedAt, 'yyyy-MM-dd HH:mm')}"></span></p>

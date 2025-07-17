@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.review.service.impl;
 
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.service.MinioService;
 import com.nhnacademy.frontend.review.adapter.ReviewAdapter;
 import com.nhnacademy.frontend.review.domain.*;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Slf4j
@@ -23,6 +25,7 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewAdapter reviewAdapter;
     private final MinioService minioService;
+    private final UserAdapter userAdapter;
 
     @Override
     public ResponseReview createReview(ReviewCreateRequest reviewCreateRequest, List<MultipartFile> images) {
@@ -41,7 +44,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ResponseReview getReview(long reviewId) {
-        return reviewAdapter.getReview(reviewId).getBody();
+        ResponseReview review = reviewAdapter.getReview(reviewId).getBody();
+        String bookTitle = getTitleByBookId(review.getBookId());
+        review.setBookTitle(bookTitle);
+        return review;
     }
 
     @Override
@@ -51,7 +57,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Page<ResponseSimpleReviewByUser> getReviewsByUserId(String userId, Pageable pageable) {
-        return reviewAdapter.getReviewByUserId(userId, pageable).getBody();
+        Page<ResponseSimpleReviewByUser> reviewsPage = reviewAdapter.getReviewByUserId(userId, pageable).getBody();
+        Objects.requireNonNull(reviewsPage).forEach(review -> {
+            String bookTitle = getTitleByBookId(review.getBookId());
+            review.setBookTitle(bookTitle);
+        });
+        return reviewsPage;
     }
 
     @Override
@@ -80,4 +91,14 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewAdapter.updateReview(reviewId, finalRequest).getBody();
     }
 
+    @Override
+    public String getTitleByBookId(long bookId) {
+        return reviewAdapter.getTitleByBookId(bookId).getBody();
+    }
+
+    @Override
+    public boolean validatePurchase(String userId, Long bookId) {
+        Long userNo = Objects.requireNonNull(userAdapter.getUserInfo().getBody()).getUserNo();
+        return reviewAdapter.validatePurchase(userNo, bookId);
+    }
 }

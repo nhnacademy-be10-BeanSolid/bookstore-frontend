@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class ResponseSimpleReviewByUser {
     private long reviewId;
     private long bookId;
+    private String bookTitle;
     private int evaluationScore;
     private LocalDateTime reviewedAt;
     private String reviewContent;
@@ -20,6 +21,7 @@ public class ResponseSimpleReviewByUser {
         return new ResponseSimpleReviewByUser(
                 responseReview.getReviewId(),
                 responseReview.getBookId(),
+                null,
                 responseReview.getEvaluationScore(),
                 responseReview.getReviewedAt(),
                 responseReview.getReviewContent()

@@ -23,4 +23,11 @@ public interface ReviewAdapter {
 
     @GetMapping("/user-api/reviews/user/{userId}")
     ResponseEntity<Page<ResponseSimpleReviewByUser>> getReviewByUserId(@PathVariable("userId") String userId, Pageable pageable);
+
+    @GetMapping("/book-api/books/{bookId}/title")
+    ResponseEntity<String> getTitleByBookId(@PathVariable Long bookId);
+
+    @GetMapping("/order-api/internal/orders/exists")
+    boolean validatePurchase(@RequestParam Long userNo, @RequestParam Long bookId);
+
 }
