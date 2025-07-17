@@ -85,8 +85,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean verifyDormantUserCode(DormantUserVerificationRequestDto dto) {
-
-        return authAdapter.verifyDormantUserCode(dto);
+        try {
+            return authAdapter.verifyDormantUserCode(dto);
+        } catch (FeignException e) {
+            log.error("휴면 사용자 인증 실패: {}", e.getMessage(), e);
+            return false;
+        }
     }
 
 

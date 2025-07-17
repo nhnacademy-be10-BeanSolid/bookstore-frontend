@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.LoginRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.request.OAuth2AdditionalSignupRequestDto;
@@ -198,5 +199,27 @@ class AuthServiceImplTest {
 
         assertThat(result).isFalse();
         verify(authAdapter, times(1)).nonMemberLogin(request);
+    }
+
+    @Test
+    void verifyDormantUserCode_success_returnsTrue() {
+        DormantUserVerificationRequestDto request = new DormantUserVerificationRequestDto("user1", "123456");
+        when(authAdapter.verifyDormantUserCode(request)).thenReturn(true);
+
+        boolean result = authService.verifyDormantUserCode(request);
+
+        assertThat(result).isTrue();
+        verify(authAdapter, times(1)).verifyDormantUserCode(request);
+    }
+
+    @Test
+    void verifyDormantUserCode_feignException_returnsFalse() {
+        DormantUserVerificationRequestDto request = new DormantUserVerificationRequestDto("user1", "123456");
+        when(authAdapter.verifyDormantUserCode(request)).thenThrow(FeignException.class);
+
+        boolean result = authService.verifyDormantUserCode(request);
+
+        assertThat(result).isFalse();
+        verify(authAdapter, times(1)).verifyDormantUserCode(request);
     }
 }

@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
@@ -184,5 +185,41 @@ class LoginControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/auth/login"))
                 .andExpect(flash().attribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다."));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 폼 요청")
+    void showDormantForm_shouldReturnDormantForm() throws Exception {
+        mockMvc.perform(get("/auth/login/dormant").param("userId", "dormantUser"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/dormant"))
+                .andExpect(model().attribute("userId", "dormantUser"))
+                .andExpect(model().attributeExists("needVerification"));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 - 성공")
+    void verifyDormantForm_success() throws Exception {
+        DormantUserVerificationRequestDto request = new DormantUserVerificationRequestDto("dormantUser", "123456");
+        when(authService.verifyDormantUserCode(request)).thenReturn(true);
+
+        mockMvc.perform(post("/auth/login/dormant/verify")
+                        .flashAttr("dormantUserVerificationRequestDto", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attributeExists("dormantSuccess"));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 - 실패")
+    void verifyDormantForm_failure() throws Exception {
+        DormantUserVerificationRequestDto request = new DormantUserVerificationRequestDto("dormantUser", "wrongCode");
+        when(authService.verifyDormantUserCode(request)).thenReturn(false);
+
+        mockMvc.perform(post("/auth/login/dormant/verify")
+                        .flashAttr("dormantUserVerificationRequestDto", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attributeExists("dormantFail"));
     }
 }
