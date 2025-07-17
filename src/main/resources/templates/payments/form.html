@@ -115,6 +115,20 @@
         <!-- 4) 추가 할인 / 포인트 (입력 생략 가능) -->
         <section class="lg:col-span-2 pt-8 space-y-4">
             <!-- ... 여기에 쿠폰/포인트 UI 그대로 유지 ... -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold text-gray-800">포인트 사용</h2>
+                <div class="flex items-center space-x-4">
+                    <p class="text-gray-600">현재 보유 포인트: <span id="currentPoints" th:text="${#numbers.formatInteger(currentPoints ?: 0, 0, 'COMMA')}">0</span>P</p>
+                    <input type="number" id="pointUseInput" name="usedPoint" min="0" th:max="${currentPoints}" value="0"
+                           class="w-32 h-11 px-4 rounded-lg border-gray-300 shadow-sm
+                                  focus:border-primary focus:ring-primary/40"
+                           oninput="clampAndUpdate(this)"/>
+                    <button type="button" onclick="maxPrev(this)"
+                            class="inline-flex justify-center rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300">
+                        모두 사용
+                    </button>
+                </div>
+            </div>
         </section>
 
         <!-- 5) 결제 요청 버튼 -->
@@ -153,10 +167,10 @@
             + shippingFee
             - num('sumProdDc')
             - num('sumCoupon')
-            - sumBy('pointUse')
+            - sumBy('usedPoint')
             - sumBy('depositUse')
             - sumBy('giftCashUse');
-        document.getElementById('sumPoints').textContent = toKR(sumBy('pointUse'));
+        document.getElementById('sumPoints').textContent = toKR(sumBy('usedPoint'));
         document.getElementById('finalAmt').textContent  = toKR(final)+'원';
         document.getElementById('expPoint').textContent  = toKR(Math.floor(final*0.05))+'P';
     }
