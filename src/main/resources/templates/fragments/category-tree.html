@@ -1,0 +1,41 @@
+<th:block th:fragment="categoryList(categoryList)">
+  <ul class="list-unstyled">
+    <li th:each="node : ${categoryList}" style="position: relative;">
+      <a th:href="@{/categories/{id}(id=${node.categoryId})}"
+         th:text="${node.categoryName}"
+         class="text-decoration-none text-dark d-block py-1 ps-2 bg-light border rounded mb-1">
+      </a>
+
+      <!-- 1단계 자식 -->
+      <ul th:if="${#lists.size(node.children) > 0}"
+          class="list-unstyled position-absolute bg-white border rounded shadow"
+          style="display: none; top: 100%; left: 0; min-width: 150px; z-index: 1000;">
+        <li th:each="child : ${node.children}" style="position: relative;">
+          <a th:href="@{/categories/{id}(id=${child.categoryId})}"
+             th:text="${child.categoryName}"
+             class="d-block px-2 py-1 text-dark text-decoration-none">
+          </a>
+
+          <!-- 2단계 자식 -->
+          <ul th:if="${#lists.size(child.children) > 0}"
+              class="list-unstyled position-absolute bg-white border rounded shadow"
+              style="display: none; top: 0; left: 100%; min-width: 150px; z-index: 1000;">
+            <li th:each="grandchild : ${child.children}">
+              <a th:href="@{/categories/{id}(id=${grandchild.categoryId})}"
+                 th:text="${grandchild.categoryName}"
+                 class="d-block px-2 py-1 text-dark text-decoration-none">
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <style>
+        /* 1단계 메뉴 보이기 */
+        li:hover > ul {
+          display: block !important;
+        }
+      </style>
+    </li>
+  </ul>
+</th:block>
