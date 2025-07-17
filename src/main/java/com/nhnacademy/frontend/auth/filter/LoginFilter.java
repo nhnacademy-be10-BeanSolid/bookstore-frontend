@@ -53,17 +53,13 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
                 throw new BadCredentialsException("아이디 또는 비밀번호가 올바르지 않습니다.");
             }
         } catch (Exception ex) {
-            // 인증 실패 시 응답에서 메시지 추출
             String errorMessage = ex.getMessage();
             log.error(errorMessage);
 
-            // "휴면" 또는 "휴먼"이 포함된 경우 dormant.html로 리다이렉트
             if (errorMessage != null && (errorMessage.contains("휴면"))) {
                 response.sendRedirect("/auth/login/dormant?userId=" + username);
                 return null;
             }
-
-            // 그 외 예외는 기존 방식으로 처리
             throw new BadCredentialsException(errorMessage != null ? errorMessage : "로그인 실패");
         }
     }
