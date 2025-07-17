@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,5 +23,11 @@ public class UserServiceImpl implements UserService {
                 .map(ResponseUser::getUserPoint)
                 .map(Long::valueOf)
                 .orElse(0L);
+    }
+
+    @Override
+    public boolean isDormantUser(String userId){
+
+        return Objects.requireNonNull(userAdapter.getUser(userId).getBody()).getUserStatus().equals("DORMANT");
     }
 }
