@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Coupons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e2e6ea;
+        }
+        .no-coupons {
+            text-align: center;
+            padding: 30px;
+            background-color: #ffeeba;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Active Coupons</h1>
+        <div th:if="${#lists.isEmpty(activeCoupons)}" class="no-coupons">
+            <p>You have no active coupons.</p>
+        </div>
+        <div th:unless="${#lists.isEmpty(activeCoupons)}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Coupon Name</th>
+                        <th>Discount</th> <!-- Discount Type 제거, Discount Amount를 Discount로 변경 -->
+                        <th>Expires At</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="coupon : ${activeCoupons}">
+                        <td th:text="${coupon.couponName}"></td>
+                        <td th:text="${coupon.couponDiscountAmount}"></td> <!-- couponDiscountAmount 사용 -->
+                        <td th:text="${#temporals.format(coupon.expiredAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${coupon.status}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
