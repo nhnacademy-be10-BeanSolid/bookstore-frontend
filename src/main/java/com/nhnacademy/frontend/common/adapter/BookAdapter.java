@@ -120,16 +120,17 @@ public interface BookAdapter {
     void deleteBookLike(@PathVariable Long bookId, @RequestHeader String userId);
 
     // 엘라스틱 서치
-    @GetMapping("/book-api/search")
+    @GetMapping("/book-api/books/search")
     Page<SimpleBookResponseDto> searchBooks(
             @RequestParam String keyword,
             @RequestParam Integer page,
             @RequestParam Integer size,
             @RequestParam(name = "sort", required = false) String sort);
 
-    @GetMapping("/book-api/books/ids")
-    List<BookResponse> getBooks(@RequestParam List<Long> ids);
-
+    // 카테고리 트리
     @GetMapping("/book-api/categories/tree")
     List<BookCategoryNodeResponseDto> getCategoryTree();
+
+    @GetMapping("/book-api/books/ids")
+    List<BookResponse> getBooks(@RequestParam List<Long> ids);
 }
