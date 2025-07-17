@@ -4,6 +4,7 @@ import com.nhnacademy.frontend.payment.dto.request.PaymentApprovalRequestDto;
 import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
+import com.nhnacademy.frontend.common.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final UserService userService;
 
     @Value("${payment.toss.success-url}")
     private String successCallbackUrl;
@@ -47,7 +49,7 @@ public class PaymentController {
 
         model.addAttribute("paymentRequest", dto);
         model.addAttribute("shippingFee",  5000);
-        model.addAttribute("currentPoints", paymentService.getCurrentUserPoints());
+        model.addAttribute("currentPoints", userService.getCurrentUserPoints());
         return "payments/form";
     }
 
