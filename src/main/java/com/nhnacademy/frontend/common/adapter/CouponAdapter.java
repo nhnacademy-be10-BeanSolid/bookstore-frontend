@@ -11,6 +11,6 @@ import java.util.List;
 @FeignClient(name = "gateway-service", contextId = "couponAdapter")
 public interface CouponAdapter {
 
-    @GetMapping("/coupons/users/{userNo}/active")
+    @GetMapping("/coupon-api/coupons/users/{userNo}/active")
     ResponseEntity<List<UserCouponResponse>> getActiveUserCoupons(@PathVariable("userNo") String userNo);
 }
