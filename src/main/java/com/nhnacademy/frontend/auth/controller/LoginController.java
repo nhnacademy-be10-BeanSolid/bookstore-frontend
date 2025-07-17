@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
@@ -8,6 +9,7 @@ import com.nhnacademy.frontend.auth.dto.response.PaycoCallbackResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +34,7 @@ public class LoginController {
     private final AuthService authService;
     private final JwtCookieUtil jwtCookieUtil;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
 
     @Value("${payco.client-id}")
     private String clientId;
@@ -116,6 +119,34 @@ public class LoginController {
             return "auth/oauth2-signup";
         }
     }
+
+    @GetMapping("/dormant")
+    public String showDormantForm(@RequestParam(name = "userId") String userId, Model model, RedirectAttributes redirectAttributes) {
+
+        if(!userService.isDormantUser(userId)) {
+
+            redirectAttributes.addFlashAttribute("accessDenied", "휴면 계정이 아니면 접근할 수 없습니다.");
+            return "redirect:/";
+        }
+
+        model.addAttribute("userId", userId);
+        model.addAttribute("needVerification", "휴면 계정입니다, 인증코드를 입력해주세요.");
+
+        return "auth/dormant";
+    }
+
+    @PostMapping("/dormant/verify")
+    public String verifyDormantForm(@ModelAttribute DormantUserVerificationRequestDto dto, RedirectAttributes redirectAttributes) {
+
+        if(authService.verifyDormantUserCode(dto)){
+
+            redirectAttributes.addFlashAttribute("dormantSuccess", "인증성공! 휴면 상태가 해제되었습니다. 다시 로그인 해주세요.");
+            return "redirect:/auth/login";
+        }
+        redirectAttributes.addFlashAttribute("dormantFail", "인증실패! 다시 인증해주세요.");
+        return "redirect:/auth/login";
+    }
+
 
     @PostMapping("/non-member")
     public String nonMemberLogin(@ModelAttribute NonMemberLoginRequest request,
