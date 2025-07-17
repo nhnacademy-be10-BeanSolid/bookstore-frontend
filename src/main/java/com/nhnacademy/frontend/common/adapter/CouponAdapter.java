@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "coupon-api")
+@FeignClient(name = "gateway-service", contextId = "couponAdapter")
 public interface CouponAdapter {
 
     @GetMapping("/coupons/users/{userNo}/active")
