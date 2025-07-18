@@ -37,7 +37,7 @@ public class MypageServiceImpl implements MypageService {
 
             Boolean isPasswordValid = authAdapter.verifyPassword(verificationRequest);
 
-            if(!isPasswordValid) {
+            if (isPasswordValid == null || !isPasswordValid) {
                 return false;
             }
 
