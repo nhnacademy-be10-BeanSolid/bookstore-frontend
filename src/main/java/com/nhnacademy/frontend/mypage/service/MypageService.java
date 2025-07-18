@@ -6,6 +6,7 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointTyp
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.springframework.data.domain.Page;
@@ -41,4 +42,6 @@ public interface MypageService {
     Page<OrderSummaryResponse> getAllOrders(Pageable pageable);
 
     OrderDetailResponse getOrderDetail(String orderNumber);
+
+    void returnOrder(String orderNumber, ReturnsRequest request);
 }

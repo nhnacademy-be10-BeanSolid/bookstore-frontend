@@ -2,18 +2,21 @@ package com.nhnacademy.frontend.mypage.controller;
 
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
+import com.nhnacademy.frontend.mypage.dto.request.ReturnFormRequest;
+import com.nhnacademy.frontend.mypage.service.MypageService;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
-import com.nhnacademy.frontend.mypage.service.MypageService;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
 
+@Slf4j
 @Controller
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
@@ -220,5 +224,20 @@ public class MypageController {
         OrderDetailResponse orderDetail = mypageService.getOrderDetail(orderNumber);
         model.addAttribute("order", orderDetail);
         return "mypage/order-detail";
+    }
+
+    @PostMapping("/orders/{orderNumber}/return")
+    public String returnOrder(@PathVariable String orderNumber,
+                              @ModelAttribute ReturnFormRequest formRequest,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            ReturnsRequest request = new ReturnsRequest(formRequest.getReason(), formRequest.isDamaged());
+            mypageService.returnOrder(orderNumber, request);
+            redirectAttributes.addFlashAttribute("message", "반품 신청이 완료되었습니다.");
+        } catch (Exception e) { // 모든 예외를 여기서 처리
+            log.error("반품 신청 오류 발생: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "반품 신청에 실패했습니다.");
+        }
+        return "redirect:/mypage/orders";
     }
 }
