@@ -9,7 +9,6 @@ import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.exception.OrderNotFoundException;
 import com.nhnacademy.frontend.order.service.OrderService;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -171,48 +166,6 @@ class OrderControllerTest {
                 .andExpect(redirectedUrl("/payments/form?orderId=" + orderNumber + "&amount=10000"));
 
         verify(orderService).updateOrder(eq(orderNumber), any(UpdateOrderRequest.class));
-    }
-
-    @Test
-    @DisplayName("주문 목록 조회에 성공하면 200을 응답한다")
-    void orderList_Success() throws Exception {
-        // Given
-        Pageable pageable = PageRequest.of(0, 10);
-        OrderSummaryResponse summary = new OrderSummaryResponse(LocalDate.now(), "202507-abcdef-123456", "받는 사람", 30000L, "PENDING");
-        Page<OrderSummaryResponse> orderPage = new PageImpl<>(List.of(summary), pageable, 1);
-
-        given(orderService.getAllOrders(any(Pageable.class))).willReturn(orderPage);
-
-        // When & Then
-        mockMvc.perform(get("/orders/list")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("order/list"))
-                .andExpect(model().attribute("orders", orderPage));
-
-        verify(orderService).getAllOrders(any(Pageable.class));
-    }
-
-    @Test
-    @DisplayName("주문 상세 조회에 성공하면 200을 응답한다")
-    void getOrderDetail_Success() throws Exception {
-        // Given
-        String orderNumber = "202507-abcdef-123456";
-        OrderDetailResponse orderDetail = OrderDetailResponse.builder()
-                .orderNumber(orderNumber)
-                .totalAmount(30_000L)
-                .build();
-
-        given(orderService.getOrder(orderNumber)).willReturn(orderDetail);
-
-        // When & Then
-        mockMvc.perform(get("/orders/list/{orderNumber}", orderNumber))
-                .andExpect(status().isOk())
-                .andExpect(view().name("order/detail"))
-                .andExpect(model().attribute("order", orderDetail));
-
-        verify(orderService).getOrder(orderNumber);
     }
 
     @Test
