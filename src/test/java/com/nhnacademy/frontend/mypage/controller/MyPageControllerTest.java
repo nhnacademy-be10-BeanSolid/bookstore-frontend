@@ -497,7 +497,7 @@ public class MyPageControllerTest {
         // When & Then
         mockMvc.perform(get("/mypage/orders/{orderNumber}", orderNumber))
                 .andExpect(status().isOk())
-                .andExpect(view().name("mypage/detail"))
+                .andExpect(view().name("mypage/order-detail"))
                 .andExpect(model().attribute("order", orderDetail));
 
         Mockito.verify(mypageService).getOrderDetail(orderNumber);
