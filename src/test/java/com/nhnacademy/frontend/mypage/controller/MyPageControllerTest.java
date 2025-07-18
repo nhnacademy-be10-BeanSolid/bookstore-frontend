@@ -7,6 +7,7 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.advice.GlobalModelAttributeAdvice;
 import com.nhnacademy.frontend.mypage.service.MypageService;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import feign.FeignException;
@@ -501,5 +502,42 @@ public class MyPageControllerTest {
                 .andExpect(model().attribute("order", orderDetail));
 
         Mockito.verify(mypageService).getOrderDetail(orderNumber);
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 성공")
+    void returnOrder_Success() throws Exception {
+        String orderNumber = "testOrderNumber";
+        String reason = "단순 변심";
+        boolean damaged = false;
+
+        mockMvc.perform(post("/mypage/orders/{orderNumber}/return", orderNumber)
+                        .param("reason", reason)
+                        .param("damaged", String.valueOf(damaged)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/mypage/orders"))
+                .andExpect(flash().attributeExists("message"));
+
+        Mockito.verify(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 실패")
+    void returnOrder_Failure() throws Exception {
+        String orderNumber = "testOrderNumber";
+        String reason = "상품 파손";
+        boolean damaged = true;
+
+        Mockito.doThrow(new RuntimeException("Service error"))
+                .when(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+
+        mockMvc.perform(post("/mypage/orders/{orderNumber}/return", orderNumber)
+                        .param("reason", reason)
+                        .param("damaged", String.valueOf(damaged)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/mypage/orders"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        Mockito.verify(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
     }
 }

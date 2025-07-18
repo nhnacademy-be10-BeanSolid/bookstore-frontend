@@ -1,16 +1,17 @@
 package com.nhnacademy.frontend.mypage.service;
 
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.service.impl.MypageServiceImpl;
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +32,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MypageServiceImpl 단위 테스트")
@@ -313,5 +313,31 @@ public class MypageServiceImplTest {
         assertEquals(orderNumber, result.getOrderNumber());
         assertEquals(30_000L, result.getTotalAmount());
         verify(orderAdapter).getOrder(orderNumber);
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 성공")
+    void returnOrder_Success() {
+        String orderNumber = "testOrderNumber";
+        ReturnsRequest returnsRequest = new ReturnsRequest("단순 변심", false);
+
+        doNothing().when(orderAdapter).returnOrder(orderNumber, returnsRequest);
+
+        mypageService.returnOrder(orderNumber, returnsRequest);
+
+        verify(orderAdapter, times(1)).returnOrder(orderNumber, returnsRequest);
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 실패 (OrderAdapter 예외 발생)")
+    void returnOrder_Failure_OrderAdapterException() {
+        String orderNumber = "testOrderNumber";
+        ReturnsRequest returnsRequest = new ReturnsRequest("상품 파손", true);
+
+        doThrow(new RuntimeException("OrderAdapter error")).when(orderAdapter).returnOrder(orderNumber, returnsRequest);
+
+        assertThrows(RuntimeException.class, () -> mypageService.returnOrder(orderNumber, returnsRequest));
+
+        verify(orderAdapter, times(1)).returnOrder(orderNumber, returnsRequest);
     }
 }
