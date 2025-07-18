@@ -40,8 +40,11 @@ jobs:
         args: >
           -Dsonar.projectKey=bookstore-BeanSolid-frontend
           -Dsonar.projectName='bookstore-BeanSolid-frontend'
-          -Dsonar.sources=.
+          -Dsonar.sources=src/main/java
+          -Dsonar.tests=src/test/java
           -Dsonar.java.binaries=target/classes
+          -Dsonar.java.test.binaries=target/test-classes
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
           -Dsonar.qualitygate.wait=true
           -Dsonar.qualitygate.timeout=300
 
