@@ -12,5 +12,5 @@ import java.util.List;
 public interface CouponAdapter {
 
     @GetMapping("/coupon-api/coupons/users/{userNo}/active")
-    ResponseEntity<List<UserCouponResponse>> getActiveUserCoupons(@PathVariable("userNo") String userNo);
+    ResponseEntity<List<UserCouponResponse>> getActiveUserCoupons(@PathVariable("userNo") Long userNo);
 }

@@ -23,6 +23,6 @@ public class CouponServiceImpl implements CouponService {
         // userId를 userNo로 변환
         Long userNo = userAdapter.getUser(userId).getBody().getUserNo();
         log.info("CouponServiceImpl: userNo received from UserAdapter: {}", userNo);
-        return couponAdapter.getActiveUserCoupons(String.valueOf(userNo)).getBody();
+        return couponAdapter.getActiveUserCoupons(userNo).getBody();
     }
 }
