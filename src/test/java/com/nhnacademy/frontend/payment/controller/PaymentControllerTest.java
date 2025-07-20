@@ -98,11 +98,4 @@ class PaymentControllerTest {
                 .andExpect(model().attribute("message", "testMessage"));
                 
     }
-
-    // @Test
-    // void testResultPage() throws Exception {
-    //     mockMvc.perform(get("/payments/payment-result"))
-    //             .andExpect(status().isOk())
-    //             .andExpect(view().name("result"));
-    // }
 }
