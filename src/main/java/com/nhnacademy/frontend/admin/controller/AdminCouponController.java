@@ -2,7 +2,7 @@ package com.nhnacademy.frontend.admin.controller;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
-import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.dto.CouponPolicyResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class AdminCouponController {
 
     @GetMapping
     public String getAdminCouponPage(Model model, @PageableDefault(size = 100) Pageable pageable) {
-        List<CouponPolicyResponse> couponPolicies = couponAdapter.getAllCouponPolicies();
+        List<CouponPolicyResponseDto> couponPolicies = couponAdapter.getAllCouponPolicies();
         model.addAttribute("couponPolicies", couponPolicies);
         model.addAttribute("books", bookAdapter.getAllBooks(pageable).getContent());
         return "admin/coupon/coupon-management"; // Thymeleaf template path
