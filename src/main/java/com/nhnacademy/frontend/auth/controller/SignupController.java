@@ -44,7 +44,7 @@ public class SignupController {
             model.addAttribute("userIdCheckRequestDto", new UserIdCheckRequestDto());
         }
         if (!model.containsAttribute(USER_CREATE_REQUEST_DTO)) {
-            model.addAttribute(USER_CREATE_REQUEST_DTO, new UserCreateRequestDto(null, null, null, null, null, null, null));
+            model.addAttribute(USER_CREATE_REQUEST_DTO, new UserCreateRequestDto(null, null, null, null, null, null, false));
         }
         return NORMAL_SIGNUP_VIEW;
     }

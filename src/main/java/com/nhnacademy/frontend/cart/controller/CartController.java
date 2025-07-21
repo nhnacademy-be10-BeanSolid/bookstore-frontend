@@ -36,7 +36,7 @@ public class CartController {
 
         List<CartItemUpdateRequest> updates = cartViewResponse.cartItems().stream()
                 .map(item -> new CartItemUpdateRequest(item.getBookId(), item.getQuantity()))
-                .collect(Collectors.toList());
+                .toList();
 
         CartUpdateQuantitiesRequest cartUpdateQuantitiesRequest = new CartUpdateQuantitiesRequest();
         cartUpdateQuantitiesRequest.setUpdates(updates);
