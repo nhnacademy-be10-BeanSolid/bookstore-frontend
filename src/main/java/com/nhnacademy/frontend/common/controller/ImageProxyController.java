@@ -1,6 +1,8 @@
 package com.nhnacademy.frontend.common.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,7 +13,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+@Profile("!test")
 @Controller
+@RequiredArgsConstructor
 public class ImageProxyController {
 
     private final RestTemplate restTemplate = new RestTemplate();
