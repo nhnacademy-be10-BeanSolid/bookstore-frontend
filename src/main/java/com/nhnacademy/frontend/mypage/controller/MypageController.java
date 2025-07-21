@@ -33,6 +33,7 @@ import java.util.Objects;
 public class MypageController {
     private static final String USER_TYPE_ATTRIBUTE = "userType";
     private static final String USER_TYPE_LOCAL = "LOCAL";
+    private static final String MESSAGE_ATTRIBUTE = "message";
     private static final String ERROR_ATTRIBUTE = "error";
     private static final String MYPAGE_VERIFIED_ATTRIBUTE = "mypage_verified";
     private final MypageService mypageService;
@@ -106,7 +107,7 @@ public class MypageController {
         }
 
         mypageService.updatePersonalInformation(request);
-        redirectAttributes.addFlashAttribute("message", "정보가 성공적으로 수정되었습니다.");
+        redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "정보가 성공적으로 수정되었습니다.");
         return "redirect:/mypage";
     }
 
@@ -233,7 +234,7 @@ public class MypageController {
                               RedirectAttributes redirectAttributes) {
         try {
             mypageService.returnOrder(orderNumber, formRequest.getReason(), formRequest.isDamaged());
-            redirectAttributes.addFlashAttribute("message", "반품 신청이 완료되었습니다.");
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "반품 신청이 완료되었습니다.");
         } catch (Exception e) { // 모든 예외를 여기서 처리
             log.error("반품 신청 오류 발생: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "반품 신청에 실패했습니다.");
@@ -247,7 +248,7 @@ public class MypageController {
                               RedirectAttributes redirectAttributes) {
         try {
             mypageService.cancelOrder(orderNumber, reason);
-            redirectAttributes.addFlashAttribute("message", "결제 취소가 완료되었습니다.");
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "결제 취소가 완료되었습니다.");
         } catch (Exception e) {
             log.error("결제 취소 오류 발생: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "결제 취소에 실패했습니다.");
