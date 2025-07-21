@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +29,7 @@ class GlobalExceptionHandlerTest {
 
         // then
         assertEquals("error/error", view);
-        verify(model).addAttribute(eq("statusCode"), eq(404));
-        verify(model).addAttribute(eq("userFriendlyMessage"), eq("페이지를 찾을 수 없습니다."));
+        verify(model).addAttribute("statusCode", 404);
+        verify(model).addAttribute("userFriendlyMessage", "페이지를 찾을 수 없습니다.");
     }
 }

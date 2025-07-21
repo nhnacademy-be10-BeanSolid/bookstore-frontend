@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MyPageController 단위 테스트")
-public class MyPageControllerTest {
+class MyPageControllerTest {
 
     @Mock
     private MypageService mypageService;

@@ -1,7 +1,6 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.admin.controller.AdminBookCategoryController;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryNodeResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;

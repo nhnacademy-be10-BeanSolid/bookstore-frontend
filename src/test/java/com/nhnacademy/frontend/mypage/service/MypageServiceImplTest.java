@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MypageServiceImpl 단위 테스트")
-public class MypageServiceImplTest {
+class MypageServiceImplTest {
     @Mock
     private AuthAdapter authAdapter;
     @Mock
@@ -296,7 +296,7 @@ public class MypageServiceImplTest {
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.getTotalElements());
-        assertEquals("202507-abcdef-123456", result.getContent().get(0).orderNumber());
+        assertEquals("202507-abcdef-123456", result.getContent().getFirst().orderNumber());
         verify(orderAdapter).getAllOrdersByUserId(pageable);
     }
 
