@@ -1,6 +1,6 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.dto.CouponPolicyResponseDto;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public interface CouponAdapter {
     ResponseEntity<List<UserCouponResponse>> getActiveUserCoupons(@PathVariable("userNo") Long userNo);
 
     @GetMapping("/coupon-api/coupons/policy")
-    List<CouponPolicyResponse> getAllCouponPolicies();
+    List<CouponPolicyResponseDto> getAllCouponPolicies();
 
     @PostMapping("/coupon-api/admin/issue-all/{couponPolicyId}")
     void startIssuingCouponsToAllUsers(@PathVariable("couponPolicyId") Long couponPolicyId);
