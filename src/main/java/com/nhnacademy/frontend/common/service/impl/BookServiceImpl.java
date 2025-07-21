@@ -105,6 +105,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookDetailResponseDto getAdminBookDetail(Long bookId) {
+        log.info("AdminBookDetail Get Start : {}", bookId);
+        return bookAdapter.getAdminBookDetail(bookId);
+    }
+
+    @Override
     public BookResponseDto createBook(BookCreateRequestDto request) {
         log.info("Book Create Start");
         return bookAdapter.createBook(request);

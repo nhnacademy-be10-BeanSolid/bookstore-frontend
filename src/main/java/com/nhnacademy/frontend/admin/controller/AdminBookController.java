@@ -58,7 +58,7 @@ public class AdminBookController {
     // 상세 정보
     @GetMapping("/{bookId}")
     public String getBookDetail(@PathVariable("bookId") Long bookId, Model model) {
-        BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
+        BookDetailResponseDto bookDetail = bookService.getAdminBookDetail(bookId);
         log.info("BookDetail Get Success : {}", bookId);
         model.addAttribute("book", bookDetail);
         return "admin/book/detail";
