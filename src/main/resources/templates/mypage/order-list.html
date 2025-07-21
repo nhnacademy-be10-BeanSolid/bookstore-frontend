@@ -46,13 +46,15 @@
                                 </td>
                                 <td>
                                     <!-- 결제 대기 상태일 때 결제취소 버튼 -->
-                                    <form th:if="${order.status == 'PENDING_PAY'}" th:action="@{/mypage/orders/{orderNumber}/cancel(orderNumber=${order.orderNumber})}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('정말로 결제를 취소하시겠습니까?')">결제취소</button>
-                                    </form>
+                                    <button th:if="${order.status == 'PENDING_PAY'}" type="button" class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#actionModal"
+                                            th:attr="data-order-number=${order.orderNumber}, data-action-type='cancel'">
+                                        결제취소
+                                    </button>
                                     <!-- 완료 상태일 때 반품신청 버튼 -->
                                     <button th:if="${order.status == 'COMPLETED'}" type="button" class="btn btn-warning btn-sm"
-                                            data-bs-toggle="modal" data-bs-target="#returnModal"
-                                            th:attr="data-order-number=${order.orderNumber}">
+                                            data-bs-toggle="modal" data-bs-target="#actionModal"
+                                            th:attr="data-order-number=${order.orderNumber}, data-action-type='return'">
                                         반품신청
                                     </button>
                                     <!-- 다른 상태일 때는 버튼 없음 -->
@@ -104,21 +106,21 @@
         </div>
     </div>
 
-    <!-- 반품 신청 모달 -->
-    <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <!-- 공통 액션 모달 (반품/결제취소) -->
+    <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="returnModalLabel">반품 신청</h5>
+                    <h5 class="modal-title" id="actionModalLabel">반품 신청</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="returnForm" method="post">
+                <form id="actionForm" method="post">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="returnReason" class="form-label">반품 사유</label>
-                            <textarea class="form-control" id="returnReason" name="reason" rows="3" required></textarea>
+                            <label for="actionReason" class="form-label">반품 사유</label>
+                            <textarea class="form-control" id="actionReason" name="reason" rows="3" required></textarea>
                         </div>
-                        <div class="form-check">
+                        <div class="form-check" id="damagedCheckbox">
                             <input class="form-check-input" type="checkbox" id="damaged" name="damaged" value="true">
                             <label class="form-check-label" for="damaged">
                                 상품이 파손되었습니까?
@@ -127,7 +129,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="submit" class="btn btn-primary">반품 접수</button>
+                        <button type="submit" class="btn btn-primary" id="actionSubmitBtn">반품 접수</button>
                     </div>
                 </form>
             </div>
@@ -136,12 +138,39 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var returnModal = document.getElementById('returnModal');
-            returnModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var orderNumber = button.getAttribute('data-order-number');
-                var form = document.getElementById('returnForm');
-                form.action = '/mypage/orders/' + orderNumber + '/return';
+            const actionModal = document.getElementById('actionModal');
+            actionModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const orderNumber = button.getAttribute('data-order-number');
+                const actionType = button.getAttribute('data-action-type');
+                
+                const modalTitle = document.getElementById('actionModalLabel');
+                const reasonLabel = document.querySelector('label[for="actionReason"]');
+                const damagedCheckbox = document.getElementById('damagedCheckbox');
+                const submitBtn = document.getElementById('actionSubmitBtn');
+                const form = document.getElementById('actionForm');
+                
+                if (actionType === 'cancel') {
+                    // 결제취소 모드
+                    modalTitle.textContent = '결제 취소';
+                    reasonLabel.textContent = '결제 취소 사유';
+                    damagedCheckbox.style.display = 'none';
+                    submitBtn.textContent = '결제 취소';
+                    submitBtn.className = 'btn btn-danger';
+                    form.action = '/mypage/orders/' + orderNumber + '/cancel';
+                } else {
+                    // 반품 모드
+                    modalTitle.textContent = '반품 신청';
+                    reasonLabel.textContent = '반품 사유';
+                    damagedCheckbox.style.display = 'block';
+                    submitBtn.textContent = '반품 접수';
+                    submitBtn.className = 'btn btn-primary';
+                    form.action = '/mypage/orders/' + orderNumber + '/return';
+                }
+                
+                // 폼 초기화
+                document.getElementById('actionReason').value = '';
+                document.getElementById('damaged').checked = false;
             });
         });
     </script>

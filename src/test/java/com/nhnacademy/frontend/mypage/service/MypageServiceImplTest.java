@@ -11,8 +11,9 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointTyp
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.service.impl.MypageServiceImpl;
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
-import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
+import com.nhnacademy.frontend.order.dto.request.OrderStatusRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderStatusResult;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -319,25 +320,55 @@ class MypageServiceImplTest {
     @DisplayName("반품 신청 - 성공")
     void returnOrder_Success() {
         String orderNumber = "testOrderNumber";
-        ReturnsRequest returnsRequest = new ReturnsRequest("단순 변심", false);
+        String reason = "단순 변심";
+        Boolean damaged = false;
 
-        doNothing().when(orderAdapter).returnOrder(orderNumber, returnsRequest);
+        OrderStatusResult.ReturnResult mockResult = new OrderStatusResult.ReturnResult(null);
+        when(orderAdapter.changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class))).thenReturn(mockResult);
 
-        mypageService.returnOrder(orderNumber, returnsRequest);
+        mypageService.returnOrder(orderNumber, reason, damaged);
 
-        verify(orderAdapter, times(1)).returnOrder(orderNumber, returnsRequest);
+        verify(orderAdapter, times(1)).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
     }
 
     @Test
     @DisplayName("반품 신청 - 실패 (OrderAdapter 예외 발생)")
     void returnOrder_Failure_OrderAdapterException() {
         String orderNumber = "testOrderNumber";
-        ReturnsRequest returnsRequest = new ReturnsRequest("상품 파손", true);
+        String reason = "상품 파손";
+        Boolean damaged = true;
 
-        doThrow(new RuntimeException("OrderAdapter error")).when(orderAdapter).returnOrder(orderNumber, returnsRequest);
+        doThrow(new RuntimeException("OrderAdapter error")).when(orderAdapter).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
 
-        assertThrows(RuntimeException.class, () -> mypageService.returnOrder(orderNumber, returnsRequest));
+        assertThrows(RuntimeException.class, () -> mypageService.returnOrder(orderNumber, reason, damaged));
 
-        verify(orderAdapter, times(1)).returnOrder(orderNumber, returnsRequest);
+        verify(orderAdapter, times(1)).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
+    }
+
+    @Test
+    @DisplayName("주문 취소 - 성공")
+    void cancelOrder_Success() {
+        String orderNumber = "testOrderNumber";
+        String reason = "결제 취소";
+
+        OrderStatusResult.CancelResult mockResult = new OrderStatusResult.CancelResult(null);
+        when(orderAdapter.changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class))).thenReturn(mockResult);
+
+        mypageService.cancelOrder(orderNumber, reason);
+
+        verify(orderAdapter, times(1)).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
+    }
+
+    @Test
+    @DisplayName("주문 취소 - 실패 (OrderAdapter 예외 발생)")
+    void cancelOrder_Failure_OrderAdapterException() {
+        String orderNumber = "testOrderNumber";
+        String reason = "결제 취소";
+
+        doThrow(new RuntimeException("OrderAdapter error")).when(orderAdapter).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
+
+        assertThrows(RuntimeException.class, () -> mypageService.cancelOrder(orderNumber, reason));
+
+        verify(orderAdapter, times(1)).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
     }
 }

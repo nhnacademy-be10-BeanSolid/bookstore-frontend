@@ -9,7 +9,6 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointTyp
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.dto.request.ReturnFormRequest;
 import com.nhnacademy.frontend.mypage.service.MypageService;
-import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import feign.FeignException;
@@ -34,7 +33,9 @@ import java.util.Objects;
 public class MypageController {
     private static final String USER_TYPE_ATTRIBUTE = "userType";
     private static final String USER_TYPE_LOCAL = "LOCAL";
+    private static final String MESSAGE_ATTRIBUTE = "message";
     private static final String ERROR_ATTRIBUTE = "error";
+    private static final String ERRORMESSAGE_ATTRIBUTE = "errorMessage";
     private static final String MYPAGE_VERIFIED_ATTRIBUTE = "mypage_verified";
     private final MypageService mypageService;
     private final JwtCookieUtil jwtCookieUtil;
@@ -107,7 +108,7 @@ public class MypageController {
         }
 
         mypageService.updatePersonalInformation(request);
-        redirectAttributes.addFlashAttribute("message", "정보가 성공적으로 수정되었습니다.");
+        redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "정보가 성공적으로 수정되었습니다.");
         return "redirect:/mypage";
     }
 
@@ -129,7 +130,7 @@ public class MypageController {
             mypageService.addAddress(addressCreateRequest);
         } catch (FeignException.BadRequest e) {
             // 10개 초과로 등록 시
-            redirectAttributes.addFlashAttribute("errorMessage", "주소는 10개까지 등록 가능합니다.");
+            redirectAttributes.addFlashAttribute(ERRORMESSAGE_ATTRIBUTE, "주소는 10개까지 등록 가능합니다.");
             return "redirect:/mypage/address"; // 주소 목록 페이지로 리다이렉트
         }
         return "redirect:/mypage/address";
@@ -233,12 +234,25 @@ public class MypageController {
                               @ModelAttribute ReturnFormRequest formRequest,
                               RedirectAttributes redirectAttributes) {
         try {
-            ReturnsRequest request = new ReturnsRequest(formRequest.getReason(), formRequest.isDamaged());
-            mypageService.returnOrder(orderNumber, request);
-            redirectAttributes.addFlashAttribute("message", "반품 신청이 완료되었습니다.");
+            mypageService.returnOrder(orderNumber, formRequest.getReason(), formRequest.isDamaged());
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "반품 신청이 완료되었습니다.");
         } catch (Exception e) { // 모든 예외를 여기서 처리
             log.error("반품 신청 오류 발생: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", "반품 신청에 실패했습니다.");
+            redirectAttributes.addFlashAttribute(ERRORMESSAGE_ATTRIBUTE, "반품 신청에 실패했습니다.");
+        }
+        return "redirect:/mypage/orders";
+    }
+
+    @PostMapping("/orders/{orderNumber}/cancel")
+    public String cancelOrder(@PathVariable String orderNumber,
+                              @RequestParam String reason,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            mypageService.cancelOrder(orderNumber, reason);
+            redirectAttributes.addFlashAttribute(MESSAGE_ATTRIBUTE, "결제 취소가 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("결제 취소 오류 발생: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute(ERRORMESSAGE_ATTRIBUTE, "결제 취소에 실패했습니다.");
         }
         return "redirect:/mypage/orders";
     }
