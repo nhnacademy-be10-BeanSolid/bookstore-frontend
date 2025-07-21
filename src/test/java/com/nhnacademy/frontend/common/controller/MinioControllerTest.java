@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 classes = {JwtAuthenticationFilter.class}
                 ))
 @AutoConfigureMockMvc(addFilters = false)
-public class MinioControllerTest {
+class MinioControllerTest {
 
     @Autowired
     MockMvc mockMvc;

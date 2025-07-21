@@ -54,6 +54,10 @@ public class ReviewControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private ResponseReview responseReview;
 
+    private static final String ATTR_BOOK_ID = "bookId";
+
+    private static final String ATTR_REVIEWS = "reviews";
+
     @BeforeEach
     void setUp(){
         responseReview = createResponseReview();
@@ -94,9 +98,9 @@ public class ReviewControllerTest {
     @DisplayName("리뷰 생성 폼")
     void createReviewFormTest() throws Exception {
         mockMvc.perform(get("/reviews/form")
-                .param("bookId", String.valueOf(1L)))
+                .param(ATTR_BOOK_ID, String.valueOf(1L)))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("bookId"))
+                .andExpect(model().attributeExists(ATTR_BOOK_ID))
                 .andExpect(model().attributeExists("hasPurchased"));
     }
 
@@ -225,8 +229,8 @@ public class ReviewControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("reviews", reviewPage.getContent()))
-                .andExpect(model().attribute("bookId", bookId))
+                .andExpect(model().attribute(ATTR_REVIEWS, reviewPage.getContent()))
+                .andExpect(model().attribute(ATTR_BOOK_ID, bookId))
                 .andExpect(model().attribute("page", reviewPage))
                 .andExpect(view().name("review/reviewByBook"));
 
@@ -247,8 +251,8 @@ public class ReviewControllerTest {
                         .param("page", "1")
                         .param("size", "5"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("reviews", reviewPage.getContent()))
-                .andExpect(model().attribute("bookId", bookId))
+                .andExpect(model().attribute(ATTR_REVIEWS, reviewPage.getContent()))
+                .andExpect(model().attribute(ATTR_BOOK_ID, bookId))
                 .andExpect(model().attribute("page", reviewPage))
                 .andExpect(view().name("review/reviewListFragment :: reviewList"));
 
@@ -269,7 +273,7 @@ public class ReviewControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("reviews", reviewPage.getContent()))
+                .andExpect(model().attribute(ATTR_REVIEWS, reviewPage.getContent()))
                 .andExpect(model().attribute("userId", userId))
                 .andExpect(model().attribute("page", reviewPage))
                 .andExpect(view().name("review/reviewByUser"));

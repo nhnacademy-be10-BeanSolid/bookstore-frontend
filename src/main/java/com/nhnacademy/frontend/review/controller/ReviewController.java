@@ -54,7 +54,6 @@ public class ReviewController {
     }
 
     @PostMapping(value = "/edit/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseBody
     public ResponseEntity<Void> editReview(@PathVariable long reviewId,
                                            @RequestPart("review") ReviewUpdateRequest review,
                                            @RequestPart(value = "images", required = false) List<MultipartFile> images) {

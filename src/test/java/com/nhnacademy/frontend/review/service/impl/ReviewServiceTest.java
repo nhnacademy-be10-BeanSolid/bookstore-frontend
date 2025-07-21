@@ -41,8 +41,6 @@ public class ReviewServiceTest {
 
     private ReviewCreateRequest reviewCreateRequest;
     private ResponseReview responseReview;
-    private ResponseSimpleReview responseSimpleReview;
-    private ResponseSimpleReviewByUser responseSimpleReviewByUser;
     private ReviewUpdateRequest reviewUpdateRequest;
     private Pageable pageable;
 
@@ -50,8 +48,6 @@ public class ReviewServiceTest {
     void setUp(){
         reviewCreateRequest = createReviewCreateRequest();
         responseReview = createResponseReview();
-        responseSimpleReview = createResponseSimpleReview();
-        responseSimpleReviewByUser = createResponseSimpleReviewByUser();
         reviewUpdateRequest = createReviewUpdateRequest();
         pageable = createPageable();
     }
@@ -81,14 +77,6 @@ public class ReviewServiceTest {
                 1L,
                 "Test Book Title"
         );
-    }
-
-    private ResponseSimpleReview createResponseSimpleReview() {
-        return ResponseSimpleReview.fromResponseReview(responseReview);
-    }
-
-    private ResponseSimpleReviewByUser createResponseSimpleReviewByUser() {
-        return ResponseSimpleReviewByUser.fromResponseReview(responseReview);
     }
 
     private ReviewUpdateRequest createReviewUpdateRequest(){
@@ -199,20 +187,4 @@ public class ReviewServiceTest {
         assert result.equals(expectedTitle);
     }
 
-//    @Test
-//    @DisplayName("구매확인")
-//    void purchaseCheckTest() {
-//        String userId = "user123";
-//        long bookId = 1L;
-//        Long userNo = 1L;
-//
-//        when(Objects.requireNonNull(userAdapter.getUserInfo().getBody()).getUserNo()).thenReturn(1L);
-//        when(reviewAdapter.validatePurchase(userNo, bookId))
-//                .thenReturn(true);
-//
-//        boolean result = reviewService.validatePurchase(userId, bookId);
-//        verify(reviewAdapter).validatePurchase(userNo, bookId);
-//        verify(userAdapter).getUserInfo();
-//        assert result;
-//    }
 }

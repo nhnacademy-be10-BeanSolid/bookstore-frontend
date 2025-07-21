@@ -23,24 +23,8 @@ public class ResponseReview {
     private LocalDateTime updatedAt;
     private String userId;
     private long bookId;
-    private String bookTitle; // Added field
+    private String bookTitle;
 
-//    public static ResponseReview from(Review review) {
-//        List<String> imageUrls = review.getReviewImages().stream()
-//                .map(ReviewImage::getImageUrl)
-//                .toList();
-//
-//        return new ResponseReview(
-//                review.getReviewId(),
-//                review.getEvaluationScore(),
-//                review.getReviewContent(),
-//                imageUrls,
-//                review.getReviewedAt(),
-//                review.getUpdatedAt(),
-//                review.getUser().getUserId(), // 필요 시 null 체크
-//                review.getBookId()
-//        );
-//    }
 
     @JsonCreator
     public ResponseReview(
