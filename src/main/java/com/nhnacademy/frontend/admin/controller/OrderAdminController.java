@@ -1,9 +1,7 @@
 package com.nhnacademy.frontend.admin.controller;
 
 import com.nhnacademy.frontend.admin.service.OrderAdminService;
-import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +29,7 @@ public class OrderAdminController {
 
     @PutMapping("/{orderNumber}/status")
     public String changeStatusToShipping(@PathVariable String orderNumber) {
-        OrderResponse statusChanged = orderAdminService.changeOrderStatus(orderNumber);
+        orderAdminService.changeOrderStatus(orderNumber);
         return "redirect:/admin/orders";
     }
 }
