@@ -3,7 +3,7 @@ package com.nhnacademy.frontend.book.controller;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
 import com.nhnacademy.frontend.common.service.BookService;
-import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.dto.CouponPolicyResponseDto;
 import com.nhnacademy.domain.CouponScope;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +33,9 @@ public class BookController {
         BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
         model.addAttribute("book", bookDetail);
 
-        List<CouponPolicyResponse> allCouponPolicies = couponAdapter.getAllCouponPolicies();
-        List<CouponPolicyResponse> bookCoupons = allCouponPolicies.stream()
-                .filter(policy -> policy.getCouponScope() == com.nhnacademy.domain.CouponScope.BOOK && policy.getBookIds() != null && policy.getBookIds().contains(bookId))
+        List<CouponPolicyResponseDto> allCouponPolicies = couponAdapter.getAllCouponPolicies();
+        List<CouponPolicyResponseDto> bookCoupons = allCouponPolicies.stream()
+                .filter(policy -> policy.getCouponScope() == CouponScope.BOOK && policy.getBookIds() != null && policy.getBookIds().contains(bookId))
                 .collect(Collectors.toList());
         model.addAttribute("bookCoupons", bookCoupons);
 
