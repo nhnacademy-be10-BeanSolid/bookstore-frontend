@@ -39,6 +39,11 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("img-src 'self' http://storage.java21.net:8000 https://shopping-phinf.pstatic.net;")
+                        )
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
                                 "/payments",
@@ -51,6 +56,7 @@ public class SecurityConfig {
                                 "/payments"
                         ).permitAll()
                         // 인증 없이 열어둘 경로들
+                        .requestMatchers("/reviews/book/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
