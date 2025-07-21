@@ -22,13 +22,17 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
+    private static final String ATTR_BOOK_ID = "bookId";
+
+    private static final String ATTR_REVIEWS = "reviews";
+
     @GetMapping("/form")
     public String showReviewForm(@RequestParam("bookId") long bookId,
                                  @ModelAttribute("loginUserId") String loginUserId,
                                  Model model) {
 
         boolean hasPurchased = reviewService.validatePurchase(loginUserId, bookId);
-        model.addAttribute("bookId", bookId);
+        model.addAttribute(ATTR_BOOK_ID, bookId);
         model.addAttribute("hasPurchased", hasPurchased);
         return "review/reviewForm";
     }
@@ -76,8 +80,8 @@ public class ReviewController {
                                      Pageable pageable,
                                      Model model) {
         Page<ResponseSimpleReview> reviews = reviewService.getReviewsByBookId(bookId, pageable);
-        model.addAttribute("reviews", reviews.getContent());
-        model.addAttribute("bookId", bookId);
+        model.addAttribute(ATTR_REVIEWS, reviews.getContent());
+        model.addAttribute(ATTR_BOOK_ID, bookId);
         model.addAttribute("page", reviews);
         return "review/reviewByBook";
     }
@@ -85,8 +89,8 @@ public class ReviewController {
     @GetMapping("/book/{bookId}/list-fragment")
     public String getReviewsFragment(@PathVariable long bookId, Pageable pageable, Model model) {
         Page<ResponseSimpleReview> reviews = reviewService.getReviewsByBookId(bookId, pageable);
-        model.addAttribute("reviews", reviews.getContent());
-        model.addAttribute("bookId", bookId);
+        model.addAttribute(ATTR_REVIEWS, reviews.getContent());
+        model.addAttribute(ATTR_BOOK_ID, bookId);
         model.addAttribute("page", reviews);
         return "review/reviewListFragment :: reviewList";
     }
@@ -96,7 +100,7 @@ public class ReviewController {
                                      Pageable pageable,
                                      Model model) {
         Page<ResponseSimpleReviewByUser> reviews = reviewService.getReviewsByUserId(userId, pageable);
-        model.addAttribute("reviews", reviews.getContent());
+        model.addAttribute(ATTR_REVIEWS, reviews.getContent());
         model.addAttribute("userId", userId);
         model.addAttribute("page", reviews);
         return "review/reviewByUser";
