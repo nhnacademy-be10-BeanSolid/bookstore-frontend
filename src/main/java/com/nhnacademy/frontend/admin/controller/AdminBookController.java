@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.admin.controller;
 
+import com.nhnacademy.dto.CouponPolicyResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
@@ -54,7 +55,7 @@ public class AdminBookController {
     @GetMapping
     public String getBookList(Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
-        List<com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse> couponPolicies = couponAdapter.getAllCouponPolicies();
+        List<CouponPolicyResponseDto> couponPolicies = couponAdapter.getAllCouponPolicies();
         log.info("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("page", bookList);
