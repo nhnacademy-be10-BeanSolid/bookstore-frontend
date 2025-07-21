@@ -37,7 +37,7 @@ class CouponServiceImplTest {
         String userId = "testUser";
         Long userNo = 1L;
 
-        ResponseUser mockUser = new ResponseUser(userNo, "testUser", "password", "nickname", "010-1234-5678", "test@test.com", LocalDate.now(), 1000, false, null, null, null);
+        ResponseUser mockUser = new ResponseUser(userNo, "testUser", "password", "nickname", "010-1234-5678", "test@test.com", LocalDate.now(), 1000, false, null, LocalDateTime.now(), null, null);
         ResponseEntity<ResponseUser> userResponseEntity = ResponseEntity.ok(mockUser);
 
         UserCouponResponse coupon1 = UserCouponResponse.builder()
