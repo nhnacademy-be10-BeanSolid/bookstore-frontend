@@ -45,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ResponseReview getReview(long reviewId) {
         ResponseReview review = reviewAdapter.getReview(reviewId).getBody();
-        String bookTitle = getTitleByBookId(review.getBookId());
+        String bookTitle = getTitleByBookId(Objects.requireNonNull(review).getBookId());
         review.setBookTitle(bookTitle);
         return review;
     }

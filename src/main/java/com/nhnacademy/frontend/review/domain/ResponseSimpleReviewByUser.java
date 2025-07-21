@@ -21,7 +21,7 @@ public class ResponseSimpleReviewByUser {
         return new ResponseSimpleReviewByUser(
                 responseReview.getReviewId(),
                 responseReview.getBookId(),
-                null,
+                responseReview.getBookTitle(),
                 responseReview.getEvaluationScore(),
                 responseReview.getReviewedAt(),
                 responseReview.getReviewContent()
