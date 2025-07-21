@@ -92,7 +92,27 @@
           <button type="submit" class="btn btn-primary">장바구니 추가</button>
         </form>
       </div>
+      <a th:href="@{/reviews/form(bookId=${book.id})}" class="btn btn-secondary mt-3">리뷰 작성</a>
     </div>
+    <!-- 리뷰 컨테이너 -->
+    <div id="review-container">
+      <p>리뷰를 불러오는 중입니다...</p>
+    </div>
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const bookId = /*[[${book.id}]]*/ 0;
+
+        fetch(`/reviews/book/${bookId}/list-fragment`)
+                .then(response => response.text())
+                .then(html => {
+                  document.getElementById("review-container").innerHTML = html;
+                })
+                .catch(error => {
+                  document.getElementById("review-container").innerHTML = "<p>리뷰를 불러오는 데 실패했습니다.</p>";
+                  console.error("리뷰 로딩 오류:", error);
+                });
+      });
+    </script>
 
     <!-- 수량 반영 스크립트 -->
     <script th:inline="javascript">
