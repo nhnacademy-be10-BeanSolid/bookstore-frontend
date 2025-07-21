@@ -74,7 +74,7 @@ public interface BookAdapter {
     BookResponseDto createBook(@RequestBody BookCreateRequestDto request);
 
     // 외부 도서 검색
-    @GetMapping("/book-api/admin/books-search")
+    @GetMapping("/book-api/admin/search")
     BookSearchResponseDto searchBooks(
             @RequestParam String query,
             @RequestParam Integer start);
