@@ -67,7 +67,7 @@ public class MypageServiceImplTest {
 
     private ResponseUser createResponseUser() {
         return new ResponseUser(
-                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null, null);
+                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null,null, null);
     }
 
     private ResponseAddress createResponseAddress() {

@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -381,7 +382,7 @@ public class MyPageControllerTest {
     void mypageInfoAfterPasswordInput() throws Exception {
 
         Mockito.when(mypageService.getMyInfo()).thenReturn(new ResponseUser(
-                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null, null));
+                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, LocalDateTime.now(), null, null));
         mockMvc.perform(get("/mypage/myinfo")
                         .sessionAttr("mypage_verified", true))
                 .andExpect(status().isOk())
@@ -442,7 +443,7 @@ public class MyPageControllerTest {
     @DisplayName("마이페이지 등급 조회")
     void mypageGradeForm() throws Exception {
         Mockito.when(mypageService.getMyInfo()).thenReturn(new ResponseUser(
-                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "test@test.test", LocalDate.now(), 1000, false, null, null, null));
+                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "test@test.test", LocalDate.now(), 1000, false, null, LocalDateTime.now(),null, null));
         mockMvc.perform(get("/mypage/grade"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("mypage/grade"));
