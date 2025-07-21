@@ -36,7 +36,7 @@ public interface BookAdapter {
     @PostMapping("/book-api/categories")
     BookCategoryResponseDto createCategory(@RequestBody BookCategoryCreateRequestDto request);
 
-    // 업데이트 필요한가?
+    // 카테고리 수정
     @PutMapping("/book-api/categories/{categoryId}")
     BookCategoryResponseDto updateCategory(@PathVariable Long categoryId, @RequestBody BookCategoryUpdateRequestDto request);
 
@@ -65,22 +65,26 @@ public interface BookAdapter {
     @GetMapping("/book-api/books/{bookId}")
     BookDetailResponseDto getBookDetail(@PathVariable Long bookId);
 
+    // 관리자 도서 상세정보
+    @GetMapping("/book-api/admin/books/{bookId}")
+    BookDetailResponseDto getAdminBookDetail(@PathVariable Long bookId);
+
     // 도서 생성
-    @PostMapping("/book-api/books")
+    @PostMapping("/book-api/admin/books")
     BookResponseDto createBook(@RequestBody BookCreateRequestDto request);
 
     // 외부 도서 검색
-    @GetMapping("/book-api/books-search")
+    @GetMapping("/book-api/admin/books/search")
     BookSearchResponseDto searchBooks(
             @RequestParam String query,
             @RequestParam Integer start);
 
     // 도서 업데이트
-    @PutMapping("/book-api/books/{bookId}")
+    @PutMapping("/book-api/admin/books/{bookId}")
     BookDetailResponseDto updateBook(@PathVariable Long bookId, @RequestBody BookUpdateRequestDto request);
 
     // 도서 삭제
-    @DeleteMapping("/book-api/books/{bookId}")
+    @DeleteMapping("/book-api/admin/books/{bookId}")
     void deleteBook(@PathVariable Long bookId);
 
     // 해당 도서의 태그 조회
@@ -120,16 +124,17 @@ public interface BookAdapter {
     void deleteBookLike(@PathVariable Long bookId, @RequestHeader String userId);
 
     // 엘라스틱 서치
-    @GetMapping("/book-api/search")
+    @GetMapping("/book-api/books/search")
     Page<SimpleBookResponseDto> searchBooks(
             @RequestParam String keyword,
             @RequestParam Integer page,
             @RequestParam Integer size,
             @RequestParam(name = "sort", required = false) String sort);
 
-    @GetMapping("/book-api/books/ids")
-    List<BookResponse> getBooks(@RequestParam List<Long> ids);
-
+    // 카테고리 트리
     @GetMapping("/book-api/categories/tree")
     List<BookCategoryNodeResponseDto> getCategoryTree();
+
+    @GetMapping("/book-api/books/ids")
+    List<BookResponse> getBooks(@RequestParam List<Long> ids);
 }

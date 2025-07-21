@@ -48,8 +48,8 @@ class BookCategoryControllerTest {
     @Test
     void bookCategory() throws Exception {
         // 카테고리를 가지고 있는 도서
-        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1L, "제목", "작가", 3000, 20, null, 1L);
-        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2L, "제목", "작가", 3000, 20, null, 1L);
+        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1L, "제목", "작가", 3000, 20, null, 1L, 0L, 0.0);
+        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2L, "제목", "작가", 3000, 20, null, 1L, 0L, 0.0);
 
         List<SimpleBookResponseDto> books = List.of(response1, response2);
         Page<SimpleBookResponseDto> page = new PageImpl<>(books);

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>리뷰 수정</title>
+</head>
+<body>
+<h1>리뷰 수정</h1>
+
+<form id="reviewEditForm" enctype="multipart/form-data" method="post">
+  <input type="hidden" id="reviewId" th:value="${review.reviewId}" />
+  <input type="hidden" id="userId" th:value="${loginUserId}" />
+  <input type="hidden" id="bookId" th:value="${review.bookId}" />
+
+  <!-- 평가 점수 -->
+  <label for="evaluationScore">평가 점수 (1~5):</label>
+  <input type="number" id="evaluationScore" name="evaluationScore" min="1" max="5" th:value="${review.evaluationScore}" required><br><br>
+
+  <!-- 리뷰 내용 -->
+  <label for="reviewContent">리뷰 내용:</label><br>
+  <textarea id="reviewContent" name="reviewContent" rows="5" cols="50" th:text="${review.reviewContent}" required></textarea><br><br>
+
+  <!-- 기존 이미지 -->
+  <label>기존 이미지:</label><br>
+  <div id="existingImages">
+    <div th:each="imgUrl : ${review.reviewImages}" class="image-item" style="display:inline-block; margin:10px;">
+      <img th:src="${imgUrl}" style="width:100px; height:100px; object-fit:cover;" />
+      <button type="button" class="remove-existing" th:data-url="${imgUrl}">❌</button>
+    </div>
+  </div>
+  <br>
+
+  <!-- 새 이미지 업로드 -->
+  <label for="newImages">새 이미지 추가:</label>
+  <input type="file" id="newImages" name="newImages" multiple accept="image/*"><br><br>
+  <div id="newImagePreview"></div>
+
+  <button type="submit">리뷰 수정</button>
+</form>
+
+<script>
+  let existingImageUrls = Array.from(document.querySelectorAll('.remove-existing'))
+          .map(btn => btn.getAttribute('data-url'));
+
+  document.querySelectorAll('.remove-existing').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const url = btn.getAttribute('data-url');
+      existingImageUrls = existingImageUrls.filter(item => item !== url);
+      btn.parentElement.remove();
+    });
+  });
+
+  const newImageInput = document.getElementById("newImages");
+  const newImagePreview = document.getElementById("newImagePreview");
+  let newImageFiles = [];
+
+  newImageInput.addEventListener("change", function () {
+    newImagePreview.innerHTML = "";
+    newImageFiles = Array.from(newImageInput.files);
+
+    newImageFiles.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const div = document.createElement("div");
+        div.style.display = "inline-block";
+        div.style.margin = "10px";
+
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.style.width = "100px";
+        img.style.height = "100px";
+        img.style.objectFit = "cover";
+
+        const btn = document.createElement("button");
+        btn.textContent = "❌";
+        btn.type = "button";
+        btn.onclick = function () {
+          newImageFiles.splice(index, 1);
+          updateNewPreview();
+        };
+
+        div.appendChild(img);
+        div.appendChild(btn);
+        newImagePreview.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  function updateNewPreview() {
+    const dataTransfer = new DataTransfer();
+    newImageFiles.forEach(file => dataTransfer.items.add(file));
+    newImageInput.files = dataTransfer.files;
+    newImageInput.dispatchEvent(new Event('change'));
+  }
+
+  document.getElementById("reviewEditForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const reviewId = document.getElementById("reviewId").value;
+    const userId = document.getElementById("userId").value;
+    const bookId = document.getElementById("bookId").value;
+    const evaluationScore = parseInt(document.getElementById("evaluationScore").value);
+    const reviewContent = document.getElementById("reviewContent").value;
+
+    if (evaluationScore < 1 || evaluationScore > 5) {
+      alert("평가 점수는 1~5 사이여야 합니다.");
+      return;
+    }
+
+    const formData = new FormData();
+    const reviewDto = {
+      userId: userId,
+      bookId: parseInt(bookId),
+      evaluationScore: evaluationScore,
+      reviewContent: reviewContent,
+      imageUrls: existingImageUrls // 남길 기존 이미지 URL
+    };
+
+    formData.append("review", new Blob([JSON.stringify(reviewDto)], { type: "application/json" }));
+    newImageFiles.forEach(file => formData.append("images", file));
+
+    try {
+      const response = await fetch(`/reviews/edit/${reviewId}`, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error("리뷰 수정에 실패했습니다. 작성 권한을 확인해주세요.");
+      }
+
+      alert("리뷰가 수정되었습니다.");
+      window.location.href = "/reviews/" + reviewId;
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+</script>
+</body>
+</html>

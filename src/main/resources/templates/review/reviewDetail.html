@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>리뷰 상세</title></head>
+<body>
+<h1>리뷰 상세</h1>
+
+<p><strong>작성자:</strong> <span th:text="${review.userId}"></span></p>
+<p><strong>도서 제목:</strong> <span th:text="${review.bookTitle}"></span></p>
+<p><strong>평점:</strong> <span th:text="${review.evaluationScore}"></span></p>
+<p><strong>내용:</strong> <span th:text="${review.reviewContent}"></span></p>
+<p><strong>작성일:</strong> <span th:text="${#temporals.format(review.reviewedAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+<p><strong>수정일:</strong> <span th:text="${#temporals.format(review.updatedAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+
+<div th:if="${review.reviewImages}">
+    <h3>이미지</h3>
+    <div th:each="image : ${review.reviewImages}">
+        <img th:src="${image}" style="max-width:300px;" alt="리뷰 이미지"/>
+    </div>
+</div>
+
+<th:block th:if="${loginUserId != null and loginUserId == review.userId}">
+    <a th:href="@{/reviews/edit/{reviewId}(reviewId=${review.reviewId})}" class="btn btn-primary btn-sm">수정하기</a>
+</th:block>
+
+</body>
+</html>

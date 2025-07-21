@@ -10,6 +10,7 @@
 <div class="container py-5">
     <h1 class="mb-4">마이페이지</h1>
 
+
     <ul class="list-group mb-4">
         <li class="list-group-item">
             <a href="/mypage/address" class="text-decoration-none">회원주소 관리</a>
@@ -28,6 +29,9 @@
         </li>
         <li class="list-group-item">
             <a href="/mypage/myinfo" class="text-decoration-none">내 정보</a>
+        </li>
+        <li class="list-group-item">
+            <a th:href="@{/reviews/user/{userId}(userId=${loginUserId})}" class="text-decoration-none">내 리뷰</a>
         </li>
     </ul>
 
