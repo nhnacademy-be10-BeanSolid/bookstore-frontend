@@ -37,7 +37,7 @@ public class MinioServiceImpl implements MinioService {
                 log.debug("이미 존재하는 버킷: " + reviewImageBucketName);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("버킷 생성 실패: {}", reviewImageBucketName, e);
             throw new RuntimeException("버킷 생성 실패", e);
         }
     }
