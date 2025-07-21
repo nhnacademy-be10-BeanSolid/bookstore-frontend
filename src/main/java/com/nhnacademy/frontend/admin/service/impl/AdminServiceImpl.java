@@ -1,7 +1,8 @@
-package com.nhnacademy.frontend.admin.service;
+package com.nhnacademy.frontend.admin.service.impl;
 
 
 import com.nhnacademy.frontend.admin.adapter.UserAdminAdapter;
+import com.nhnacademy.frontend.admin.service.AdminService;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
