@@ -23,6 +23,7 @@
                 <th>상세 보기</th>
                 <th>관리</th>
                 <th>삭제</th>
+                <th>쿠폰 연결</th>
             </tr>
             </thead>
             <tbody>
@@ -41,6 +42,16 @@
                     <form th:action="@{/admin/books/{id}(id=${book.id})}" method="post" th:onsubmit="return confirm('정말 삭제하시겠습니까?');">
                         <input type="hidden" name="_method" value="delete" />
                         <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/admin/books/associate-coupon}" method="post">
+                        <input type="hidden" name="bookId" th:value="${book.id}" />
+                        <select name="couponPolicyId" class="form-select form-select-sm mb-1" required>
+                            <option value="">쿠폰 정책 선택</option>
+                            <option th:each="policy : ${couponPolicies}" th:value="${policy.couponId}" th:text="${policy.couponName}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm">연결</button>
                     </form>
                 </td>
             </tr>
