@@ -50,7 +50,7 @@ class LoginFilterTest {
     @Test
     void attemptAuthentication_success_returnsAuthentication() throws Exception {
         String username = "user1";
-        String password = "pw123";
+        String password = "test_password_123";
         String accessToken = "access-token";
         String refreshToken = "refresh-token";
         List<String> authorities = List.of("ROLE_USER");
@@ -76,7 +76,7 @@ class LoginFilterTest {
     @Test
     void attemptAuthentication_invalidCredentials_throwsException() {
         String username = "user1";
-        String password = "wrong";
+        String password = "invalid_password_abc";
         when(request.getParameter("username")).thenReturn(username);
         when(request.getParameter("password")).thenReturn(password);
         when(authService.login(username, password)).thenReturn(null);

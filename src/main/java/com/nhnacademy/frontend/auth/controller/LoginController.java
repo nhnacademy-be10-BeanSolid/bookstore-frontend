@@ -31,6 +31,9 @@ import java.util.UUID;
 @RequestMapping("/auth/login")
 @RequiredArgsConstructor
 public class LoginController {
+    private static final String REDIRECT_ROOT = "redirect:/";
+    private static final String REDIRECT_LOGIN_FORM = "redirect:/auth/login";
+
     private final AuthService authService;
     private final JwtCookieUtil jwtCookieUtil;
     private final ObjectMapper objectMapper;
@@ -47,7 +50,7 @@ public class LoginController {
         if(auth != null
             && auth.isAuthenticated()
             && !(auth instanceof AnonymousAuthenticationToken)) {
-            return "redirect:/";
+            return REDIRECT_ROOT;
         }
         if (model.containsAttribute("signupSuccess")) {
             model.addAttribute("signupSuccess", true);
@@ -94,7 +97,7 @@ public class LoginController {
 
         String stateParam = responseDto.state();
         if(!Objects.equals(stateParam, cookieState) || cookieState == null) {
-            return "redirect:/auth/login";
+            return REDIRECT_LOGIN_FORM;
         }
 
         String code = responseDto.code();
@@ -104,7 +107,7 @@ public class LoginController {
         if(result.isSuccess()) {
             OAuth2LoginResponseDto successData = objectMapper.convertValue(result.getData(), OAuth2LoginResponseDto.class);
             jwtCookieUtil.addJwtCookie(response, successData.getAccessToken(), successData.getRefreshToken());
-            return "redirect:/";
+            return REDIRECT_ROOT;
         } else {
             AdditionalSignupRequiredDto signupData = objectMapper.convertValue(result.getData(), AdditionalSignupRequiredDto.class);
             model.addAttribute("tempJwt", signupData.getTempJwt());
@@ -126,7 +129,7 @@ public class LoginController {
         if(!userService.isDormantUser(userId)) {
 
             redirectAttributes.addFlashAttribute("accessDenied", "휴면 계정이 아니면 접근할 수 없습니다.");
-            return "redirect:/";
+            return REDIRECT_ROOT;
         }
 
         model.addAttribute("userId", userId);
@@ -141,10 +144,10 @@ public class LoginController {
         if(authService.verifyDormantUserCode(dto)){
 
             redirectAttributes.addFlashAttribute("dormantSuccess", "인증성공! 휴면 상태가 해제되었습니다. 다시 로그인 해주세요.");
-            return "redirect:/auth/login";
+            return REDIRECT_LOGIN_FORM;
         }
         redirectAttributes.addFlashAttribute("dormantFail", "인증실패! 다시 인증해주세요.");
-        return "redirect:/auth/login";
+        return REDIRECT_LOGIN_FORM;
     }
 
 
@@ -159,7 +162,7 @@ public class LoginController {
             return "redirect:/orders/non-member-detail";
         } else {
             redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
-            return "redirect:/auth/login";
+            return REDIRECT_LOGIN_FORM;
         }
     }
 }
