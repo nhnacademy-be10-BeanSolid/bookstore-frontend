@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
+    private static final String SORT_PARAM_DELIMITER = "&sort=";
+
     private final BookAdapter bookAdapter;
 
     @Override
@@ -80,7 +82,7 @@ public class BookServiceImpl implements BookService {
         if (pageable.getSort().isSorted()) {
             sort = pageable.getSort().stream()
                     .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
-                    .collect(Collectors.joining("&sort="));
+                    .collect(Collectors.joining(SORT_PARAM_DELIMITER));
         }
 
         return bookAdapter.getBooks(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -92,7 +94,7 @@ public class BookServiceImpl implements BookService {
         if (pageable.getSort().isSorted()) {
             sort = pageable.getSort().stream()
                     .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
-                    .collect(Collectors.joining("&sort="));
+                    .collect(Collectors.joining(SORT_PARAM_DELIMITER));
         }
         return bookAdapter.getBooks(categoryId, pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
@@ -190,7 +192,7 @@ public class BookServiceImpl implements BookService {
         if (pageable.getSort().isSorted()) {
             sort = pageable.getSort().stream()
                     .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
-                    .collect(Collectors.joining("&sort="));
+                    .collect(Collectors.joining(SORT_PARAM_DELIMITER));
         }
 
         return bookAdapter.searchBooks(keyword, pageable.getPageNumber(), pageable.getPageSize(), sort);

@@ -1,9 +1,11 @@
 package com.nhnacademy.frontend.admin.service;
 
 import com.nhnacademy.frontend.admin.adapter.UserAdminAdapter;
+import com.nhnacademy.frontend.admin.service.impl.AdminServiceImpl;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -75,5 +77,22 @@ class AdminServiceImplTest {
         ResponsePointType result = adminService.getPointType(4L);
         assertThat(result).isEqualTo(response);
         verify(userAdminAdapter).getPointType(4L);
+    }
+
+    @Test
+    void getAllUsers_returnsPage() {
+        Page<ResponseUser> page = new PageImpl<>(Collections.emptyList());
+        when(userAdminAdapter.getAllUsers(anyInt(), anyInt()))
+                .thenReturn(ResponseEntity.ok(page));
+
+        Page<ResponseUser> result = adminService.getAllUsers(Pageable.ofSize(10));
+        assertThat(result).isNotNull();
+        verify(userAdminAdapter).getAllUsers(anyInt(), anyInt());
+    }
+
+    @Test
+    void bulkUpdate_callsAdapter() {
+        adminService.bulkUpdate();
+        verify(userAdminAdapter).bulkUpdateUserStatus();
     }
 }

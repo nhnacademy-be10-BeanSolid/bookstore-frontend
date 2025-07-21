@@ -65,6 +65,19 @@
         alert('회원가입이 완료되었습니다!');
     </script>
 </div>
+
+<script th:if="${dormantSuccess != null}">
+    alert('[[${dormantSuccess}]]');
+</script>
+
+<script th:if="${dormantFail != null}">
+    alert('[[${dormantFail}]]');
+</script>
+
+<script th:if="${loginFail != null}">
+    alert('[[${loginFail}]]');
+</script>
+
 <script>
     document.getElementById('nonMemberOrderLookupBtn').addEventListener('click', function() {
         var form = document.getElementById('nonMemberLookupForm');

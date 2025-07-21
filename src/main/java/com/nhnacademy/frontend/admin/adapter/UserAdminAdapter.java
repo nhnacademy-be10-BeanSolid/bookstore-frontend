@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.admin.adapter;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -28,4 +29,10 @@ public interface UserAdminAdapter {
 
     @GetMapping("/user-api/users/pointType/{typeId}")
     ResponseEntity<ResponsePointType> getPointType(@PathVariable("typeId") Long typeId);
+
+    @GetMapping("/user-api/users")
+    ResponseEntity<Page<ResponseUser>> getAllUsers(@RequestParam int page, @RequestParam int size);
+
+    @GetMapping("/user-api/users/bulk/status")
+    ResponseEntity<Void> bulkUpdateUserStatus();
 }

@@ -142,3 +142,7 @@
         }
     }
 </script>
+
+<script th:if="${accessDenied != null}">
+    alert('[[${accessDenied}]]');
+</script>

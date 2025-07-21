@@ -21,10 +21,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class AdminPointTypeController {
 
+    private static final String REDIRECT_ADMIN_POINT_TYPE = "redirect:/admin/pointtype";
+
     private final AdminService adminService;
 
     @GetMapping()
-    public String PointTypeForm(Pageable pageable, Model model){
+    public String pointTypeForm(Pageable pageable, Model model){
 
         Page<ResponsePointType> pointTypes = adminService.getAllPointTypes(pageable);
 
@@ -48,7 +50,7 @@ public class AdminPointTypeController {
             redirectAttributes.addFlashAttribute("registerFail", "등록 실패!");
         }
 
-        return "redirect:/admin/pointtype";
+        return REDIRECT_ADMIN_POINT_TYPE;
     }
 
     @GetMapping("/register")
@@ -67,7 +69,7 @@ public class AdminPointTypeController {
             redirectAttributes.addFlashAttribute("deleteFail", "삭제 실패! 포인트 db 확인 필요!");
         }
 
-        return "redirect:/admin/pointtype";
+        return REDIRECT_ADMIN_POINT_TYPE;
     }
 
     @PutMapping("/{typeId}/isactive")
@@ -77,7 +79,7 @@ public class AdminPointTypeController {
 
         redirectAttributes.addFlashAttribute("changeSuccess", "변경 성공!");
 
-        return "redirect:/admin/pointtype";
+        return REDIRECT_ADMIN_POINT_TYPE;
     }
 
     @PutMapping("/{typeId}/edit")
@@ -87,7 +89,7 @@ public class AdminPointTypeController {
 
         redirectAttributes.addFlashAttribute("editSuccess", "수정 성공!");
 
-        return "redirect:/admin/pointtype";
+        return REDIRECT_ADMIN_POINT_TYPE;
     }
 
     @GetMapping("/{typeId}/edit")

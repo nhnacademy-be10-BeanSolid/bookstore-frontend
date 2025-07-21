@@ -231,9 +231,9 @@ class BookServiceImplTest {
     @Test
     @DisplayName("도서 태그 삭제 - 성공")
     void deleteBookTagMap_Success() {
-        bookService.deleteBookCategoryMap(1L, 1L);
+        bookService.deleteBookTagMap(1L, 1L);
 
-        verify(bookAdapter, times(1)).deleteBookCategoryMap(1L, 1L);
+        verify(bookAdapter, times(1)).deleteBookTagMap(1L, 1L);
     }
 
     @Test

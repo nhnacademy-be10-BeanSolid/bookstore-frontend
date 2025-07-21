@@ -11,6 +11,10 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.mypage.service.MypageService;
+import com.nhnacademy.frontend.order.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +28,7 @@ import java.util.Objects;
 public class MypageServiceImpl implements MypageService {
     private final AuthAdapter authAdapter;
     private final UserAdapter userAdapter;
+    private final OrderAdapter orderAdapter;
 
     @Override
     public boolean withdrawUser(String password) {
@@ -32,7 +37,7 @@ public class MypageServiceImpl implements MypageService {
 
             Boolean isPasswordValid = authAdapter.verifyPassword(verificationRequest);
 
-            if(!isPasswordValid) {
+            if (isPasswordValid == null || !isPasswordValid) {
                 return false;
             }
 
@@ -114,5 +119,20 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public void bulkUpdateUserGrades() {
         userAdapter.bulkUpdateUserGrades();
+    }
+
+    @Override
+    public Page<OrderSummaryResponse> getAllOrders(Pageable pageable) {
+        return orderAdapter.getAllOrdersByUserId(pageable);
+    }
+
+    @Override
+    public OrderDetailResponse getOrderDetail(String orderNumber) {
+        return orderAdapter.getOrder(orderNumber);
+    }
+
+    @Override
+    public void returnOrder(String orderNumber, ReturnsRequest request) {
+        orderAdapter.returnOrder(orderNumber, request);
     }
 }

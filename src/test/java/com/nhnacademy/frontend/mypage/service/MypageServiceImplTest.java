@@ -1,15 +1,19 @@
 package com.nhnacademy.frontend.mypage.service;
 
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.service.impl.MypageServiceImpl;
+import com.nhnacademy.frontend.order.adapter.OrderAdapter;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +22,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
@@ -26,16 +32,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MypageServiceImpl 단위 테스트")
-public class MypageServiceImplTest {
+class MypageServiceImplTest {
     @Mock
     private AuthAdapter authAdapter;
     @Mock
     private UserAdapter userAdapter;
+    @Mock
+    private OrderAdapter orderAdapter;
 
     @InjectMocks
     private MypageServiceImpl mypageService;
@@ -46,6 +53,8 @@ public class MypageServiceImplTest {
     private ResponseAddress responseAddress;
     private PasswordVerificationRequestDto passwordVerificationRequestDto;
     private ResponsePointType responsePointType;
+    private OrderSummaryResponse orderSummaryResponse;
+    private OrderDetailResponse orderDetailResponse;
 
     @BeforeEach
     void setUp() {
@@ -55,6 +64,8 @@ public class MypageServiceImplTest {
         responseAddress = createResponseAddress();
         passwordVerificationRequestDto = new PasswordVerificationRequestDto("validPassword");
         responsePointType = createResponsePointType();
+        orderSummaryResponse = createOrderSummaryResponse();
+        orderDetailResponse = createOrderDetailResponse();
     }
 
     private UserUpdateRequestDto createUserUpdateRequestDto() {
@@ -67,7 +78,7 @@ public class MypageServiceImplTest {
 
     private ResponseUser createResponseUser() {
         return new ResponseUser(
-                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null, null);
+                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null,null, null);
     }
 
     private ResponseAddress createResponseAddress() {
@@ -77,6 +88,17 @@ public class MypageServiceImplTest {
 
     private ResponsePointType createResponsePointType() {
         return new ResponsePointType(1L, "테스트 포인트 타입", null, 2, "BASIC", true);
+    }
+
+    private OrderSummaryResponse createOrderSummaryResponse() {
+        return new OrderSummaryResponse(LocalDate.now(), "202507-abcdef-123456", "받는 사람", 30000L, "PENDING");
+    }
+
+    private OrderDetailResponse createOrderDetailResponse() {
+        return OrderDetailResponse.builder()
+                .orderNumber("202507-abcdef-123456")
+                .totalAmount(30_000L)
+                .build();
     }
 
 
@@ -260,5 +282,62 @@ public class MypageServiceImplTest {
 
         mypageService.bulkUpdateUserGrades();
         verify(userAdapter).bulkUpdateUserGrades();
+    }
+
+    @Test
+    @DisplayName("주문 목록 조회 - 성공")
+    void getAllOrders_Success() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<OrderSummaryResponse> orderPage = new PageImpl<>(List.of(orderSummaryResponse), pageable, 1);
+
+        when(orderAdapter.getAllOrdersByUserId(pageable)).thenReturn(orderPage);
+
+        Page<OrderSummaryResponse> result = mypageService.getAllOrders(pageable);
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.getTotalElements());
+        assertEquals("202507-abcdef-123456", result.getContent().getFirst().orderNumber());
+        verify(orderAdapter).getAllOrdersByUserId(pageable);
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회 - 성공")
+    void getOrderDetail_Success() {
+        String orderNumber = "202507-abcdef-123456";
+
+        when(orderAdapter.getOrder(orderNumber)).thenReturn(orderDetailResponse);
+
+        OrderDetailResponse result = mypageService.getOrderDetail(orderNumber);
+
+        assertNotNull(result);
+        assertEquals(orderNumber, result.getOrderNumber());
+        assertEquals(30_000L, result.getTotalAmount());
+        verify(orderAdapter).getOrder(orderNumber);
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 성공")
+    void returnOrder_Success() {
+        String orderNumber = "testOrderNumber";
+        ReturnsRequest returnsRequest = new ReturnsRequest("단순 변심", false);
+
+        doNothing().when(orderAdapter).returnOrder(orderNumber, returnsRequest);
+
+        mypageService.returnOrder(orderNumber, returnsRequest);
+
+        verify(orderAdapter, times(1)).returnOrder(orderNumber, returnsRequest);
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 실패 (OrderAdapter 예외 발생)")
+    void returnOrder_Failure_OrderAdapterException() {
+        String orderNumber = "testOrderNumber";
+        ReturnsRequest returnsRequest = new ReturnsRequest("상품 파손", true);
+
+        doThrow(new RuntimeException("OrderAdapter error")).when(orderAdapter).returnOrder(orderNumber, returnsRequest);
+
+        assertThrows(RuntimeException.class, () -> mypageService.returnOrder(orderNumber, returnsRequest));
+
+        verify(orderAdapter, times(1)).returnOrder(orderNumber, returnsRequest);
     }
 }
