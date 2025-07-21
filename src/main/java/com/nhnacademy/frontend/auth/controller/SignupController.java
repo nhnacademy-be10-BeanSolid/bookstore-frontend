@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Controller
@@ -44,7 +45,7 @@ public class SignupController {
             model.addAttribute("userIdCheckRequestDto", new UserIdCheckRequestDto());
         }
         if (!model.containsAttribute(USER_CREATE_REQUEST_DTO)) {
-            model.addAttribute(USER_CREATE_REQUEST_DTO, new UserCreateRequestDto(null, null, null, null, null, null, null));
+            model.addAttribute(USER_CREATE_REQUEST_DTO, new UserCreateRequestDto("", "", "", "", "", LocalDate.now(), false));
         }
         return NORMAL_SIGNUP_VIEW;
     }

@@ -78,7 +78,7 @@ class CartControllerTest {
         Authentication authentication = new UsernamePasswordAuthenticationToken("testUser", "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        when(cartService.getCartItems(eq(true), eq(null))).thenReturn(cartViewResponse);
+        when(cartService.getCartItems(true, null)).thenReturn(cartViewResponse);
 
         mockMvc.perform(get("/cart").sessionAttr("isLoggedIn", true))
                 .andExpect(status().isOk())
@@ -87,7 +87,7 @@ class CartControllerTest {
                 .andExpect(model().attributeExists("cartUpdateQuantitiesRequest"))
                 .andExpect(cookie().doesNotExist("guest_uuid"));
 
-        verify(cartService, times(1)).getCartItems(eq(true), eq(null));
+        verify(cartService, times(1)).getCartItems(true, null);
     }
 
     @Test
@@ -110,7 +110,7 @@ class CartControllerTest {
 
     @Test
     void cartForm_guestUser_withGuestUuid() throws Exception {
-        when(cartService.getCartItems(eq(false), eq(guestUuid))).thenReturn(cartViewResponse);
+        when(cartService.getCartItems(false, guestUuid)).thenReturn(cartViewResponse);
 
         mockMvc.perform(get("/cart").sessionAttr("isLoggedIn", false).cookie(new Cookie("guest_uuid", guestUuid)))
                 .andExpect(status().isOk())

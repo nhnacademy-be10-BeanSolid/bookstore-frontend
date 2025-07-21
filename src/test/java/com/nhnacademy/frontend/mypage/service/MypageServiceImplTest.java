@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MypageServiceImpl 단위 테스트")
-public class MypageServiceImplTest {
+class MypageServiceImplTest {
     @Mock
     private AuthAdapter authAdapter;
     @Mock
@@ -78,7 +78,7 @@ public class MypageServiceImplTest {
 
     private ResponseUser createResponseUser() {
         return new ResponseUser(
-                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null, null);
+                1L, "Test User", "asdfghjkl", "test", "010-1111-1111", "asdf@asdf.asdf", LocalDate.now(), 1000, false, null, null,null, null);
     }
 
     private ResponseAddress createResponseAddress() {
@@ -296,7 +296,7 @@ public class MypageServiceImplTest {
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.getTotalElements());
-        assertEquals("202507-abcdef-123456", result.getContent().get(0).orderNumber());
+        assertEquals("202507-abcdef-123456", result.getContent().getFirst().orderNumber());
         verify(orderAdapter).getAllOrdersByUserId(pageable);
     }
 
