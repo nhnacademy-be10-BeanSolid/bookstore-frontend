@@ -2,7 +2,8 @@ package com.nhnacademy.frontend.admin.controller;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
-import com.nhnacademy.dto.CouponPolicyResponseDto;
+import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.frontend.coupon.dto.IssueBookCouponRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,10 @@ public class AdminCouponController {
 
     @GetMapping
     public String getAdminCouponPage(Model model, @PageableDefault(size = 100) Pageable pageable) {
-        List<CouponPolicyResponseDto> couponPolicies = couponAdapter.getAllCouponPolicies();
+        List<CouponPolicyResponse> couponPolicies = couponAdapter.getAllCouponPolicies();
         model.addAttribute("couponPolicies", couponPolicies);
         model.addAttribute("books", bookAdapter.getAllBooks(pageable).getContent());
-        return "admin/coupon/coupon-management"; // Thymeleaf template path
+        return "admin/coupon/coupon-management";
     }
 
     @PostMapping("/issue-all/{couponPolicyId}")
@@ -60,7 +61,7 @@ public class AdminCouponController {
     }
 
     @PostMapping("/issue-book-to-user")
-    public String issueBookCouponToUser(com.nhnacademy.dto.IssueBookCouponRequest request, RedirectAttributes redirectAttributes) {
+    public String issueBookCouponToUser(IssueBookCouponRequest request, RedirectAttributes redirectAttributes) {
         try {
             couponAdapter.issueBookCoupon(request);
             redirectAttributes.addFlashAttribute("message", "사용자에게 도서 쿠폰 발급 요청이 성공적으로 접수되었습니다.");

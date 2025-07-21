@@ -104,7 +104,7 @@
             <div class="card-body">
                 <h6 class="card-title" th:text="${coupon.couponName}">쿠폰 이름</h6>
                 <p class="card-text">
-                    <span th:text="${coupon.couponDiscountType == T(com.nhnacademy.domain.CouponDiscountType).AMOUNT ? coupon.couponDiscountAmount + '원 할인' : coupon.couponDiscountAmount + '% 할인'}"></span>
+                    <span th:text="${coupon.couponDiscountType == T(com.nhnacademy.frontend.coupon.domain.CouponDiscountType).AMOUNT ? coupon.couponDiscountAmount + '원 할인' : coupon.couponDiscountAmount + '% 할인'}"></span>
                     <span th:if="${coupon.couponMaximumDiscountAmount != null}"> (최대 <span th:text="${coupon.couponMaximumDiscountAmount}"></span>원 할인)</span>
                     <span th:if="${coupon.couponMinimumOrderAmount != null}"> (<span th:text="${coupon.couponMinimumOrderAmount}"></span>원 이상 구매 시)</span>
                 </p>

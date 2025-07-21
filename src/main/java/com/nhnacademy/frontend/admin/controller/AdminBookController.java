@@ -1,6 +1,5 @@
 package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.dto.CouponPolicyResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
@@ -9,6 +8,7 @@ import com.nhnacademy.frontend.common.adapter.CouponAdapter;
 import com.nhnacademy.frontend.common.service.BookService;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
+import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,7 @@ public class AdminBookController {
     @GetMapping
     public String getBookList(Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
-        List<CouponPolicyResponseDto> couponPolicies = couponAdapter.getAllCouponPolicies();
+        List<CouponPolicyResponse> couponPolicies = couponAdapter.getAllCouponPolicies();
         log.info("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("page", bookList);

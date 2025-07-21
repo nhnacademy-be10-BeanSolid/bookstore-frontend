@@ -1,5 +1,7 @@
 package com.nhnacademy.frontend.coupon.domain;
 
 public enum CouponDiscountType {
-    AMOUNT, PERCENT
+    PERCENT,     // 백분율
+    AMOUNT,      // 금액
+    FIXED        // 고정
 }

@@ -46,6 +46,9 @@ public class AdminBookControllerTest {
     @MockBean
     private RedisConnectionFactory redisConnectionFactory;
 
+    @MockBean
+    private com.nhnacademy.frontend.common.adapter.CouponAdapter couponAdapter;
+
     @Test
     void showCreateForm() throws Exception {
         mockMvc.perform(get("/admin/books/new"))
@@ -62,6 +65,7 @@ public class AdminBookControllerTest {
         Page<SimpleBookResponseDto> page = new PageImpl<>(books);
 
         when(bookService.getAllBooks(any(Pageable.class))).thenReturn(page);
+        when(couponAdapter.getAllCouponPolicies()).thenReturn(List.of());
 
         mockMvc.perform(get("/admin/books"))
                 .andExpect(status().isOk())

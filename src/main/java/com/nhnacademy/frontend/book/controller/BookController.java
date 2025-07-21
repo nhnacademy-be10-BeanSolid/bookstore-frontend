@@ -1,10 +1,13 @@
 package com.nhnacademy.frontend.book.controller;
 
+import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.service.BookService;
-import com.nhnacademy.dto.CouponPolicyResponseDto;
-import com.nhnacademy.domain.CouponScope;
+
+import com.nhnacademy.frontend.coupon.domain.CouponScope;
+import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,14 +31,16 @@ public class BookController {
 
     private final BookService bookService;
     private final CouponAdapter couponAdapter;
+    private final UserAdapter userAdapter;
 
     @GetMapping("/{bookId}")
     public String bookDetail(@PathVariable("bookId") Long bookId, Model model) {
         BookDetailResponseDto bookDetail = bookService.getBookDetail(bookId);
         model.addAttribute("book", bookDetail);
 
-        List<CouponPolicyResponseDto> allCouponPolicies = couponAdapter.getAllCouponPolicies();
-        List<CouponPolicyResponseDto> bookCoupons = allCouponPolicies.stream()
+        List<CouponPolicyResponse> allCouponPolicies = couponAdapter.getAllCouponPolicies();
+        log.info("Fetched all coupon policies: {}", allCouponPolicies);
+        List<CouponPolicyResponse> bookCoupons = allCouponPolicies.stream()
                 .filter(policy -> policy.getCouponScope() == CouponScope.BOOK && policy.getBookIds() != null && policy.getBookIds().contains(bookId))
                 .collect(Collectors.toList());
         model.addAttribute("bookCoupons", bookCoupons);
@@ -59,8 +65,9 @@ public class BookController {
     }
 
     @PostMapping("/issue-coupon")
-    public String issueCouponToUser(@RequestParam Long couponPolicyId, @RequestParam Long bookId, RedirectAttributes redirectAttributes) {
-        Long userNo = 1L; // Placeholder for user ID
+    public String issueCouponToUser(@RequestParam Long couponPolicyId, @RequestParam Long bookId, RedirectAttributes redirectAttributes, Authentication authentication) {
+        String userId = ((CustomPrincipal) authentication.getPrincipal()).getUsername();
+        Long userNo = userAdapter.getUser(userId).getBody().getUserNo();
         try {
             couponAdapter.issueCouponToUser(userNo, couponPolicyId);
             redirectAttributes.addFlashAttribute("message", "쿠폰이 성공적으로 발급되었습니다!");
