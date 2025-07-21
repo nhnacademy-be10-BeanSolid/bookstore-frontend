@@ -9,7 +9,6 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointTyp
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.mypage.dto.request.ReturnFormRequest;
 import com.nhnacademy.frontend.mypage.service.MypageService;
-import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import feign.FeignException;
@@ -233,12 +232,25 @@ public class MypageController {
                               @ModelAttribute ReturnFormRequest formRequest,
                               RedirectAttributes redirectAttributes) {
         try {
-            ReturnsRequest request = new ReturnsRequest(formRequest.getReason(), formRequest.isDamaged());
-            mypageService.returnOrder(orderNumber, request);
+            mypageService.returnOrder(orderNumber, formRequest.getReason(), formRequest.isDamaged());
             redirectAttributes.addFlashAttribute("message", "반품 신청이 완료되었습니다.");
         } catch (Exception e) { // 모든 예외를 여기서 처리
             log.error("반품 신청 오류 발생: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "반품 신청에 실패했습니다.");
+        }
+        return "redirect:/mypage/orders";
+    }
+
+    @PostMapping("/orders/{orderNumber}/cancel")
+    public String cancelOrder(@PathVariable String orderNumber,
+                              @RequestParam String reason,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            mypageService.cancelOrder(orderNumber, reason);
+            redirectAttributes.addFlashAttribute("message", "결제 취소가 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("결제 취소 오류 발생: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "결제 취소에 실패했습니다.");
         }
         return "redirect:/mypage/orders";
     }

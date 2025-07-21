@@ -12,7 +12,7 @@ import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequ
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.mypage.service.MypageService;
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
-import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
+import com.nhnacademy.frontend.order.dto.request.OrderStatusRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import lombok.RequiredArgsConstructor;
@@ -132,7 +132,14 @@ public class MypageServiceImpl implements MypageService {
     }
 
     @Override
-    public void returnOrder(String orderNumber, ReturnsRequest request) {
-        orderAdapter.returnOrder(orderNumber, request);
+    public void returnOrder(String orderNumber, String reason, Boolean damaged) {
+        OrderStatusRequest request = new OrderStatusRequest(OrderStatusRequest.OrderAction.RETURN, reason, damaged);
+        orderAdapter.changeOrderStatus(orderNumber, request);
+    }
+
+    @Override
+    public void cancelOrder(String orderNumber, String reason) {
+        OrderStatusRequest request = new OrderStatusRequest(OrderStatusRequest.OrderAction.CANCEL, reason, null);
+        orderAdapter.changeOrderStatus(orderNumber, request);
     }
 }

@@ -1,15 +1,15 @@
 package com.nhnacademy.frontend.order.adapter;
 
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.order.dto.request.OrderStatusRequest;
 import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
-import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
+import com.nhnacademy.frontend.order.dto.response.*;
+import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "gateway-service", contextId = "orderAdapter")
@@ -33,4 +33,8 @@ public interface OrderAdapter {
 
     @PutMapping("/order-api/orders/{orderNumber}/status")
     void returnOrder(@PathVariable String orderNumber, @RequestBody ReturnsRequest request);
+
+    @PutMapping("/order-api/orders/{orderNumber}/status")
+    OrderStatusResult changeOrderStatus(@PathVariable String orderNumber,
+                                                               @Valid @RequestBody OrderStatusRequest request);
 }

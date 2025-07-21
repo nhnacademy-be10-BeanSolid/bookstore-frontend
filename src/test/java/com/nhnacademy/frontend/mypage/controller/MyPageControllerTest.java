@@ -7,7 +7,6 @@ import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.advice.GlobalModelAttributeAdvice;
 import com.nhnacademy.frontend.mypage.service.MypageService;
-import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import feign.FeignException;
@@ -519,7 +518,7 @@ class MyPageControllerTest {
                 .andExpect(redirectedUrl("/mypage/orders"))
                 .andExpect(flash().attributeExists("message"));
 
-        Mockito.verify(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+        Mockito.verify(mypageService).returnOrder(orderNumber, reason, damaged);
     }
 
     @Test
@@ -530,7 +529,7 @@ class MyPageControllerTest {
         boolean damaged = true;
 
         Mockito.doThrow(new RuntimeException("Service error"))
-                .when(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+                .when(mypageService).returnOrder(orderNumber, reason, damaged);
 
         mockMvc.perform(post("/mypage/orders/{orderNumber}/return", orderNumber)
                         .param("reason", reason)
@@ -539,6 +538,6 @@ class MyPageControllerTest {
                 .andExpect(redirectedUrl("/mypage/orders"))
                 .andExpect(flash().attributeExists("errorMessage"));
 
-        Mockito.verify(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+        Mockito.verify(mypageService).returnOrder(orderNumber, reason, damaged);
     }
 }
