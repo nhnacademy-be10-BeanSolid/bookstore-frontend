@@ -39,11 +39,6 @@ public class SecurityConfig {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives("img-src 'self' http://storage.java21.net:8000 https://shopping-phinf.pstatic.net;")
-                        )
-                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET,
                                 "/payments",
