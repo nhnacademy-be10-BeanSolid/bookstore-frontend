@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,10 +25,4 @@ public class ReviewUpdateRequest {
 
     private List<@Size(max = 2083) String> imageUrls;
 
-    public void addImageUrl(String imageUrl) {
-        if (this.imageUrls == null) {
-            this.imageUrls = new ArrayList<>();
-        }
-        this.imageUrls.add(imageUrl);
-    }
 }

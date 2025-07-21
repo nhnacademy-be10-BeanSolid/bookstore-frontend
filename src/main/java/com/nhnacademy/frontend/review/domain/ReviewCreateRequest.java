@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,10 +31,4 @@ public class ReviewCreateRequest {
     @Min(1)
     private long bookId;
 
-    public void addImageUrl(String imageUrl) {
-        if (this.imageUrls == null) {
-            this.imageUrls = new ArrayList<>();
-        }
-        this.imageUrls.add(imageUrl);
-    }
 }
