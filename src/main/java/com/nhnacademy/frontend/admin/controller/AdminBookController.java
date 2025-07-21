@@ -4,6 +4,7 @@ import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCreateRequest
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookUpdateRequestDto;
+import com.nhnacademy.frontend.common.adapter.CouponAdapter;
 import com.nhnacademy.frontend.common.service.BookService;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminBookController {
 
     private final BookService bookService;
+    private final CouponAdapter couponAdapter;
 
     // 등록 폼
     @GetMapping("/new")
@@ -49,9 +54,11 @@ public class AdminBookController {
     @GetMapping
     public String getBookList(Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
+        List<com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse> couponPolicies = couponAdapter.getAllCouponPolicies();
         log.info("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("books", bookList.getContent());
         model.addAttribute("page", bookList);
+        model.addAttribute("couponPolicies", couponPolicies);
         return "admin/book/book-list";
     }
 
@@ -95,6 +102,18 @@ public class AdminBookController {
     public String deleteBook(@PathVariable("bookId") Long bookId) {
         bookService.deleteBook(bookId);
         log.info("Book Delete Success : {}", bookId);
+        return "redirect:/admin/books";
+    }
+
+    @PostMapping("/associate-coupon")
+    public String associateCouponToBook(@RequestParam Long bookId, @RequestParam Long couponPolicyId, RedirectAttributes redirectAttributes) {
+        try {
+            couponAdapter.issueCouponToBook(couponPolicyId, bookId);
+            redirectAttributes.addFlashAttribute("message", "쿠폰이 도서에 성공적으로 연결되었습니다.");
+        } catch (Exception e) {
+            log.error("Failed to associate coupon {} with book {}: {}", couponPolicyId, bookId, e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "쿠폰 연결 중 오류가 발생했습니다: " + e.getMessage());
+        }
         return "redirect:/admin/books";
     }
 }
