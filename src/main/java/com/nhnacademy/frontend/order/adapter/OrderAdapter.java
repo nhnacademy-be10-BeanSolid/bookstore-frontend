@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.order.adapter;
 
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
 import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
@@ -29,4 +30,7 @@ public interface OrderAdapter {
 
     @GetMapping("/order-api/orders/{orderNumber}")
     OrderDetailResponse getOrder(@PathVariable String orderNumber);
+
+    @PutMapping("/order-api/orders/{orderNumber}/status")
+    void returnOrder(@PathVariable String orderNumber, @RequestBody ReturnsRequest request);
 }

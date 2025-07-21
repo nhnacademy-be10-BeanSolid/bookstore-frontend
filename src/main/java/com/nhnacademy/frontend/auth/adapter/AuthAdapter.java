@@ -29,6 +29,9 @@ public interface AuthAdapter {
     @PostMapping("/auth-service/auth/verify-password")
     Boolean verifyPassword(@RequestBody PasswordVerificationRequestDto request);
 
+    @PostMapping("/auth-service/auth/dormant/verify")
+    Boolean verifyDormantUserCode(@RequestBody DormantUserVerificationRequestDto request);
+
     @PostMapping("/auth-service/auth/non-member/login")
     Boolean nonMemberLogin(@RequestBody NonMemberLoginRequest request);
 }

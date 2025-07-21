@@ -1,12 +1,15 @@
 package com.nhnacademy.frontend.mypage.controller;
 
 
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.advice.GlobalModelAttributeAdvice;
 import com.nhnacademy.frontend.mypage.service.MypageService;
+import com.nhnacademy.frontend.order.dto.request.ReturnsRequest;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import feign.FeignException;
 import feign.Request;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -456,5 +460,84 @@ public class MyPageControllerTest {
                 .andExpect(view().name("redirect:/mypage/grade"));
 
         Mockito.verify(mypageService).bulkUpdateUserGrades();
+    }
+
+    @Test
+    @DisplayName("마이페이지 주문 목록 조회에 성공하면 200을 응답한다")
+    void mypageOrdersForm_Success() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        OrderSummaryResponse summary = new OrderSummaryResponse(LocalDate.now(), "202507-abcdef-123456", "받는 사람", 30000L, "PENDING");
+        Page<OrderSummaryResponse> orderPage = new PageImpl<>(List.of(summary), pageable, 1);
+
+        Mockito.when(mypageService.getAllOrders(any(Pageable.class))).thenReturn(orderPage);
+
+        // When & Then
+        mockMvc.perform(get("/mypage/orders")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mypage/order-list"))
+                .andExpect(model().attribute("orders", orderPage));
+
+        Mockito.verify(mypageService).getAllOrders(any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("마이페이지 주문 상세 조회에 성공하면 200을 응답한다")
+    void getOrderDetail_Success() throws Exception {
+        // Given
+        String orderNumber = "202507-abcdef-123456";
+        OrderDetailResponse orderDetail = OrderDetailResponse.builder()
+                .orderNumber(orderNumber)
+                .totalAmount(30_000L)
+                .build();
+
+        Mockito.when(mypageService.getOrderDetail(orderNumber)).thenReturn(orderDetail);
+
+        // When & Then
+        mockMvc.perform(get("/mypage/orders/{orderNumber}", orderNumber))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mypage/order-detail"))
+                .andExpect(model().attribute("order", orderDetail));
+
+        Mockito.verify(mypageService).getOrderDetail(orderNumber);
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 성공")
+    void returnOrder_Success() throws Exception {
+        String orderNumber = "testOrderNumber";
+        String reason = "단순 변심";
+        boolean damaged = false;
+
+        mockMvc.perform(post("/mypage/orders/{orderNumber}/return", orderNumber)
+                        .param("reason", reason)
+                        .param("damaged", String.valueOf(damaged)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/mypage/orders"))
+                .andExpect(flash().attributeExists("message"));
+
+        Mockito.verify(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+    }
+
+    @Test
+    @DisplayName("반품 신청 - 실패")
+    void returnOrder_Failure() throws Exception {
+        String orderNumber = "testOrderNumber";
+        String reason = "상품 파손";
+        boolean damaged = true;
+
+        Mockito.doThrow(new RuntimeException("Service error"))
+                .when(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
+
+        mockMvc.perform(post("/mypage/orders/{orderNumber}/return", orderNumber)
+                        .param("reason", reason)
+                        .param("damaged", String.valueOf(damaged)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/mypage/orders"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        Mockito.verify(mypageService).returnOrder(orderNumber, new ReturnsRequest(reason, damaged));
     }
 }

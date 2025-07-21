@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
@@ -8,6 +9,7 @@ import com.nhnacademy.frontend.auth.dto.response.PaycoCallbackResponseDto;
 import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,9 +31,13 @@ import java.util.UUID;
 @RequestMapping("/auth/login")
 @RequiredArgsConstructor
 public class LoginController {
+    private static final String REDIRECT_ROOT = "redirect:/";
+    private static final String REDIRECT_LOGIN_FORM = "redirect:/auth/login";
+
     private final AuthService authService;
     private final JwtCookieUtil jwtCookieUtil;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
 
     @Value("${payco.client-id}")
     private String clientId;
@@ -44,7 +50,7 @@ public class LoginController {
         if(auth != null
             && auth.isAuthenticated()
             && !(auth instanceof AnonymousAuthenticationToken)) {
-            return "redirect:/";
+            return REDIRECT_ROOT;
         }
         if (model.containsAttribute("signupSuccess")) {
             model.addAttribute("signupSuccess", true);
@@ -91,7 +97,7 @@ public class LoginController {
 
         String stateParam = responseDto.state();
         if(!Objects.equals(stateParam, cookieState) || cookieState == null) {
-            return "redirect:/auth/login";
+            return REDIRECT_LOGIN_FORM;
         }
 
         String code = responseDto.code();
@@ -101,7 +107,7 @@ public class LoginController {
         if(result.isSuccess()) {
             OAuth2LoginResponseDto successData = objectMapper.convertValue(result.getData(), OAuth2LoginResponseDto.class);
             jwtCookieUtil.addJwtCookie(response, successData.getAccessToken(), successData.getRefreshToken());
-            return "redirect:/";
+            return REDIRECT_ROOT;
         } else {
             AdditionalSignupRequiredDto signupData = objectMapper.convertValue(result.getData(), AdditionalSignupRequiredDto.class);
             model.addAttribute("tempJwt", signupData.getTempJwt());
@@ -117,6 +123,34 @@ public class LoginController {
         }
     }
 
+    @GetMapping("/dormant")
+    public String showDormantForm(@RequestParam(name = "userId") String userId, Model model, RedirectAttributes redirectAttributes) {
+
+        if(!userService.isDormantUser(userId)) {
+
+            redirectAttributes.addFlashAttribute("accessDenied", "휴면 계정이 아니면 접근할 수 없습니다.");
+            return REDIRECT_ROOT;
+        }
+
+        model.addAttribute("userId", userId);
+        model.addAttribute("needVerification", "휴면 계정입니다, 인증코드를 입력해주세요.");
+
+        return "auth/dormant";
+    }
+
+    @PostMapping("/dormant/verify")
+    public String verifyDormantForm(@ModelAttribute DormantUserVerificationRequestDto dto, RedirectAttributes redirectAttributes) {
+
+        if(authService.verifyDormantUserCode(dto)){
+
+            redirectAttributes.addFlashAttribute("dormantSuccess", "인증성공! 휴면 상태가 해제되었습니다. 다시 로그인 해주세요.");
+            return REDIRECT_LOGIN_FORM;
+        }
+        redirectAttributes.addFlashAttribute("dormantFail", "인증실패! 다시 인증해주세요.");
+        return REDIRECT_LOGIN_FORM;
+    }
+
+
     @PostMapping("/non-member")
     public String nonMemberLogin(@ModelAttribute NonMemberLoginRequest request,
                                  RedirectAttributes redirectAttributes) {
@@ -128,7 +162,7 @@ public class LoginController {
             return "redirect:/orders/non-member-detail";
         } else {
             redirectAttributes.addFlashAttribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다.");
-            return "redirect:/auth/login";
+            return REDIRECT_LOGIN_FORM;
         }
     }
 }

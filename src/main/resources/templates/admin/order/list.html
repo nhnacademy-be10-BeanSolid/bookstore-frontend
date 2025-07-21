@@ -35,7 +35,7 @@
                     <span class="badge bg-primary" th:text="${order.status}"></span>
                 </td>
                 <td>
-                    <form th:if="${order.status == 'PENDING'}" th:action="@{/admin/orders/{orderNumber}/status(orderNumber=${order.orderNumber})}" method="post">
+                    <form th:if="${order.status == 'PENDING_PAY'}" th:action="@{/admin/orders/{orderNumber}/status(orderNumber=${order.orderNumber})}" method="post">
                         <input type="hidden" name="_method" value="PUT">
                         <button type="submit" class="btn btn-success btn-sm">배송 시작</button>
                     </form>
