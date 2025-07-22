@@ -71,7 +71,6 @@ public class AdminBookController {
         if (bindingResult.hasErrors()) {
             throw new ValidationFailedException(bindingResult);
         }
-        log.info("createBook : {}", request);
         BookResponseDto book = bookService.createBook(request);
         log.info("Book Create Success : {}", book.id());
         return "redirect:/admin/books/" + book.id();
