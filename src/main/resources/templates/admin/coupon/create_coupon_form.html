@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>쿠폰 정책 생성</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form div { margin-bottom: 10px; }
+        label { display: inline-block; width: 150px; }
+        input[type="text"], input[type="number"], select { width: 200px; padding: 5px; }
+        button { padding: 8px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #selectedBooksList { border: 1px solid #ccc; padding: 10px; min-height: 50px; margin-top: 10px; }
+        .selected-book-item { display: flex; justify-content: space-between; align-items: center; padding: 5px; border-bottom: 1px dashed #eee; }
+        .selected-book-item button { background-color: #dc3545; margin-left: 10px; }
+        .success-message { color: green; font-weight: bold; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <h1>새 쿠폰 정책 생성</h1>
+
+    <div id="messageContainer" class="success-message" style="display: none;"></div>
+
+    <form th:action="@{/admin/coupons/create}" th:object="${couponPolicyCreateRequest}" method="post">
+        <div>
+            <label for="couponName">쿠폰 이름:</label>
+            <input type="text" id="couponName" th:field="*{couponName}" required>
+        </div>
+        <div>
+            <label for="couponDiscountType">할인 유형:</label>
+            <select id="couponDiscountType" th:field="*{couponDiscountType}" required>
+                <option value="AMOUNT">정액 할인</option>
+                <option value="PERCENT">정률 할인</option>
+            </select>
+        </div>
+        <div>
+            <label for="couponDiscountAmount">할인 금액:</label>
+            <input type="number" id="couponDiscountAmount" th:field="*{couponDiscountAmount}" required>
+        </div>
+        <div>
+            <label for="couponMinimumOrderAmount">최소 주문 금액:</label>
+            <input type="number" id="couponMinimumOrderAmount" th:field="*{couponMinimumOrderAmount}">
+        </div>
+        <div>
+            <label for="couponMaximumDiscountAmount">최대 할인 금액:</label>
+            <input type="number" id="couponMaximumDiscountAmount" th:field="*{couponMaximumDiscountAmount}">
+        </div>
+        <div>
+            <label for="couponScope">쿠폰 적용 범위:</label>
+            <select id="couponScope" th:field="*{couponScope}" required>
+                <option value="ALL">전체</option>
+                <option value="BOOK">도서</option>
+                <option value="CATEGORY">카테고리</option>
+            </select>
+        </div>
+        <div>
+            <label for="couponExpiredAt">만료일:</label>
+            <input type="datetime-local" id="couponExpiredAt" th:field="*{couponExpiredAt}">
+        </div>
+        <div>
+            <label for="couponIssuePeriod">발급 기간 (일):</label>
+            <input type="number" id="couponIssuePeriod" th:field="*{couponIssuePeriod}">
+        </div>
+        <div>
+            <label for="couponType">쿠폰 유형:</label>
+            <select id="couponType" th:field="*{couponType}" required>
+                <option value="GENERAL">일반</option>
+                <option value="WELCOME">웰컴</option>
+                <option value="BIRTHDAY">생일</option>
+            </select>
+        </div>
+
+        <!-- Book Selection Section -->
+        <div id="bookSelectionSection" style="display: none;">
+            <h2>도서 선택</h2>
+            <div>
+                <label for="bookSelect">도서 목록:</label>
+                <select id="bookSelect" multiple size="5">
+                    <option th:each="book : ${allBooks}" th:value="${book.bookId}" th:text="|${book.title} (${book.author})|"></option>
+                </select>
+                <button type="button" id="addSelectedBooksBtn">선택된 도서 추가</button>
+            </div>
+            <h3>선택된 도서:</h3>
+            <div id="selectedBooksList">
+                <!-- 선택된 도서가 여기에 표시됩니다 -->
+            </div>
+            <input type="hidden" id="bookIdsInput" th:field="*{bookIds}">
+        </div>
+
+        <div>
+            <button type="submit">쿠폰 생성</button>
+            <a th:href="@{/admin/coupons}" class="btn btn-secondary">목록으로 돌아가기</a>
+        </div>
+    </form>
+
+    <script>
+        const couponScopeSelect = document.getElementById('couponScope');
+        const bookSelectionSection = document.getElementById('bookSelectionSection');
+        const bookSelect = document.getElementById('bookSelect');
+        const addSelectedBooksBtn = document.getElementById('addSelectedBooksBtn');
+        const selectedBooksListDiv = document.getElementById('selectedBooksList');
+        const bookIdsInput = document.getElementById('bookIdsInput');
+        const messageContainer = document.getElementById('messageContainer');
+
+        let selectedBookIds = new Set(); // 고유한 도서 ID를 저장하기 위해 Set 사용
+
+        // 선택된 도서 ID로 숨겨진 입력 필드를 업데이트하는 함수
+        function updateBookIdsInput() {
+            bookIdsInput.value = Array.from(selectedBookIds).join(',');
+        }
+
+        // 쿠폰 적용 범위에 따라 도서 선택 섹션 가시성 토글
+        couponScopeSelect.addEventListener('change', function() {
+            if (this.value === 'BOOK') {
+                bookSelectionSection.style.display = 'block';
+            } else {
+                bookSelectionSection.style.display = 'none';
+                selectedBookIds.clear(); // 범위 변경 시 선택된 도서 초기화
+                selectedBooksListDiv.innerHTML = '';
+                updateBookIdsInput();
+            }
+        });
+
+        // 선택된 도서 추가
+        addSelectedBooksBtn.addEventListener('click', function() {
+            Array.from(bookSelect.options).forEach(option => {
+                if (option.selected) {
+                    const bookId = option.value;
+                    const bookTitle = option.text.split(' (')[0]; // Extract title from text
+
+                    if (!selectedBookIds.has(bookId)) {
+                        selectedBookIds.add(bookId);
+                        const selectedBookItem = document.createElement('div');
+                        selectedBookItem.classList.add('selected-book-item');
+                        selectedBookItem.innerHTML = `
+                            <span>${bookTitle} (ID: ${bookId})</span>
+                            <button type="button" data-book-id="${bookId}" class="remove-book-btn">삭제</button>
+                        `;
+                        selectedBooksListDiv.appendChild(selectedBookItem);
+                        updateBookIdsInput();
+                    }
+                }
+            });
+        });
+
+        // 선택된 목록에서 도서 제거
+        selectedBooksListDiv.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-book-btn')) {
+                const bookIdToRemove = event.target.dataset.bookId;
+                selectedBookIds.delete(bookIdToRemove);
+                event.target.closest('.selected-book-item').remove();
+                updateBookIdsInput();
+            }
+        });
+
+        // 도서 선택 섹션의 초기 상태 확인
+        if (couponScopeSelect.value === 'BOOK') {
+            bookSelectionSection.style.display = 'block';
+        }
+
+        // URL 파라미터 확인 및 메시지 표시
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success') && urlParams.get('success') === 'true') {
+            messageContainer.textContent = '쿠폰이 성공적으로 생성되었습니다!';
+            messageContainer.style.display = 'block';
+            // 메시지를 잠시 후 사라지게 하려면:
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+                // URL에서 파라미터 제거 (선택 사항)
+                history.replaceState({}, document.title, window.location.pathname);
+            }, 5000); // 5초 후 사라짐
+        }
+    </script>
+</body>
+</html>

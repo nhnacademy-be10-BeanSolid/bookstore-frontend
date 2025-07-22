@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>쿠폰 정책 목록</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .success-message { color: green; font-weight: bold; margin-bottom: 15px; }
+        .deleted-message { color: orange; font-weight: bold; margin-bottom: 15px; }
+        .action-buttons a, .action-buttons button { margin-right: 5px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>쿠폰 정책 목록</h1>
+
+    <div id="messageContainer" style="display: none;"></div>
+
+    <div>
+        <a th:href="@{/admin/coupons/create}">새 쿠폰 정책 생성</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>쿠폰 이름</th>
+                <th>할인 유형</th>
+                <th>할인 금액</th>
+                <th>적용 범위</th>
+                <th>만료일</th>
+                <th>생성일</th>
+                <th>액션</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="coupon : ${couponPolicies}">
+                <td th:text="${coupon.couponId}"></td>
+                <td th:text="${coupon.couponName}"></td>
+                <td th:text="${coupon.couponDiscountType}"></td>
+                <td th:text="${coupon.couponDiscountAmount}"></td>
+                <td th:text="${coupon.couponScope}"></td>
+                <td th:text="${coupon.couponExpiredAt}"></td>
+                <td th:text="${coupon.couponCreatedAt}"></td>
+                <td class="action-buttons">
+                    <a th:href="@{/admin/coupons/{id}(id=${coupon.couponId})}">상세 보기</a>
+                    <form th:action="@{/admin/coupons/{id}/delete(id=${coupon.couponId})}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('정말로 이 쿠폰 정책을 삭제하시겠습니까?');">삭제</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const messageContainer = document.getElementById('messageContainer');
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has('success') && urlParams.get('success') === 'true') {
+            messageContainer.textContent = '쿠폰이 성공적으로 생성되었습니다!';
+            messageContainer.className = 'success-message';
+            messageContainer.style.display = 'block';
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+                history.replaceState({}, document.title, window.location.pathname);
+            }, 5000);
+        } else if (urlParams.has('deleted') && urlParams.get('deleted') === 'true') {
+            messageContainer.textContent = '쿠폰이 성공적으로 삭제되었습니다!';
+            messageContainer.className = 'deleted-message';
+            messageContainer.style.display = 'block';
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+                history.replaceState({}, document.title, window.location.pathname);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

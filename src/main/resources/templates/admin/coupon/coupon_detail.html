@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>쿠폰 정책 상세</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        div { margin-bottom: 10px; }
+        label { display: inline-block; width: 180px; font-weight: bold; }
+        span { display: inline-block; }
+        .button-group { margin-top: 20px; }
+        .button-group a, .button-group button { padding: 8px 15px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>쿠폰 정책 상세</h1>
+
+    <div th:if="${couponPolicy}">
+        <div>
+            <label>쿠폰 ID:</label>
+            <span th:text="${couponPolicy.couponId}"></span>
+        </div>
+        <div>
+            <label>쿠폰 이름:</label>
+            <span th:text="${couponPolicy.couponName}"></span>
+        </div>
+        <div>
+            <label>할인 유형:</label>
+            <span th:text="${couponPolicy.couponDiscountType}"></span>
+        </div>
+        <div>
+            <label>할인 금액:</label>
+            <span th:text="${couponPolicy.couponDiscountAmount}"></span>
+        </div>
+        <div>
+            <label>최소 주문 금액:</label>
+            <span th:text="${couponPolicy.couponMinimumOrderAmount}"></span>
+        </div>
+        <div>
+            <label>최대 할인 금액:</label>
+            <span th:text="${couponPolicy.couponMaximumDiscountAmount}"></span>
+        </div>
+        <div>
+            <label>쿠폰 적용 범위:</label>
+            <span th:text="${couponPolicy.couponScope}"></span>
+        </div>
+        <div>
+            <label>만료일:</label>
+            <span th:text="${couponPolicy.couponExpiredAt}"></span>
+        </div>
+        <div>
+            <label>발급 기간 (일):</label>
+            <span th:text="${couponPolicy.couponIssuePeriod}"></span>
+        </div>
+        <div>
+            <label>쿠폰 유형:</label>
+            <span th:text="${couponPolicy.couponType}"></span>
+        </div>
+        <div>
+            <label>생성일:</label>
+            <span th:text="${couponPolicy.couponCreatedAt}"></span>
+        </div>
+        <div th:if="${couponPolicy.couponScope == 'BOOK'}">
+            <label>적용 도서 ID:</label>
+            <span th:text="${couponPolicy.bookIds}"></span>
+        </div>
+        <div th:if="${couponPolicy.couponScope == 'CATEGORY'}">
+            <label>적용 카테고리 ID:</label>
+            <span th:text="${couponPolicy.categoryIds}"></span>
+        </div>
+    </div>
+    <div th:unless="${couponPolicy}">
+        <p>쿠폰 정책을 찾을 수 없습니다.</p>
+    </div>
+
+    <div class="button-group">
+        <a th:href="@{/admin/coupons}">목록으로 돌아가기</a>
+        <form th:action="@{/admin/coupons/{id}/delete(id=${couponPolicy.couponId})}" method="post" style="display:inline;">
+            <button type="submit" onclick="return confirm('정말로 이 쿠폰 정책을 삭제하시겠습니까?');">삭제</button>
+        </form>
+    </div>
+</body>
+</html>
