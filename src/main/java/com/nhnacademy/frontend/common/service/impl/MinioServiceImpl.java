@@ -3,7 +3,6 @@ package com.nhnacademy.frontend.common.service.impl;
 
 import com.nhnacademy.frontend.common.service.MinioService;
 import io.minio.*;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,13 +54,7 @@ public class MinioServiceImpl implements MinioService {
                             .contentType(file.getContentType())
                             .build()
             );
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .bucket(reviewImageBucketName)
-                            .object(objectName)
-                            .method(Method.GET)
-                            .build()
-            );
+            return "/images/review/" + objectName;
         } catch (Exception e) {
             throw new RuntimeException("MinIO 파일 업로드 실패", e);
         }

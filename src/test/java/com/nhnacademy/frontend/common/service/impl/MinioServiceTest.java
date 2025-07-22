@@ -62,20 +62,20 @@ class MinioServiceTest {
     @DisplayName("이미지 업로드 - 성공")
     void uploadImage_Success() throws Exception {
         // given
-        MultipartFile file = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test-image-content".getBytes());
-        String expectedUrl = "http://example.com/test.jpg";
+        String originalFilename = "test.jpg";
+        MultipartFile file = new MockMultipartFile("image", originalFilename, "image/jpeg", "test-image-content".getBytes());
 
         when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(mock(ObjectWriteResponse.class));
-        when(minioClient.getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class))).thenReturn(expectedUrl);
 
         // when
         String resultUrl = minioService.uploadImage(file);
 
         // then
         assertNotNull(resultUrl);
-        assertEquals(expectedUrl, resultUrl);
+        assertTrue(resultUrl.startsWith("/images/review/"));
+        assertTrue(resultUrl.endsWith(originalFilename));
         verify(minioClient).putObject(any(PutObjectArgs.class));
-        verify(minioClient).getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class));
+        verify(minioClient, never()).getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class));
     }
 
     @Test
