@@ -41,7 +41,24 @@ public class BookController {
         List<CouponPolicyResponse> allCouponPolicies = couponAdapter.getAllCouponPolicies();
         log.info("Fetched all coupon policies: {}", allCouponPolicies);
         List<CouponPolicyResponse> bookCoupons = allCouponPolicies.stream()
-                .filter(policy -> policy.getCouponScope() == CouponScope.BOOK && policy.getBookIds() != null && policy.getBookIds().contains(bookId))
+                .filter(policy -> {
+                    // 도서 범위 쿠폰 필터링
+                    if (policy.getCouponScope() == CouponScope.BOOK && policy.getBookIds() != null && policy.getBookIds().contains(bookId)) {
+                        return true;
+                    }
+                    // 카테고리 범위 쿠폰 필터링
+                    if (policy.getCouponScope() == CouponScope.CATEGORY && policy.getCategoryIds() != null && !policy.getCategoryIds().isEmpty()) {
+                        // 현재 도서의 카테고리 ID 목록을 가져옵니다.
+                        List<Long> bookCategoryIds = bookDetail.bookCategories().stream()
+                                .map(com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto::categoryId)
+                                .collect(Collectors.toList());
+
+                        // 쿠폰의 카테고리 ID 중 하나라도 도서의 카테고리 ID에 포함되는지 확인합니다.
+                        return policy.getCategoryIds().stream()
+                                .anyMatch(bookCategoryIds::contains);
+                    }
+                    return false;
+                })
                 .collect(Collectors.toList());
         model.addAttribute("bookCoupons", bookCoupons);
 

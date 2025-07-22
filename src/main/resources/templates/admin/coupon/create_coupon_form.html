@@ -87,6 +87,23 @@
             <input type="hidden" id="bookIdsInput" th:field="*{bookIds}">
         </div>
 
+        <!-- Category Selection Section -->
+        <div id="categorySelectionSection" style="display: none;">
+            <h2>카테고리 선택</h2>
+            <div>
+                <label for="categorySelect">카테고리 목록:</label>
+                <select id="categorySelect" multiple size="5">
+                    <option th:each="category : ${allCategories}" th:value="${category.categoryId}" th:text="${category.categoryName}"></option>
+                </select>
+                <button type="button" id="addSelectedCategoriesBtn">선택된 카테고리 추가</button>
+            </div>
+            <h3>선택된 카테고리:</h3>
+            <div id="selectedCategoriesList">
+                <!-- 선택된 카테고리가 여기에 표시됩니다 -->
+            </div>
+            <input type="hidden" id="categoryIdsInput" th:field="*{categoryIds}">
+        </div>
+
         <div>
             <button type="submit">쿠폰 생성</button>
             <a th:href="@{/admin/coupons}" class="btn btn-secondary">목록으로 돌아가기</a>
@@ -102,22 +119,47 @@
         const bookIdsInput = document.getElementById('bookIdsInput');
         const messageContainer = document.getElementById('messageContainer');
 
+        const categorySelectionSection = document.getElementById('categorySelectionSection');
+        const categorySelect = document.getElementById('categorySelect');
+        const addSelectedCategoriesBtn = document.getElementById('addSelectedCategoriesBtn');
+        const selectedCategoriesListDiv = document.getElementById('selectedCategoriesList');
+        const categoryIdsInput = document.getElementById('categoryIdsInput');
+
         let selectedBookIds = new Set(); // 고유한 도서 ID를 저장하기 위해 Set 사용
+        let selectedCategoryIds = new Set();
 
         // 선택된 도서 ID로 숨겨진 입력 필드를 업데이트하는 함수
         function updateBookIdsInput() {
             bookIdsInput.value = Array.from(selectedBookIds).join(',');
         }
 
+        function updateCategoryIdsInput() {
+            categoryIdsInput.value = Array.from(selectedCategoryIds).join(',');
+        }
+
         // 쿠폰 적용 범위에 따라 도서 선택 섹션 가시성 토글
         couponScopeSelect.addEventListener('change', function() {
             if (this.value === 'BOOK') {
                 bookSelectionSection.style.display = 'block';
-            } else {
-                bookSelectionSection.style.display = 'none';
-                selectedBookIds.clear(); // 범위 변경 시 선택된 도서 초기화
+                categorySelectionSection.style.display = 'none'; // 카테고리 섹션 숨김
+                selectedCategoryIds.clear(); // 카테고리 선택 초기화
+                selectedCategoriesListDiv.innerHTML = '';
+                updateCategoryIdsInput();
+            } else if (this.value === 'CATEGORY') {
+                bookSelectionSection.style.display = 'none'; // 도서 섹션 숨김
+                categorySelectionSection.style.display = 'block';
+                selectedBookIds.clear(); // 도서 선택 초기화
                 selectedBooksListDiv.innerHTML = '';
                 updateBookIdsInput();
+            } else {
+                bookSelectionSection.style.display = 'none';
+                categorySelectionSection.style.display = 'none';
+                selectedBookIds.clear();
+                selectedBooksListDiv.innerHTML = '';
+                updateBookIdsInput();
+                selectedCategoryIds.clear();
+                selectedCategoriesListDiv.innerHTML = '';
+                updateCategoryIdsInput();
             }
         });
 
@@ -153,9 +195,41 @@
             }
         });
 
+        addSelectedCategoriesBtn.addEventListener('click', function() {
+            Array.from(categorySelect.options).forEach(option => {
+                if (option.selected) {
+                    const categoryId = option.value;
+                    const categoryName = option.text;
+
+                    if (!selectedCategoryIds.has(categoryId)) {
+                        selectedCategoryIds.add(categoryId);
+                        const selectedCategoryItem = document.createElement('div');
+                        selectedCategoryItem.classList.add('selected-category-item');
+                        selectedCategoryItem.innerHTML = `
+                            <span>${categoryName} (ID: ${categoryId})</span>
+                            <button type="button" data-category-id="${categoryId}" class="remove-category-btn">삭제</button>
+                        `;
+                        selectedCategoriesListDiv.appendChild(selectedCategoryItem);
+                        updateCategoryIdsInput();
+                    }
+                }
+            });
+        });
+
+        selectedCategoriesListDiv.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-category-btn')) {
+                const categoryIdToRemove = event.target.dataset.categoryId;
+                selectedCategoryIds.delete(categoryIdToRemove);
+                event.target.closest('.selected-category-item').remove();
+                updateCategoryIdsInput();
+            }
+        });
+
         // 도서 선택 섹션의 초기 상태 확인
         if (couponScopeSelect.value === 'BOOK') {
             bookSelectionSection.style.display = 'block';
+        } else if (couponScopeSelect.value === 'CATEGORY') {
+            categorySelectionSection.style.display = 'block';
         }
 
         // URL 파라미터 확인 및 메시지 표시

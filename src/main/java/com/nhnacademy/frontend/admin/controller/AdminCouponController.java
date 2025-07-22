@@ -1,8 +1,10 @@
 package com.nhnacademy.frontend.admin.controller;
 
 import com.nhnacademy.frontend.admin.adapter.BookAdminAdaptor;
+import com.nhnacademy.frontend.admin.adapter.CategoryAdminAdaptor;
 import com.nhnacademy.frontend.admin.adapter.CouponAdminAdaptor;
 import com.nhnacademy.frontend.admin.dto.request.CouponPolicyCreateRequest;
+import com.nhnacademy.frontend.admin.dto.response.BookCategoryResponse;
 import com.nhnacademy.frontend.admin.dto.response.BookResponse;
 import com.nhnacademy.frontend.admin.dto.response.CouponPolicyResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class AdminCouponController {
 
     private final CouponAdminAdaptor couponAdminAdaptor;
     private final BookAdminAdaptor bookAdminAdaptor;
+    private final CategoryAdminAdaptor categoryAdminAdaptor;
 
     @GetMapping
     public String showCouponList(Model model) {
@@ -30,8 +33,12 @@ public class AdminCouponController {
     @GetMapping("/create")
     public String showCreateCouponForm(Model model) {
         model.addAttribute("couponPolicyCreateRequest", new CouponPolicyCreateRequest());
-        List<BookResponse> allBooks = bookAdminAdaptor.getAllBooks();
+        List<BookResponse> allBooks = bookAdminAdaptor.getAllBooks(0, Integer.MAX_VALUE, List.of()).getContent();
         model.addAttribute("allBooks", allBooks);
+
+        List<BookCategoryResponse> allCategories = categoryAdminAdaptor.getAllCategories();
+        model.addAttribute("allCategories", allCategories);
+
         return "admin/coupon/create_coupon_form";
     }
 
