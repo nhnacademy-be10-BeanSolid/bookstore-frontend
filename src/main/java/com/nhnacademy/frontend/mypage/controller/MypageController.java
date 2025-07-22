@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.mypage.controller;
 
 
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
@@ -255,5 +256,12 @@ public class MypageController {
             redirectAttributes.addFlashAttribute(ERRORMESSAGE_ATTRIBUTE, "결제 취소에 실패했습니다.");
         }
         return "redirect:/mypage/orders";
+    }
+
+    @GetMapping("/book-likes")
+    public String mypageBookLikes(Pageable pageable, Model model) {
+        Page<BookLikeResponse> bookLikesPage = mypageService.getBookLikes(pageable);
+        model.addAttribute("bookLikes", bookLikesPage);
+        return "mypage/book-likes";
     }
 }

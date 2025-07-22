@@ -1,12 +1,13 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
-import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
-import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,4 +55,7 @@ public interface UserAdapter {
 
     @PutMapping("/user-api/users/bulk/grade")
     ResponseEntity<Void> bulkUpdateUserGrades();
+
+    @GetMapping("/book-api/users")
+    ResponseEntity<Page<BookLikeResponse>> getBookLikes(Pageable pageable);
 }
