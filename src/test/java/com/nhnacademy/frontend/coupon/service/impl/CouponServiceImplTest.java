@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.coupon.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
 import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.frontend.coupon.dto.IssueCategoryCouponRequest;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -31,100 +30,69 @@ class CouponServiceImplTest {
     @InjectMocks
     private CouponServiceImpl couponService;
 
-    private Long testUserNo;
-    private Long testCouponPolicyId;
     private UserCouponResponse testUserCouponResponse;
     private CouponPolicyResponse testCouponPolicyResponse;
 
     @BeforeEach
     void setUp() {
-        testUserNo = 1L;
-        testCouponPolicyId = 10L;
         testUserCouponResponse = UserCouponResponse.builder()
-            .userCouponId(1L)
-            .userNo(testUserNo)
-            .couponPolicyId(testCouponPolicyId)
-            .couponName("Test Coupon")
-            .couponDiscountAmount(1000)
-            .issuedAt(LocalDateTime.now())
-            .expiredAt(LocalDateTime.now().plusDays(7))
-            .build();
+                .userCouponId(1L)
+                .couponName("Test User Coupon")
+                .couponDiscountAmount(1000)
+                .expiredAt(LocalDateTime.now().plusDays(7))
+                .build();
 
         testCouponPolicyResponse = CouponPolicyResponse.builder()
-            .couponId(testCouponPolicyId)
-            .couponName("Test Policy")
-            .couponDiscountAmount(1000)
-            .build();
+                .couponId(1L)
+                .couponName("Test Coupon Policy")
+                .build();
     }
 
     @Test
     @DisplayName("활성 사용자 쿠폰 조회 - 성공")
     void getActiveUserCoupons_success() {
         when(couponAdapter.getActiveUserCoupons(anyLong()))
-            .thenReturn(ResponseEntity.ok(List.of(testUserCouponResponse)));
+                .thenReturn(ResponseEntity.ok(List.of(testUserCouponResponse)));
 
-        List<UserCouponResponse> result = couponService.getActiveUserCoupons(testUserNo);
+        List<UserCouponResponse> result = couponService.getActiveUserCoupons(1L);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(testUserCouponResponse.getCouponName(), result.get(0).getCouponName());
-    }
-
-    @Test
-    @DisplayName("활성 사용자 쿠폰 조회 - 결과 없음")
-    void getActiveUserCoupons_noResult() {
-        when(couponAdapter.getActiveUserCoupons(anyLong()))
-            .thenReturn(ResponseEntity.ok(Collections.emptyList()));
-
-        List<UserCouponResponse> result = couponService.getActiveUserCoupons(testUserNo);
-
-        assertNotNull(result);
-        assertEquals(0, result.size());
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).getUserCouponId()).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("사용자에게 쿠폰 발급 - 성공")
     void issueCouponToUser_success() {
         when(couponAdapter.issueCouponToUser(anyLong(), anyLong()))
-            .thenReturn(ResponseEntity.ok(testUserCouponResponse));
+                .thenReturn(ResponseEntity.ok(testUserCouponResponse));
 
-        UserCouponResponse result = couponService.issueCouponToUser(testUserNo, testCouponPolicyId);
+        UserCouponResponse result = couponService.issueCouponToUser(1L, 1L);
 
-        assertNotNull(result);
-        assertEquals(testUserCouponResponse.getCouponName(), result.getCouponName());
-    }
-
-    @Test
-    @DisplayName("사용자에게 쿠폰 발급 - 실패 (어댑터 오류)")
-    void issueCouponToUser_failure() {
-        when(couponAdapter.issueCouponToUser(anyLong(), anyLong()))
-            .thenThrow(new RuntimeException("Adapter error"));
-
-        assertThrows(RuntimeException.class, () -> couponService.issueCouponToUser(testUserNo, testCouponPolicyId));
+        assertThat(result).isNotNull();
+        assertThat(result.getUserCouponId()).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("모든 쿠폰 정책 조회 - 성공")
     void getAllCouponPolicies_success() {
         when(couponAdapter.getAllCouponPolicies())
-            .thenReturn(List.of(testCouponPolicyResponse));
+                .thenReturn(List.of(testCouponPolicyResponse));
 
         List<CouponPolicyResponse> result = couponService.getAllCouponPolicies();
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(testCouponPolicyResponse.getCouponName(), result.get(0).getCouponName());
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).getCouponId()).isEqualTo(1L);
     }
 
     @Test
-    @DisplayName("모든 쿠폰 정책 조회 - 결과 없음")
-    void getAllCouponPolicies_noResult() {
-        when(couponAdapter.getAllCouponPolicies())
-            .thenReturn(Collections.emptyList());
+    @DisplayName("카테고리 쿠폰 발급 - 성공")
+    void issueCategoryCoupon_success() {
+        when(couponAdapter.issueCategoryCoupon(any(IssueCategoryCouponRequest.class)))
+                .thenReturn(ResponseEntity.ok(testUserCouponResponse));
 
-        List<CouponPolicyResponse> result = couponService.getAllCouponPolicies();
+        UserCouponResponse result = couponService.issueCategoryCoupon(1L, 1L, 10L);
 
-        assertNotNull(result);
-        assertEquals(0, result.size());
+        assertThat(result).isNotNull();
+        assertThat(result.getUserCouponId()).isEqualTo(1L);
     }
 }

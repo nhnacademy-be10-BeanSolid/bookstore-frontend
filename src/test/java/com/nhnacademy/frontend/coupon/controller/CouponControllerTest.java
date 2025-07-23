@@ -131,7 +131,7 @@ class CouponControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("coupon/my-coupons"))
                 .andExpect(model().attributeExists("errorMessage"))
-                .andExpect(model().attribute("activeCoupons", Collections.emptyList()));
+                .andExpect(model().attribute("errorMessage", "사용자 정보를 가져오는 데 실패했습니다. 쿠폰 목록을 불러올 수 없습니다."));
         verify(couponService, never()).getActiveUserCoupons(anyLong());
     }
 
@@ -146,8 +146,8 @@ class CouponControllerTest {
         mockMvc.perform(get("/my-coupons").principal(userAuth))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error/error"))
-                .andExpect(model().attributeExists("errorMessage"))
-                .andExpect(model().attribute("activeCoupons", Collections.emptyList()));
+                .andExpect(model().attributeExists("userFriendlyMessage"))
+                .andExpect(model().attribute("userFriendlyMessage", "서버 내부 오류가 발생했습니다."));
     }
 
     @Test
@@ -293,4 +293,98 @@ class CouponControllerTest {
         verify(couponService, never()).issueCategoryCoupon(anyLong(), anyLong(), anyLong());
     }
 
+    @Test
+    @DisplayName("isAuthenticated - 인증 객체가 null인 경우 false 반환")
+    void isAuthenticated_nullAuthentication_returnsFalse() throws Exception {
+        mockMvc.perform(get("/my-coupons"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"));
+    }
+
+    
+
+    @Test
+    @DisplayName("isAdmin - principal이 null인 경우 false 반환")
+    void isAdmin_nullPrincipal_returnsFalse() throws Exception {
+        Authentication authWithNullPrincipal = new UsernamePasswordAuthenticationToken(
+                null,
+                null,
+                Collections.emptyList());
+
+        mockMvc.perform(get("/my-coupons").principal(authWithNullPrincipal))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error/error"))
+                .andExpect(model().attributeExists("statusCode"))
+                .andExpect(model().attribute("statusCode", 500))
+                .andExpect(model().attributeExists("userFriendlyMessage"))
+                .andExpect(model().attribute("userFriendlyMessage", "서버 내부 오류가 발생했습니다."));
+    }
+
+    @Test
+    @DisplayName("isAdmin - userType이 null인 경우 false 반환")
+    void isAdmin_nullUserType_returnsFalse() throws Exception {
+        Authentication authWithNullUserType = new UsernamePasswordAuthenticationToken(
+                new CustomPrincipal("4", null),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+        when(userAdapter.getUser("4"))
+                .thenReturn(new ResponseEntity<>(ResponseUser.builder().userNo(4L).build(), HttpStatus.OK));
+
+        mockMvc.perform(get("/my-coupons").principal(authWithNullUserType))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"));
+    }
+
+    @Test
+    @DisplayName("isAdmin - userType이 ADMIN이 아닌 경우 false 반환")
+    void isAdmin_nonAdminUserType_returnsFalse() throws Exception {
+        Authentication authWithNonAdminUserType = new UsernamePasswordAuthenticationToken(
+                new CustomPrincipal("5", "ROLE_MEMBER"),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_MEMBER")));
+
+        when(userAdapter.getUser("5"))
+                .thenReturn(new ResponseEntity<>(ResponseUser.builder().userNo(5L).build(), HttpStatus.OK));
+
+        mockMvc.perform(get("/my-coupons").principal(authWithNonAdminUserType))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"));
+    }
+
+    @Test
+    @DisplayName("fetchUserNo - userAdapter 호출 시 2xx 상태 코드가 아닌 경우 null 반환")
+    void fetchUserNo_non2xxStatusCode_returnsNull() throws Exception {
+        when(userAdapter.getUser(anyString()))
+                .thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        mockMvc.perform(get("/my-coupons").principal(userAuth))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"))
+                .andExpect(model().attributeExists("errorMessage"));
+    }
+
+    @Test
+    @DisplayName("fetchUserNo - userAdapter 호출 시 응답 본문이 null인 경우 null 반환")
+    void fetchUserNo_nullResponseBody_returnsNull() throws Exception {
+        when(userAdapter.getUser(anyString()))
+                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+
+        mockMvc.perform(get("/my-coupons").principal(userAuth))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"))
+                .andExpect(model().attributeExists("errorMessage"));
+    }
+
+    @Test
+    @DisplayName("fetchUserNo - userAdapter 호출 시 예외 발생 시 null 반환")
+    void fetchUserNo_exception_returnsNull() throws Exception {
+        doThrow(new RuntimeException("UserAdapter Exception"))
+                .when(userAdapter).getUser(anyString());
+
+        mockMvc.perform(get("/my-coupons").principal(userAuth))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"))
+                .andExpect(model().attributeExists("errorMessage"));
+    }
 }
