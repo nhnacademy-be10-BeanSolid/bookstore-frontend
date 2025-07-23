@@ -4,6 +4,8 @@ import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookRespon
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 
@@ -137,4 +139,7 @@ public interface BookAdapter {
 
     @GetMapping("/book-api/books/ids")
     List<BookResponse> getBooks(@RequestParam List<Long> ids);
+
+    @GetMapping("/book-api/users")
+    ResponseEntity<Page<BookLikeResponse>> getBookLikes(Pageable pageable);
 }

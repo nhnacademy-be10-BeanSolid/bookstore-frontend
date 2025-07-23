@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.mypage.service;
 
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
@@ -45,4 +46,6 @@ public interface MypageService {
     void returnOrder(String orderNumber, String reason, Boolean damaged);
 
     void cancelOrder(String orderNumber, String reason);
+
+    Page<BookLikeResponse> getBookLikes(Pageable pageable);
 }
