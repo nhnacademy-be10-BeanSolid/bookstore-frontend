@@ -6,19 +6,13 @@ import com.nhnacademy.frontend.order.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
 import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -159,80 +153,6 @@ class OrderServiceImplTest {
         assertThat(result.totalPrice()).isEqualTo(10000L);
         verify(orderAdapter).updateOrder(orderNumber, request);
         verify(guestAdapter).registerGuest(any(GuestCreateRequest.class));
-    }
-
-    @Test
-    @DisplayName("모든 주문 조회에 성공한다")
-    void getAllOrders_Success() {
-        // Given
-        String orderNumber1 = "202507-abcdef-123456";
-        String orderNumber2 = "202508-abcdef-123456";
-        Pageable pageable = PageRequest.of(0, 10);
-        OrderSummaryResponse summary1 = new OrderSummaryResponse(LocalDate.now(), orderNumber1, "받는사람", 10_000L, "PENDING");
-        OrderSummaryResponse summary2 = new OrderSummaryResponse(LocalDate.now(), orderNumber2, "받는사람", 20_000L, "PENDING");
-
-        Page<OrderSummaryResponse> expectedPage = new PageImpl<>(
-                List.of(summary1, summary2), pageable, 2);
-
-        given(orderAdapter.getAllOrdersByUserId(pageable)).willReturn(expectedPage);
-
-        // When
-        Page<OrderSummaryResponse> result = orderService.getAllOrders(pageable);
-
-        // Then
-        assertThat(result).isEqualTo(expectedPage);
-        assertThat(result.getContent()).hasSize(2);
-        assertThat(result.getTotalElements()).isEqualTo(2);
-        assertThat(result.getContent().get(0).orderNumber()).isEqualTo(orderNumber1);
-        assertThat(result.getContent().get(1).orderNumber()).isEqualTo(orderNumber2);
-        verify(orderAdapter).getAllOrdersByUserId(pageable);
-    }
-
-    @Test
-    @DisplayName("주문 상세 조회 성공")
-    void getOrder_Success() {
-        // Given
-        String orderNumber = "ORDER123";
-        OrderDetailResponse expectedResponse = OrderDetailResponse.builder()
-                .orderNumber(orderNumber)
-                .totalAmount(10_000L)
-                .receiverName("테스트사용자")
-                .receiverPhoneNumber("010-1234-5678")
-                .address("서울시 강남구")
-                .build();
-
-        given(orderAdapter.getOrder(orderNumber)).willReturn(expectedResponse);
-
-        // When
-        OrderDetailResponse result = orderService.getOrder(orderNumber);
-
-        // Then
-        assertThat(result).isEqualTo(expectedResponse);
-        assertThat(result.getOrderNumber()).isEqualTo(orderNumber);
-        assertThat(result.getTotalAmount()).isEqualTo(10_000L);
-        assertThat(result.getReceiverName()).isEqualTo("테스트사용자");
-        assertThat(result.getReceiverPhoneNumber()).isEqualTo("010-1234-5678");
-        assertThat(result.getAddress()).isEqualTo("서울시 강남구");
-        verify(orderAdapter).getOrder(orderNumber);
-    }
-
-    @Test
-    @DisplayName("빈 주문 목록 조회")
-    void getAllOrders_EmptyResult() {
-        // Given
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<OrderSummaryResponse> emptyPage = new PageImpl<>(List.of(), pageable, 0);
-
-        given(orderAdapter.getAllOrdersByUserId(pageable)).willReturn(emptyPage);
-
-        // When
-        Page<OrderSummaryResponse> result = orderService.getAllOrders(pageable);
-
-        // Then
-        assertThat(result).isEqualTo(emptyPage);
-        assertThat(result.getContent()).isEmpty();
-        assertThat(result.getTotalElements()).isZero();
-        verify(orderAdapter).getAllOrdersByUserId(pageable);
     }
 
     @Test

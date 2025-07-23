@@ -1,6 +1,5 @@
-package com.nhnacademy.frontend.book.controller;
+package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.controller.AdminBookTagController;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookTagCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;

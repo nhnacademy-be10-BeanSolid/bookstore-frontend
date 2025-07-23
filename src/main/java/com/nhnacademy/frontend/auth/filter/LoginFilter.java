@@ -36,24 +36,32 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
         String password = request.getParameter("password");
         log.debug("로그인 시도: username={}", username);
 
-        // 1. AuthService로 인증 요청 및 토큰 수령
-        LoginResponseDto loginResponse = authService.login(username, password);
+        try {
+            // 인증 요청 및 토큰 수령
+            LoginResponseDto loginResponse = authService.login(username, password);
 
-        if(loginResponse != null && loginResponse.getAccessToken() != null) {
-            // 2. 인증 객체 생성 (details에 토큰 정보 저장)
-            log.info("로그인 성공: username={}", username);
-            TokenParseResponseDto parsed = authService.parse(loginResponse.getAccessToken());
-            List<String> authorities = parsed.authorities();
-            var grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    username,
-                    null,
-                    grantedAuthorities);
-            authToken.setDetails(loginResponse);
-            return authToken;
+            if (loginResponse != null && loginResponse.getAccessToken() != null) {
+                // 정상 로그인 처리
+                TokenParseResponseDto parsed = authService.parse(loginResponse.getAccessToken());
+                List<String> authorities = parsed.authorities();
+                var grantedAuthorities = AuthorityUtils.createAuthorityList(authorities.toArray(new String[0]));
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        username, null, grantedAuthorities);
+                authToken.setDetails(loginResponse);
+                return authToken;
+            } else {
+                throw new BadCredentialsException("아이디 또는 비밀번호가 올바르지 않습니다.");
+            }
+        } catch (Exception ex) {
+            String errorMessage = ex.getMessage();
+            log.error(errorMessage);
+
+            if (errorMessage != null && (errorMessage.contains("휴면"))) {
+                response.sendRedirect("/auth/login/dormant?userId=" + username);
+                return null;
+            }
+            throw new BadCredentialsException(errorMessage != null ? errorMessage : "로그인 실패");
         }
-        log.warn("로그인 실패: username={}", username);
-        throw new BadCredentialsException("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
 
     @Override

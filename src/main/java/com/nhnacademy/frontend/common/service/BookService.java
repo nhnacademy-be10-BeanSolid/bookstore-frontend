@@ -30,6 +30,8 @@ public interface BookService {
 
     BookDetailResponseDto getBookDetail(Long bookId);
 
+    BookDetailResponseDto getAdminBookDetail(Long bookId);
+
     BookResponseDto createBook(BookCreateRequestDto request);
 
     BookSearchResponseDto searchNaverBooks(String query, Integer start);

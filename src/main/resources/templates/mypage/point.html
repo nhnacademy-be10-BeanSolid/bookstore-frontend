@@ -22,7 +22,7 @@
                 <th>Point ID</th>
                 <th>User ID</th>
                 <th>Type ID</th>
-                <th>Order No</th>
+                <th>Order ID</th>
                 <th>Earned/Used At</th>
                 <th>Earned/Used Point</th>
             </tr>
@@ -45,7 +45,7 @@
         <ul class="pagination">
             <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/admin/categories(page=${page.number - 1}, size=${page.size})}"
+                   th:href="@{/mypage/point(page=${page.number - 1}, size=${page.size})}"
                    th:if="${page.hasPrevious()}">이전</a>
                 <span class="page-link" th:unless="${page.hasPrevious()}">이전</span>
             </li>
@@ -56,7 +56,7 @@
             </li>
             <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/admin/categories(page=${page.number + 1}, size=${page.size})}"
+                   th:href="@{/mypage/point(page=${page.number + 1}, size=${page.size})}"
                    th:if="${page.hasNext()}">다음</a>
                 <span class="page-link" th:unless="${page.hasNext()}">다음</span>
             </li>

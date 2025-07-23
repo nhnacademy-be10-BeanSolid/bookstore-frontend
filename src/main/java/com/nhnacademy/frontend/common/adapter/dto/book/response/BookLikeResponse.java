@@ -6,6 +6,7 @@ public record BookLikeResponse (
         Long bookLikeId,
         LocalDateTime likedAt,
         String userId,
-        Long bookId
+        Long bookId,
+        String bookTitle
 ) {
 }

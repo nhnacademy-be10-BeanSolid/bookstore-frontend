@@ -1,21 +1,18 @@
 package com.nhnacademy.frontend.order.controller;
 
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
 import com.nhnacademy.frontend.order.dto.request.CreateOrderRequest;
 import com.nhnacademy.frontend.order.dto.request.UpdateOrderRequest;
 import com.nhnacademy.frontend.order.dto.response.CreateOrderResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.frontend.order.dto.response.OrderResponse;
-import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import com.nhnacademy.frontend.order.service.OrderService;
-import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
-import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -87,24 +84,6 @@ public class OrderController {
 
         OrderResponse orderResponse = orderService.updateOrder(orderNumber, request);
         return "redirect:/payments/form?orderId=" + orderResponse.orderNumber() + "&amount=" + orderResponse.totalPrice();
-    }
-
-    // 주문 전체 조회 페이지
-    @GetMapping("/list")
-    public String orderList(Pageable pageable, Model model) {
-        Page<OrderSummaryResponse> orders = orderService.getAllOrders(pageable);
-        model.addAttribute("orders", orders);
-
-        return "order/list";
-    }
-
-    // 주문 상세 조회 페이지
-    @GetMapping("/list/{orderNumber}")
-    public String getOrderDetail(@PathVariable String orderNumber, Model model) {
-        OrderDetailResponse orderDetail = orderService.getOrder(orderNumber);
-        model.addAttribute(ORDER, orderDetail);
-
-        return "order/detail";
     }
 
     @GetMapping("/non-member-detail")

@@ -1,6 +1,6 @@
-package com.nhnacademy.frontend.book.controller;
+package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.controller.AdminBookController;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
@@ -19,6 +19,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         )
 )
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminBookControllerTest {
+class AdminBookControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,8 +59,8 @@ public class AdminBookControllerTest {
 
     @Test
     void getBookList() throws Exception {
-        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1L, "제목", "작가", 3000, 20, null, 1L);
-        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2L, "제목", "작가", 3000, 20, null, 1L);
+        SimpleBookResponseDto response1 = new SimpleBookResponseDto(1L, "제목", "작가", 3000, 20, null, 1L, 0L, 0.0);
+        SimpleBookResponseDto response2 = new SimpleBookResponseDto(2L, "제목", "작가", 3000, 20, null, 1L, 0L, 0.0);
 
         List<SimpleBookResponseDto> books = List.of(response1, response2);
         Page<SimpleBookResponseDto> page = new PageImpl<>(books);
@@ -110,6 +111,22 @@ public class AdminBookControllerTest {
     }
 
     @Test
+    void getBookDetail_Success() throws Exception {
+        BookDetailResponseDto detail = new BookDetailResponseDto(1L, "제목", "설명", "목차", "출판사",
+                "작가", LocalDate.of(2000, 1,1), "1234567891011", 1000, 900,
+                false, LocalDateTime.of(2000, 2, 1,10,10, 10), null,
+                "판매중", 200, null, null, null, 10);
+
+        when(bookService.getAdminBookDetail(anyLong())).thenReturn(detail);
+
+        mockMvc.perform(get("/admin/books/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("admin/book/detail"))
+                .andExpect(model().attributeExists("book"));
+
+    }
+
+    @Test
     void deleteBook() throws Exception {
         doNothing().when(bookService).deleteBook(1L);
 
@@ -120,4 +137,3 @@ public class AdminBookControllerTest {
         verify(bookService, times(1)).deleteBook(1L);
     }
 }
-

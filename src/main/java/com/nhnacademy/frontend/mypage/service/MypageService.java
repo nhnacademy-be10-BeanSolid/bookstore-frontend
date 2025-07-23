@@ -1,11 +1,14 @@
 package com.nhnacademy.frontend.mypage.service;
 
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
+import com.nhnacademy.frontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,4 +38,14 @@ public interface MypageService {
     ResponsePointType getPointTypeByGradeName(String gradeName);
 
     void bulkUpdateUserGrades();
+
+    Page<OrderSummaryResponse> getAllOrders(Pageable pageable);
+
+    OrderDetailResponse getOrderDetail(String orderNumber);
+
+    void returnOrder(String orderNumber, String reason, Boolean damaged);
+
+    void cancelOrder(String orderNumber, String reason);
+
+    Page<BookLikeResponse> getBookLikes(Pageable pageable);
 }

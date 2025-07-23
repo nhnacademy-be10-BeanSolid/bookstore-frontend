@@ -1,6 +1,7 @@
 package com.nhnacademy.frontend.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.frontend.auth.dto.request.DormantUserVerificationRequestDto;
 import com.nhnacademy.frontend.auth.dto.request.NonMemberLoginRequest;
 import com.nhnacademy.frontend.auth.dto.response.AdditionalSignupRequiredDto;
 import com.nhnacademy.frontend.auth.dto.response.OAuth2LoginResponseDto;
@@ -8,6 +9,7 @@ import com.nhnacademy.frontend.auth.dto.response.ResponseDto;
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.service.AuthService;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.service.UserService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,9 @@ class LoginControllerTest {
 
     @MockBean
     AuthService authService;
+
+    @MockBean
+    UserService userService;
 
     @MockBean
     JwtCookieUtil jwtCookieUtil;
@@ -184,5 +189,55 @@ class LoginControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/auth/login"))
                 .andExpect(flash().attribute("nonMemberLoginError", "주문 정보를 찾을 수 없습니다."));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 폼 - 휴면 계정일 때 폼 반환")
+    void showDormantForm_shouldReturnDormantForm() throws Exception {
+        // userService.isDormantUser(...)가 true 반환하도록 mock
+        when(userService.isDormantUser("dormantUser")).thenReturn(true);
+
+        mockMvc.perform(get("/auth/login/dormant").param("userId", "dormantUser"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/dormant"))
+                .andExpect(model().attribute("userId", "dormantUser"))
+                .andExpect(model().attribute("needVerification", "휴면 계정입니다, 인증코드를 입력해주세요."));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 폼 - 휴면계정이 아니면 리다이렉트")
+    void showDormantForm_notDormantUser_redirectsToRoot() throws Exception {
+        when(userService.isDormantUser("normalUser")).thenReturn(false);
+
+        mockMvc.perform(get("/auth/login/dormant").param("userId", "normalUser"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"))
+                .andExpect(flash().attribute("accessDenied", "휴면 계정이 아니면 접근할 수 없습니다."));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 - 성공")
+    void verifyDormantForm_success() throws Exception {
+        DormantUserVerificationRequestDto request = new DormantUserVerificationRequestDto("dormantUser", "123456");
+        when(authService.verifyDormantUserCode(request)).thenReturn(true);
+
+        mockMvc.perform(post("/auth/login/dormant/verify")
+                        .flashAttr("dormantUserVerificationRequestDto", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attributeExists("dormantSuccess"));
+    }
+
+    @Test
+    @DisplayName("휴면 계정 인증 - 실패")
+    void verifyDormantForm_failure() throws Exception {
+        DormantUserVerificationRequestDto request = new DormantUserVerificationRequestDto("dormantUser", "wrongCode");
+        when(authService.verifyDormantUserCode(request)).thenReturn(false);
+
+        mockMvc.perform(post("/auth/login/dormant/verify")
+                        .flashAttr("dormantUserVerificationRequestDto", request))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attributeExists("dormantFail"));
     }
 }

@@ -22,8 +22,8 @@ public class GlobalModelAttributeAdvice {
     public String loginUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (auth != null && auth.getPrincipal() instanceof CustomPrincipal) {
-            return (((CustomPrincipal) auth.getPrincipal()).getUsername());
+        if (auth != null && auth.getPrincipal() instanceof CustomPrincipal customPrincipal) {
+            return customPrincipal.getUsername();
         }
         return null;
     }
@@ -31,8 +31,8 @@ public class GlobalModelAttributeAdvice {
     @ModelAttribute("userType")
     public String userType() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth != null && auth.getPrincipal() instanceof CustomPrincipal) {
-            return ((CustomPrincipal)auth.getPrincipal()).getUserType();
+        if(auth != null && auth.getPrincipal() instanceof CustomPrincipal customPrincipal) {
+            return customPrincipal.getUserType();
         }
         return null;
     }

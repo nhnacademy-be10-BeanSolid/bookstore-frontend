@@ -16,12 +16,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/auth/signup")
 @RequiredArgsConstructor
 public class SignupController {
+    private static final String USER_CREATE_REQUEST_DTO = "userCreateRequestDto";
+    private static final String NORMAL_SIGNUP_VIEW = "auth/normal-signup";
     private final AuthService authService;
     private final JwtCookieUtil jwtCookieUtil;
     private final SignupService signupService;
@@ -41,10 +44,10 @@ public class SignupController {
         if (!model.containsAttribute("userIdCheckRequestDto")) {
             model.addAttribute("userIdCheckRequestDto", new UserIdCheckRequestDto());
         }
-        if (!model.containsAttribute("userCreateRequestDto")) {
-            model.addAttribute("userCreateRequestDto", new UserCreateRequestDto(null, null, null, null, null, null, null));
+        if (!model.containsAttribute(USER_CREATE_REQUEST_DTO)) {
+            model.addAttribute(USER_CREATE_REQUEST_DTO, new UserCreateRequestDto("", "", "", "", "", LocalDate.now(), false));
         }
-        return "auth/normal-signup";
+        return NORMAL_SIGNUP_VIEW;
     }
 
     @GetMapping("/select-signup")
@@ -70,22 +73,22 @@ public class SignupController {
                                RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("userCreateRequestDto", request);
-            return "auth/normal-signup";
+            model.addAttribute(USER_CREATE_REQUEST_DTO, request);
+            return NORMAL_SIGNUP_VIEW;
         }
 
         Boolean isAvailable = request.isAvailable();
         if (isAvailable == null || !isAvailable) {
             model.addAttribute("duplicateMessage", "아이디 중복 문제 먼저 해결해주세요.");
-            model.addAttribute("userCreateRequestDto", request);
-            return "auth/normal-signup";
+            model.addAttribute(USER_CREATE_REQUEST_DTO, request);
+            return NORMAL_SIGNUP_VIEW;
         }
 
         boolean exists = signupService.isExistUser(request.userId());
         if (exists) {
             model.addAttribute("duplicateMessage", "이미 사용 중인 아이디입니다.");
-            model.addAttribute("userCreateRequestDto", request);
-            return "auth/normal-signup";
+            model.addAttribute(USER_CREATE_REQUEST_DTO, request);
+            return NORMAL_SIGNUP_VIEW;
         }
 
         signupService.register(request);

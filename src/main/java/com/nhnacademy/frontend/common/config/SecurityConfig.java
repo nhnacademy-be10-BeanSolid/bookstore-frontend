@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 "/payments"
                         ).permitAll()
                         // 인증 없이 열어둘 경로들
+                        .requestMatchers("/reviews/book/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
@@ -63,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/books/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/reviews/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>좋아요한 도서 목록</title>
+</head>
+<body>
+<div layout:fragment="content" class="container my-5">
+    <h1 class="mb-4 text-center">좋아요한 도서</h1>
+
+    <div th:if="${bookLikes == null or #lists.isEmpty(bookLikes.content)}">
+        <p class="text-center">좋아요한 도서가 없습니다.</p>
+    </div>
+
+    <div th:unless="${bookLikes == null or #lists.isEmpty(bookLikes.content)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light text-center">
+            <tr>
+                <th scope="col" style="width: 60%;">책 제목</th>
+                <th scope="col" style="width: 30%;">좋아요 누른 날</th>
+                <th scope="col" style="width: 10%;"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="like : ${bookLikes.content}">
+                <td>
+                    <a th:href="@{/books/{bookId}(bookId=${like.bookId})}" class="text-decoration-none text-dark" th:text="${like.bookTitle}">책 제목</a>
+                </td>
+                <td th:text="${#temporals.format(like.likedAt, 'yyyy-MM-dd')}" class="text-center">2025-07-21</td>
+                <td class="text-center">
+                    <form th:action="@{'/books/' + ${like.bookId} + '/bookLikes'}" method="post" onsubmit="return confirm('좋아요를 취소하시겠습니까?');">
+                        <input type="hidden" name="_method" value="delete" />
+                        <button type="submit" class="btn btn-outline-danger btn-sm">좋아요 취소</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4"
+         th:if="${bookLikes != null and bookLikes.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${bookLikes.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/mypage/book-likes(page=${bookLikes.number - 1}, size=${bookLikes.size})}">이전</a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, bookLikes.totalPages - 1)}"
+                th:classappend="${pageNumber == bookLikes.number} ? 'active'">
+                <a class="page-link" th:href="@{/mypage/book-likes(page=${pageNumber}, size=${bookLikes.size})}"
+                   th:text="${pageNumber + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${bookLikes.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/mypage/book-likes(page=${bookLikes.number + 1}, size=${bookLikes.size})}">다음</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

@@ -22,6 +22,8 @@ import java.util.List;
 @RequestMapping("/cart")
 public class CartController {
 
+    private static final String REDIRECT_CART = "redirect:/cart";
+
     private final CartService cartService;
 
     @GetMapping
@@ -34,7 +36,7 @@ public class CartController {
 
         List<CartItemUpdateRequest> updates = cartViewResponse.cartItems().stream()
                 .map(item -> new CartItemUpdateRequest(item.getBookId(), item.getQuantity()))
-                .collect(Collectors.toList());
+                .toList();
 
         CartUpdateQuantitiesRequest cartUpdateQuantitiesRequest = new CartUpdateQuantitiesRequest();
         cartUpdateQuantitiesRequest.setUpdates(updates);
@@ -53,7 +55,7 @@ public class CartController {
         if (result.newGuestUuid() != null) {
             addGuestCookie(response, result.newGuestUuid());
         }
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
 
     @PostMapping("/delete")
@@ -65,7 +67,7 @@ public class CartController {
         if (result.newGuestUuid() != null) {
             addGuestCookie(response, result.newGuestUuid());
         }
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
 
     @PostMapping("/update")
@@ -75,7 +77,7 @@ public class CartController {
                              HttpServletResponse response) {
         CartOperationResult result = cartService.updateCartItems(request.getUpdates(), isLoggedIn, guestUUID);
         handleGuestCookie(result, response);
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
 
     private void handleGuestCookie(GuestUuidProvider provider, HttpServletResponse response) {
@@ -89,6 +91,7 @@ public class CartController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 }

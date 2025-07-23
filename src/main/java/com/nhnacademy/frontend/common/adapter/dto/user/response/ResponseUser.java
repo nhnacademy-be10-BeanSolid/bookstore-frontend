@@ -19,15 +19,17 @@ public class ResponseUser {
     private int userPoint;
     private boolean isAuth;
     private String userStatus;
+    private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
     private String userGradeName;
 
     public String getGradeName() {
         return this.userGradeName;
     }
+
     public ResponseUser(Long userNo, String userId, String userPassword, String userName,
                         String userPhoneNumber, String userEmail, LocalDate userBirth,
-                        int userPoint, boolean isAuth, String userStatus,
+                        int userPoint, boolean isAuth, String userStatus, LocalDateTime createdAt,
                         LocalDateTime lastLoginAt, String userGradeName) {
         this.userNo = userNo;
         this.userId = userId;
@@ -39,6 +41,7 @@ public class ResponseUser {
         this.userPoint = userPoint;
         this.isAuth = isAuth;
         this.userStatus = userStatus;
+        this.createdAt = createdAt;
         this.lastLoginAt = lastLoginAt;
         this.userGradeName = userGradeName;
     }
