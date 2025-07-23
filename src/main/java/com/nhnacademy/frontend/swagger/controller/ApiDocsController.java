@@ -23,10 +23,8 @@ public class ApiDocsController {
 
         try {
             JsonNode rootNode = objectMapper.readTree(apiDocsJson);
-            if (rootNode instanceof ObjectNode objectNode) {
-                if (objectNode.has("servers")) {
-                    objectNode.remove("servers");
-                }
+            if (rootNode instanceof ObjectNode objectNode && objectNode.has("servers")) {
+                objectNode.remove("servers");
             }
             return ResponseEntity.ok(objectMapper.writeValueAsString(rootNode));
         } catch (Exception e) {

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>API Documentation</title>
+    <title layout:fragment="title">API Documentation</title>
     <!-- Swagger UI CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.1/swagger-ui.min.css" />
-    <style>
+    <style layout:fragment="style">
         body {
             margin: 0;
             padding: 0;
@@ -13,6 +14,8 @@
     </style>
 </head>
 <body>
+<div layout:fragment="content">
+
     <div id="swagger-ui"></div>
 
     <!-- Swagger UI JavaScript -->
@@ -57,5 +60,6 @@
             window.ui = ui;
         };
     </script>
+</div>
 </body>
 </html>
