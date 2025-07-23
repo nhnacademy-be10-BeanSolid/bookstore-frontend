@@ -1,6 +1,5 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
@@ -55,7 +54,4 @@ public interface UserAdapter {
 
     @PutMapping("/user-api/users/bulk/grade")
     ResponseEntity<Void> bulkUpdateUserGrades();
-
-    @GetMapping("/book-api/users")
-    ResponseEntity<Page<BookLikeResponse>> getBookLikes(Pageable pageable);
 }

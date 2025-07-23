@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.mypage.service;
 
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
+import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
@@ -46,6 +47,8 @@ class MypageServiceImplTest {
     private UserAdapter userAdapter;
     @Mock
     private OrderAdapter orderAdapter;
+    @Mock
+    private BookAdapter bookAdapter;
 
     @InjectMocks
     private MypageServiceImpl mypageService;
@@ -380,13 +383,13 @@ class MypageServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<BookLikeResponse> bookLikesPage = new PageImpl<>(List.of(new BookLikeResponse(1L, LocalDateTime.now(), "test", 1L, "testBook")), pageable, 1);
 
-        when(userAdapter.getBookLikes(pageable)).thenReturn(ResponseEntity.ok(bookLikesPage));
+        when(bookAdapter.getBookLikes(pageable)).thenReturn(ResponseEntity.ok(bookLikesPage));
 
         Page<BookLikeResponse> result = mypageService.getBookLikes(pageable);
 
         assertFalse(result.isEmpty());
         assertEquals(1, result.getTotalElements());
         assertEquals("testBook", result.getContent().getFirst().bookTitle());
-        verify(userAdapter).getBookLikes(pageable);
+        verify(bookAdapter).getBookLikes(pageable);
     }
 }
