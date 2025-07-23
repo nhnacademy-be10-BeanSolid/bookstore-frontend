@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.coupon.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
 import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.frontend.coupon.dto.IssueCategoryCouponRequest;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import com.nhnacademy.frontend.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,16 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public List<CouponPolicyResponse> getAllCouponPolicies() {
         return couponAdapter.getAllCouponPolicies();
+    }
+
+    @Override
+    public UserCouponResponse issueCategoryCoupon(Long userNo, Long couponPolicyId, Long categoryId) {
+        return couponAdapter.issueCategoryCoupon(
+                IssueCategoryCouponRequest.builder()
+                        .userId(userNo)
+                        .couponPolicyId(couponPolicyId)
+                        .categoryId(categoryId)
+                        .build()
+        ).getBody();
     }
 }

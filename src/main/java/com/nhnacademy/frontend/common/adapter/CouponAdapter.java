@@ -1,7 +1,8 @@
 package com.nhnacademy.frontend.common.adapter;
 
-import com.nhnacademy.frontend.coupon.dto.IssueBookCouponRequest;
 import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.frontend.coupon.dto.IssueBookCouponRequest;
+import com.nhnacademy.frontend.coupon.dto.IssueCategoryCouponRequest;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -32,4 +33,10 @@ public interface CouponAdapter {
 
     @PostMapping("/coupon-api/coupons/issue/book")
     ResponseEntity<com.nhnacademy.frontend.coupon.dto.UserCouponResponse> issueBookCoupon(IssueBookCouponRequest request);
+
+    @PostMapping("/coupon-api/coupons/issue/category")
+    ResponseEntity<com.nhnacademy.frontend.coupon.dto.UserCouponResponse> issueCategoryCoupon(IssueCategoryCouponRequest request);
+
+    @GetMapping("/coupon-api/coupons/policy/{couponPolicyId}")
+    CouponPolicyResponse getCouponPolicy(@PathVariable("couponPolicyId") Long couponPolicyId);
 }
