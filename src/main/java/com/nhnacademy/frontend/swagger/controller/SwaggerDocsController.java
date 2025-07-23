@@ -14,6 +14,9 @@ import java.util.Map;
 @Controller
 public class SwaggerDocsController {
 
+    private static final String OAUTH2_REDIRECT_URL = "oauth2RedirectUrl";
+    private static final String HTTP_PROTOCOL = "http://";
+    private static final String HTTPS_PROTOCOL = "https://";
 
     private final GatewaySwaggerAdapter gatewaySwaggerAdapter;
 
@@ -29,15 +32,15 @@ public class SwaggerDocsController {
             // 현재 요청의 프로토콜 확인
             String currentProtocol = request.getScheme(); // "http" 또는 "https"
 
-            if (swaggerConfig.containsKey("oauth2RedirectUrl")) {
-                String oauth2RedirectUrl = (String) swaggerConfig.get("oauth2RedirectUrl");
+            if (swaggerConfig.containsKey(OAUTH2_REDIRECT_URL)) {
+                String oauth2RedirectUrl = (String) swaggerConfig.get(OAUTH2_REDIRECT_URL);
                 if (oauth2RedirectUrl != null) {
                     // 현재 요청 프로토콜에 맞춰 oauth2RedirectUrl의 프로토콜 변경
-                    if (currentProtocol.equals("https") && oauth2RedirectUrl.startsWith("http://")) {
-                        swaggerConfig.put("oauth2RedirectUrl", oauth2RedirectUrl.replace("http://", "https://"));
-                    } else if (currentProtocol.equals("http") && oauth2RedirectUrl.startsWith("https://")) {
+                    if (currentProtocol.equals(HTTPS_PROTOCOL.replace("://", "")) && oauth2RedirectUrl.startsWith(HTTP_PROTOCOL)) {
+                        swaggerConfig.put(OAUTH2_REDIRECT_URL, oauth2RedirectUrl.replace(HTTP_PROTOCOL, HTTPS_PROTOCOL));
+                    } else if (currentProtocol.equals(HTTP_PROTOCOL.replace("://", "")) && oauth2RedirectUrl.startsWith(HTTPS_PROTOCOL)) {
                         // 이 경우는 거의 없겠지만, 혹시 모를 상황 대비
-                        swaggerConfig.put("oauth2RedirectUrl", oauth2RedirectUrl.replace("https://", "http://"));
+                        swaggerConfig.put(OAUTH2_REDIRECT_URL, oauth2RedirectUrl.replace(HTTPS_PROTOCOL, HTTP_PROTOCOL));
                     }
                 }
             }
