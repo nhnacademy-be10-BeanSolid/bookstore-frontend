@@ -4,6 +4,7 @@ import com.nhnacademy.frontend.coupon.domain.CouponDiscountType;
 import com.nhnacademy.frontend.coupon.domain.CouponScope;
 import com.nhnacademy.frontend.coupon.domain.CouponType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CouponPolicyResponse {
     private Long couponId;
     private String couponName;
