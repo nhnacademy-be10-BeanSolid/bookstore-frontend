@@ -105,15 +105,11 @@ class MinioServiceTest {
     @Test
     @DisplayName("이미지 삭제 - 실패 (MinIO 예외)")
     void deleteImage_Failure_MinioException() throws Exception {
-        // given
         String objectName = "test-object";
         doThrow(new RuntimeException("MinIO error")).when(minioClient).removeObject(any(RemoveObjectArgs.class));
 
-        // when
         minioService.deleteImage(bucketName, objectName);
 
-        // then
-        // 예외가 로그로 처리되고 무시되므로, 메서드가 정상적으로 완료되는지 확인
         verify(minioClient).removeObject(any(RemoveObjectArgs.class));
     }
 }

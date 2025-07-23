@@ -1,6 +1,5 @@
-package com.nhnacademy.frontend.book.controller;
+package com.nhnacademy.frontend.admin.controller;
 
-import com.nhnacademy.frontend.admin.controller.BookCategoryMapController;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.BookCategoryMapCreateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
@@ -33,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         )
 )
 @AutoConfigureMockMvc(addFilters = false)
-class BookCategoryMapControllerTest {
+class AdminBookCategoryMapControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

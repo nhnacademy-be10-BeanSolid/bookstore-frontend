@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.payment.controller;
 
+import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.payment.dto.request.PaymentApprovalRequestDto;
 import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
@@ -32,23 +33,22 @@ public class PaymentController {
     private String failCallbackUrl;
 
     @GetMapping("/form")
-    public String showForm(@RequestParam String orderId,
-                           @RequestParam Long amount,
+    public String showForm(@ModelAttribute("orderResponse") OrderResponse orderResponse,
                            Model model) {
-        if (amount <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "amount 파라미터가 필요합니다");
+        if (orderResponse == null || orderResponse.totalPrice() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "주문 정보가 없습니다");
         }
 
         PaymentRequestDto dto = new PaymentRequestDto();
-        dto.setOrderId(orderId);
+        dto.setOrderId(orderResponse.orderNumber());
         dto.setPayName("도서");
-        dto.setPayAmount(amount);
+        dto.setPayAmount(orderResponse.totalPrice());
         dto.setSuccessUrl(successCallbackUrl);
         dto.setFailUrl(failCallbackUrl);
         dto.setUsedPoint(0);
 
         model.addAttribute("paymentRequest", dto);
-        model.addAttribute("shippingFee",  5000);
+        model.addAttribute("shippingFee", orderResponse.shippingFee());
         model.addAttribute("currentPoints", userService.getCurrentUserPoints());
         return "payments/form";
     }

@@ -57,7 +57,7 @@
       <strong>목차:</strong> <span th:text="${book.toc}"></span>
     </div>
     <div th:if="${book.description}" class="mb-2">
-      <strong>설명:</strong> <span th:text="${book.description}"></span>
+      <span th:utext="${book.description}"></span>
     </div>
 
     <!-- 좋아요 -->

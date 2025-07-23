@@ -77,13 +77,15 @@ public class OrderController {
     @PutMapping("/{orderNumber}")
     public String updateOrder(@Valid @ModelAttribute UpdateOrderRequest request,
                               BindingResult bindingResult,
-                              @PathVariable String orderNumber) {
+                              @PathVariable String orderNumber,
+                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             throw new ValidationFailedException(bindingResult);
         }
 
         OrderResponse orderResponse = orderService.updateOrder(orderNumber, request);
-        return "redirect:/payments/form?orderId=" + orderResponse.orderNumber() + "&amount=" + orderResponse.totalPrice();
+        redirectAttributes.addFlashAttribute("orderResponse", orderResponse);
+        return "redirect:/payments/form";
     }
 
     @GetMapping("/non-member-detail")

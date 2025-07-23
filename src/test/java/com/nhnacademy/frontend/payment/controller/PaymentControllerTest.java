@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.payment.controller;
 
 import com.nhnacademy.frontend.common.advice.GlobalModelAttributeAdvice;
 import com.nhnacademy.frontend.common.service.UserService;
+import com.nhnacademy.frontend.order.dto.response.OrderResponse;
 import com.nhnacademy.frontend.payment.dto.request.PaymentRequestDto;
 import com.nhnacademy.frontend.payment.dto.response.PaymentResponseDto;
 import com.nhnacademy.frontend.payment.service.PaymentService;
@@ -13,6 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -43,15 +46,28 @@ class PaymentControllerTest {
 
     @Test
     void testShowForm() throws Exception {
+        OrderResponse orderResponse = new OrderResponse(
+                1L,
+                "202507-abcdef-123456",
+                1L,
+                "PENDING",
+                LocalDate.now(),
+                15000L,
+                "홍길동",
+                "010-1234-5678",
+                "서울시 강남구",
+                LocalDate.now().plusDays(1),
+                3000
+        );
+
         when(userService.getCurrentUserPoints()).thenReturn(1000L);
 
         mockMvc.perform(get("/payments/form")
-                        .param("orderId", "testOrderId")
-                        .param("amount", "10000"))
+                        .flashAttr("orderResponse", orderResponse))
                 .andExpect(status().isOk())
                 .andExpect(view().name("payments/form"))
                 .andExpect(model().attributeExists("paymentRequest"))
-                .andExpect(model().attribute("shippingFee", 5000))
+                .andExpect(model().attribute("shippingFee", 3000))
                 .andExpect(model().attribute("currentPoints", 1000L));
     }
 
