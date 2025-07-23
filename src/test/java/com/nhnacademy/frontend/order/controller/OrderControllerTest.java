@@ -163,7 +163,7 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .flashAttr("updateOrderRequest", request))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/payments/form?orderId=" + orderNumber + "&amount=10000"));
+                .andExpect(redirectedUrl("/payments/form"));
 
         verify(orderService).updateOrder(eq(orderNumber), any(UpdateOrderRequest.class));
     }

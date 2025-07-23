@@ -1,5 +1,6 @@
 package com.nhnacademy.frontend.order.dto.response;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 public record OrderResponse(
@@ -15,4 +16,4 @@ public record OrderResponse(
         String address,
         LocalDate requestedDeliveryDate,
         Integer shippingFee
-) {}
+) implements Serializable {}

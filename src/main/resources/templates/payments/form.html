@@ -41,6 +41,7 @@
         <input type="hidden" th:field="*{orderId}"/>
         <input type="hidden" th:field="*{successUrl}"/>
         <input type="hidden" th:field="*{failUrl}"/>
+        <input type="hidden" id="finalPayAmount" th:field="*{payAmount}"/>
 
         <!-- 2) 결제 정보 입력 -->
         <section class="space-y-8">
@@ -53,9 +54,10 @@
 
             <div class="grid sm:grid-cols-2 gap-6">
                 <div>
-                    <label for="payAmount" class="block mb-2 text-sm font-medium text-gray-700">결제 금액(원)</label>
-                    <input id="payAmount" type="number" min="100" th:field="*{payAmount}" required
-                           class="w-full h-11 px-4 rounded-lg border-gray-300 shadow-sm
+                    <label for="displayAmount" class="block mb-2 text-sm font-medium text-gray-700">결제 금액(원)</label>
+                    <input id="displayAmount" type="number" min="100" required readonly
+                           th:value="${paymentRequest.payAmount}"
+                           class="w-full h-11 px-4 rounded-lg border-gray-300 shadow-sm bg-gray-100
                                   focus:border-primary focus:ring-primary/40"/>
                 </div>
                 <div>
@@ -150,7 +152,9 @@
     const toKR   = n => (+n||0).toLocaleString();
     const num    = id => +document.getElementById(id).textContent.replace(/,/g,'');
     const sumBy  = name => [...document.getElementsByName(name)].reduce((t,e)=>t+(+e.value||0), 0);
-    const priceEl= document.getElementById('payAmount');
+    const priceEl= document.getElementById('displayAmount');
+    const finalPayAmountEl = document.getElementById('finalPayAmount');
+    const originalAmount = +priceEl.value || 0; // 원래 상품 금액 저장
 
     function clampAndUpdate(el){
         const max=+el.getAttribute('max')||0, v=+el.value||0;
@@ -161,18 +165,43 @@
     const maxPrev   = btn=>{ const ip=btn.previousElementSibling; ip.value=ip.getAttribute('max')||0; updateSummary(); };
 
     function updateSummary(){
-        document.getElementById('sumProduct').textContent = toKR(priceEl.value);
+        // 상품 금액은 원래 값으로 고정
+        document.getElementById('sumProduct').textContent = toKR(originalAmount);
         const shippingFee = num('sumShip');
-        const final = (+priceEl.value||0)
+        const beforePointDeduction = originalAmount
             + shippingFee
             - num('sumProdDc')
             - num('sumCoupon')
-            - sumBy('usedPoint')
             - sumBy('depositUse')
             - sumBy('giftCashUse');
+        
+        // 포인트 사용량이 결제 가능 금액을 초과하지 않도록 제한
+        const maxUsablePoints = Math.max(0, beforePointDeduction);
+        const currentUsedPoints = sumBy('usedPoint');
+        
+        if (currentUsedPoints > maxUsablePoints) {
+            // 포인트 사용량을 최대 사용 가능한 금액으로 제한
+            const pointInputs = document.getElementsByName('usedPoint');
+            for (let input of pointInputs) {
+                if (input.value > maxUsablePoints) {
+                    input.value = maxUsablePoints;
+                }
+            }
+        }
+        
+        const final = Math.max(0, beforePointDeduction - sumBy('usedPoint'));
+        
         document.getElementById('sumPoints').textContent = toKR(sumBy('usedPoint'));
         document.getElementById('finalAmt').textContent  = toKR(final)+'원';
         document.getElementById('expPoint').textContent  = toKR(Math.floor(final*0.05))+'P';
+        
+        // finalAmt에서 실제 표시된 금액을 추출하여 제출
+        const finalAmtText = document.getElementById('finalAmt').textContent;
+        const finalAmtValue = parseInt(finalAmtText.replace(/[^0-9]/g, '')) || 0;
+        
+        // 최종 결제 금액을 hidden 필드와 display 필드에 설정
+        finalPayAmountEl.value = finalAmtValue;
+        priceEl.value = finalAmtValue;
     }
     priceEl.addEventListener('input', updateSummary);
     updateSummary();
