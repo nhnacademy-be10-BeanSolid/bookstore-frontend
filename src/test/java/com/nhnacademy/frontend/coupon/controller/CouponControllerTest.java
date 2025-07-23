@@ -2,6 +2,9 @@ package com.nhnacademy.frontend.coupon.controller;
 
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
+import com.nhnacademy.frontend.common.adapter.CouponAdapter;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import com.nhnacademy.frontend.coupon.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,11 +28,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @WebMvcTest(
         controllers = CouponController.class,
         excludeFilters = @ComponentScan.Filter(
@@ -37,12 +44,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 "spring.session.store-type=none",
                 "spring.thymeleaf.enabled=false"
         })
+
+
 @AutoConfigureMockMvc(addFilters = false)
 class CouponControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockBean CouponService couponService;
     @MockBean RedisConnectionFactory redisConnectionFactory;
+    @MockBean
+    private CouponAdapter couponAdapter;
+    @MockBean
+    private UserAdapter userAdapter;
 
     private Authentication auth;
 
@@ -52,6 +65,10 @@ class CouponControllerTest {
                 new CustomPrincipal("1", "ROLE_USER"),
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+        // userAdapter.getUser() Mocking
+        when(userAdapter.getUser(anyString()))
+                .thenReturn(new ResponseEntity<>(ResponseUser.builder().userNo(1L).build(), HttpStatus.OK));
     }
 
 
@@ -66,7 +83,7 @@ class CouponControllerTest {
 
         mockMvc.perform(get("/my-coupons").principal(auth))
                 .andExpect(status().isOk())
-                .andExpect(view().name("coupon/my-coupon"))
+                .andExpect(view().name("coupon/my-coupons")) // 오타 수정
                 .andExpect(model().attribute("activeCoupons", active));
     }
 
