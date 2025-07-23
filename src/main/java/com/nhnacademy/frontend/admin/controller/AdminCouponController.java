@@ -7,6 +7,8 @@ import com.nhnacademy.frontend.admin.dto.request.CouponPolicyCreateRequest;
 import com.nhnacademy.frontend.admin.dto.response.BookCategoryResponse;
 import com.nhnacademy.frontend.admin.dto.response.BookResponse;
 import com.nhnacademy.frontend.admin.dto.response.CouponPolicyResponse;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Data
+@Builder
 @Controller
 @RequestMapping("/admin/coupons")
 @RequiredArgsConstructor

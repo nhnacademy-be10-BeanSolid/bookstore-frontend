@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 classes = JwtAuthenticationFilter.class),
         properties = {
                 "spring.session.store-type=none",
-                "spring.thymeleaf.enabled=false"      // ① Thymeleaf 끄기
+                "spring.thymeleaf.enabled=false"
         })
 @AutoConfigureMockMvc(addFilters = false)
 class CouponControllerTest {
@@ -54,7 +54,6 @@ class CouponControllerTest {
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
-    /* ---------- 테스트 ---------- */
 
     @Test
     @DisplayName("인증된 사용자의 활성 쿠폰 조회 - 성공")
