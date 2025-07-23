@@ -1,6 +1,5 @@
 package com.nhnacademy.frontend.common.config;
 
-
 import com.nhnacademy.frontend.common.domain.MinioProperties;
 import io.minio.MinioClient;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

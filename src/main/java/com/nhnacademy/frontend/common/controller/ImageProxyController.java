@@ -26,11 +26,25 @@ public class ImageProxyController {
     @Value("${spring.minio.review.image.bucket.name}")
     private String reviewImageBucketName;
 
+    @Value("${spring.minio.book.image.bucket.name}")
+    private String bookImageBucketName;
+
     @GetMapping("/images/review/{objectName}")
     public ResponseEntity<byte[]> getReviewImage(@PathVariable String objectName) {
         URI uri = UriComponentsBuilder
                 .fromHttpUrl(minioEndpoint)
                 .pathSegment(reviewImageBucketName, objectName)
+                .build(true)
+                .toUri();
+
+        return restTemplate.exchange(uri, HttpMethod.GET, null, byte[].class);
+    }
+
+    @GetMapping("/images/book/{objectName}")
+    public ResponseEntity<byte[]> getBookImage(@PathVariable String objectName) {
+        URI uri = UriComponentsBuilder
+                .fromHttpUrl(minioEndpoint)
+                .pathSegment(bookImageBucketName, objectName)
                 .build(true)
                 .toUri();
 

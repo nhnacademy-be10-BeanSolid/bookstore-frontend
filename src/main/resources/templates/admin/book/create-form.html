@@ -5,6 +5,8 @@
     <title>도서 생성</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+
 </head>
 <body>
 <div class="container my-5" style="max-width: 700px;">
@@ -46,7 +48,12 @@
         </div>
         <div class="mb-3">
             <label class="form-label">설명</label>
-            <textarea th:field="*{description}" class="form-control" name="description"></textarea>
+
+            <!-- 서버 전송용 숨겨진 textarea -->
+            <textarea th:field="*{description}" id="description" name="description" style="display: none;"></textarea>
+
+            <!-- Toast UI Editor가 표시될 영역 -->
+            <div id="editor"></div>
         </div>
         <div class="mb-3">
             <label class="form-label">목차</label>
@@ -105,6 +112,7 @@
 
 <!-- Bootstrap JS (필수: 모달 등 동작) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script>
     function addCategoryIdInput() {
         const container = document.getElementById('categoryIdsContainer');
@@ -120,6 +128,19 @@
     // 모달 검색 관련
     let currentPage = 1;
     const itemsPerPage = 10;
+
+    const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        height: '400px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: '', // 필요 시 기존 설명 값 넣기
+    });
+
+    // 폼 제출 시 editor 내용 textarea에 넣기
+    document.querySelector('form').addEventListener('submit', function () {
+        document.getElementById('description').value = editor.getHTML();
+    });
 
     function searchBook(page = 1) {
         const keyword = document.getElementById("searchKeyword").value;
@@ -166,15 +187,28 @@
         searchBook(newPage);
     }
 
+    // function applyBookInfo(item) {
+    //     document.querySelector('[name="title"]').value = item.title;
+    //     document.querySelector('[name="description"]').value = item.description;
+    //     document.querySelector('[name="author"]').value = item.author;
+    //     document.querySelector('[name="publisher"]').value = item.publisher;
+    //     document.querySelector('[name="publishAt"]').value = item.pubdate;
+    //     document.querySelector('[name="isbn"]').value = item.isbn;
+    //     document.querySelector('[name="image"]').value = item.image;
+    //     // 모달 닫기 (Bootstrap)
+    //     const modal = bootstrap.Modal.getInstance(document.getElementById('bookSearchModal'));
+    //     modal.hide();
+    // }
     function applyBookInfo(item) {
         document.querySelector('[name="title"]').value = item.title;
-        document.querySelector('[name="description"]').value = item.description;
+        editor.setHTML(item.description || ''); // ← 에디터에 내용 설정
         document.querySelector('[name="author"]').value = item.author;
         document.querySelector('[name="publisher"]').value = item.publisher;
         document.querySelector('[name="publishAt"]').value = item.pubdate;
         document.querySelector('[name="isbn"]').value = item.isbn;
         document.querySelector('[name="image"]').value = item.image;
-        // 모달 닫기 (Bootstrap)
+
+        // 모달 닫기
         const modal = bootstrap.Modal.getInstance(document.getElementById('bookSearchModal'));
         modal.hide();
     }
