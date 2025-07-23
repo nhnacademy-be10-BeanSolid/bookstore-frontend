@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/orders").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/orders/**").permitAll()

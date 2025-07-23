@@ -40,8 +40,8 @@
 
             // 가져온 설정에서 'urls' 배열을 추출
             const urls = swaggerConfig.urls.map(item => ({
-                // 게이트웨이의 기본 URL과 item.url을 결합하여 완전한 URL을 생성합니다.
-                url: `${gatewayBaseUrl}${item.url}`,
+                // frontend 서비스의 새로운 API 문서 엔드포인트를 사용합니다.
+                url: `/api-docs/${item.name.toLowerCase()}/v3/api-docs`,
                 name: item.name
             }));
 
