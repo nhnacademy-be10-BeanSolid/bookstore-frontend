@@ -1,15 +1,17 @@
 package com.nhnacademy.frontend.mypage.service.impl;
 
 
-import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
+import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
+import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
+import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
-import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
-import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.mypage.service.MypageService;
 import com.nhnacademy.frontend.order.adapter.OrderAdapter;
 import com.nhnacademy.frontend.order.dto.request.OrderStatusRequest;
@@ -29,6 +31,7 @@ public class MypageServiceImpl implements MypageService {
     private final AuthAdapter authAdapter;
     private final UserAdapter userAdapter;
     private final OrderAdapter orderAdapter;
+    private final BookAdapter bookAdapter;
 
     @Override
     public boolean withdrawUser(String password) {
@@ -141,5 +144,10 @@ public class MypageServiceImpl implements MypageService {
     public void cancelOrder(String orderNumber, String reason) {
         OrderStatusRequest request = new OrderStatusRequest(OrderStatusRequest.OrderAction.CANCEL, reason, null);
         orderAdapter.changeOrderStatus(orderNumber, request);
+    }
+
+    @Override
+    public Page<BookLikeResponse> getBookLikes(Pageable pageable) {
+        return bookAdapter.getBookLikes(pageable).getBody();
     }
 }
