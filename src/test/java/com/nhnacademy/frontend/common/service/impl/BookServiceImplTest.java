@@ -1,15 +1,8 @@
-package com.nhnacademy.frontend.book.service;
+package com.nhnacademy.frontend.common.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagMapResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookSearchResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookItemResponseDto;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookResponseDto;
-import com.nhnacademy.frontend.common.service.impl.BookServiceImpl;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -214,6 +207,38 @@ class BookServiceImplTest {
 
         assertThat(result).isEqualTo(expected);
         verify(bookAdapter).searchBooks(query, start);
+    }
+
+    @Test
+    @DisplayName("도서 상세 페이지")
+    void getDetails_Success() {
+        BookCategoryResponseDto category = new BookCategoryResponseDto(1L, "카테고리", null, null, LocalDateTime.now(), null);
+        BookDetailResponseDto detail = new BookDetailResponseDto(
+                1L, "제목", "설명", null, "출판사",
+                "작가", LocalDate.of(2020,1,1), "1234567891011",
+                3000, 1000, true, LocalDateTime.now(), null, "ON_SALE", 30,  null, List.of(category), null, 0);
+        when(bookAdapter.getBookDetail(1L)).thenReturn(detail);
+
+        BookDetailResponseDto result = bookService.getBookDetail(1L);
+
+        assertThat(result).isEqualTo(detail);
+        assertThat(result.id()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("관리자 도서 상세 페이지")
+    void getAdminDetails_Success() {
+        BookCategoryResponseDto category = new BookCategoryResponseDto(1L, "카테고리", null, null, LocalDateTime.now(), null);
+        BookDetailResponseDto detail = new BookDetailResponseDto(
+                1L, "제목", "설명", null, "출판사",
+                "작가", LocalDate.of(2020,1,1), "1234567891011",
+                3000, 1000, true, LocalDateTime.now(), null, "ON_SALE", 30,  null, List.of(category), null, 0);
+        when(bookAdapter.getAdminBookDetail(1L)).thenReturn(detail);
+
+        BookDetailResponseDto result = bookService.getAdminBookDetail(1L);
+
+        assertThat(result).isEqualTo(detail);
+        assertThat(result.id()).isEqualTo(1L);
     }
 
 
