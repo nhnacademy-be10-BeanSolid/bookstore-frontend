@@ -33,11 +33,22 @@ public class CouponController {
             return "redirect:/auth/login";
         }
         CustomPrincipal customPrincipal = (CustomPrincipal) authentication.getPrincipal();
-        Long userNo = Long.parseLong(customPrincipal.getUsername()); // String -> Long 변환
-        log.info("Frontend CouponController: Fetching coupons for userNo (from Authentication): {}", userNo);
+        if ("ADMIN".equals(customPrincipal.getUserType())) {
+            log.info("CouponController: Admin user, returning empty coupon list.");
+            model.addAttribute("activeCoupons", java.util.Collections.emptyList());
+            return "coupon/my-coupon";
+        }
 
-        List<UserCouponResponse> activeCoupons = couponService.getActiveUserCoupons(userNo);
-        model.addAttribute("activeCoupons", activeCoupons);
+        Long userNo = null;
+        try {
+            userNo = Long.parseLong(customPrincipal.getUsername());
+            log.info("Frontend CouponController: Fetching coupons for userNo (from Authentication): {}", userNo);
+            List<UserCouponResponse> activeCoupons = couponService.getActiveUserCoupons(userNo);
+            model.addAttribute("activeCoupons", activeCoupons);
+        } catch (NumberFormatException e) {
+            log.error("CouponController: Failed to parse userNo from username '{}'. Returning empty coupon list. Error: {}", customPrincipal.getUsername(), e.getMessage());
+            model.addAttribute("activeCoupons", java.util.Collections.emptyList());
+        }
 
         return "coupon/my-coupon";
     }
@@ -49,7 +60,18 @@ public class CouponController {
             return "redirect:/auth/login";
         }
         CustomPrincipal customPrincipal = (CustomPrincipal) authentication.getPrincipal();
-        Long userNo = Long.parseLong(customPrincipal.getUsername());
+        if ("ADMIN".equals(customPrincipal.getUserType())) {
+            redirectAttributes.addFlashAttribute("error", "관리자 계정은 쿠폰을 발급받을 수 없습니다.");
+            return "redirect:/my-coupons";
+        }
+        Long userNo = null;
+        try {
+            userNo = Long.parseLong(customPrincipal.getUsername());
+        } catch (NumberFormatException e) {
+            log.error("CouponController: Failed to parse userNo from username '{}'. Coupon issuance failed. Error: {}", customPrincipal.getUsername(), e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "사용자 정보를 가져오는 데 실패했습니다. 쿠폰 발급에 실패했습니다.");
+            return "redirect:/my-coupons";
+        }
 
         try {
             couponService.issueCouponToUser(userNo, couponPolicyId);
