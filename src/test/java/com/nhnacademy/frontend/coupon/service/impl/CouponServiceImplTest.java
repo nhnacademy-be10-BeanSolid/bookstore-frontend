@@ -42,7 +42,7 @@ class CouponServiceImplTest {
 
         UserCouponResponse coupon1 = UserCouponResponse.builder()
                 .userCouponId(1L)
-                .userNo(String.valueOf(userNo))
+                .userNo(userNo)
                 .couponPolicyId(1L)
                 .couponName("Coupon1")
                 .couponDiscountAmount(1000)
@@ -55,7 +55,7 @@ class CouponServiceImplTest {
 
         UserCouponResponse coupon2 = UserCouponResponse.builder()
                 .userCouponId(2L)
-                .userNo(String.valueOf(userNo))
+                .userNo(userNo)
                 .couponPolicyId(2L)
                 .couponName("Coupon2")
                 .couponDiscountAmount(10)
@@ -70,7 +70,7 @@ class CouponServiceImplTest {
         ResponseEntity<List<UserCouponResponse>> couponResponseEntity = ResponseEntity.ok(expectedCoupons);
 
         when(userAdapter.getUser(userId)).thenReturn(userResponseEntity);
-        when(couponAdapter.getActiveUserCoupons(String.valueOf(userNo))).thenReturn(couponResponseEntity);
+        when(couponAdapter.getActiveUserCoupons(userNo)).thenReturn(couponResponseEntity);
 
         List<UserCouponResponse> actualCoupons = couponService.getActiveUserCoupons(userId);
 
