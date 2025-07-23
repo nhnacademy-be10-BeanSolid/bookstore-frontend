@@ -34,8 +34,8 @@
             </select>
         </div>
         <div>
-            <label for="couponDiscountAmount">할인 금액:</label>
-            <input type="number" id="couponDiscountAmount" th:field="*{couponDiscountAmount}" required>
+            <label for="couponDiscountAmount" id="discountAmountLabel">할인 금액 (원):</label>
+            <input type="number" id="couponDiscountAmount" th:field="*{couponDiscountAmount}" required placeholder="예: 10000 (원)">
         </div>
         <div>
             <label for="couponMinimumOrderAmount">최소 주문 금액:</label>
@@ -111,6 +111,28 @@
     </form>
 
     <script>
+        const discountTypeSelect = document.getElementById('couponDiscountType');
+        const discountAmountLabel = document.getElementById('discountAmountLabel');
+
+        const discountAmountInput = document.getElementById('couponDiscountAmount');
+
+        discountTypeSelect.addEventListener('change', function() {
+            if (this.value === 'PERCENT') {
+                discountAmountLabel.textContent = '할인율 (%):';
+                discountAmountInput.placeholder = '예: 20 (%)';
+            } else {
+                discountAmountLabel.textContent = '할인 금액 (원):';
+                discountAmountInput.placeholder = '예: 10000 (원)';
+            }
+        });
+
+        // 초기 로드 시 플레이스홀더 설정
+        if (discountTypeSelect.value === 'PERCENT') {
+            discountAmountInput.placeholder = '예: 20 (%)';
+        } else {
+            discountAmountInput.placeholder = '예: 10000 (원)';
+        }
+
         const couponScopeSelect = document.getElementById('couponScope');
         const bookSelectionSection = document.getElementById('bookSelectionSection');
         const bookSelect = document.getElementById('bookSelect');
