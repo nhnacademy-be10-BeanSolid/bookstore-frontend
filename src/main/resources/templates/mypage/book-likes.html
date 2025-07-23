@@ -18,7 +18,7 @@
         <table class="table table-hover align-middle">
             <thead class="table-light text-center">
             <tr>
-                <th scope="col" style="width: 60%;">책 ID</th>
+                <th scope="col" style="width: 60%;">책 제목</th>
                 <th scope="col" style="width: 30%;">좋아요 누른 날</th>
                 <th scope="col" style="width: 10%;"></th>
             </tr>
@@ -26,7 +26,7 @@
             <tbody>
             <tr th:each="like : ${bookLikes.content}">
                 <td>
-                    <a th:href="@{/books/{bookId}(bookId=${like.bookId})}" class="text-decoration-none text-dark" th:text="'Book ID: ' + ${like.bookId}">책 ID</a>
+                    <a th:href="@{/books/{bookId}(bookId=${like.bookId})}" class="text-decoration-none text-dark" th:text="${like.bookTitle}">책 제목</a>
                 </td>
                 <td th:text="${#temporals.format(like.likedAt, 'yyyy-MM-dd')}" class="text-center">2025-07-21</td>
                 <td class="text-center">

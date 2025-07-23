@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.mypage.controller;
 
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
 import com.nhnacademy.frontend.auth.util.JwtCookieUtil;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePoint;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
 import com.nhnacademy.frontend.common.advice.GlobalModelAttributeAdvice;
@@ -539,5 +540,28 @@ class MyPageControllerTest {
                 .andExpect(flash().attributeExists("errorMessage"));
 
         Mockito.verify(mypageService).returnOrder(orderNumber, reason, damaged);
+    }
+
+    @Test
+    @DisplayName("좋아요한 책 목록 조회")
+    void getBookLikes() throws Exception {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<BookLikeResponse> bookLikes = List.of(
+                new BookLikeResponse(1L, LocalDateTime.now(), "test", 1L, "testBook"),
+                new BookLikeResponse(2L, LocalDateTime.now(), "test", 2L, "testBook2")
+        );
+        Page<BookLikeResponse> bookLikePage = new PageImpl<>(bookLikes, pageable, bookLikes.size());
+
+        Mockito.when(mypageService.getBookLikes(pageable)).thenReturn(bookLikePage);
+
+        mockMvc.perform(get("/mypage/book-likes")
+                        .header("X-USER-ID", "test")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("mypage/book-likes"))
+                .andExpect(model().attribute("bookLikes", bookLikePage));
+
+        Mockito.verify(mypageService).getBookLikes(pageable);
     }
 }

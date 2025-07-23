@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.mypage.service;
 import com.nhnacademy.frontend.auth.adapter.AuthAdapter;
 import com.nhnacademy.frontend.auth.dto.request.PasswordVerificationRequestDto;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookLikeResponse;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.AddressCreateRequest;
 import com.nhnacademy.frontend.common.adapter.dto.user.request.UserUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseAddress;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -370,5 +372,21 @@ class MypageServiceImplTest {
         assertThrows(RuntimeException.class, () -> mypageService.cancelOrder(orderNumber, reason));
 
         verify(orderAdapter, times(1)).changeOrderStatus(eq(orderNumber), any(OrderStatusRequest.class));
+    }
+
+    @Test
+    @DisplayName("좋아요한 책 목록 조회 - 성공")
+    void getBookLikes_Success() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<BookLikeResponse> bookLikesPage = new PageImpl<>(List.of(new BookLikeResponse(1L, LocalDateTime.now(), "test", 1L, "testBook")), pageable, 1);
+
+        when(userAdapter.getBookLikes(pageable)).thenReturn(ResponseEntity.ok(bookLikesPage));
+
+        Page<BookLikeResponse> result = mypageService.getBookLikes(pageable);
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.getTotalElements());
+        assertEquals("testBook", result.getContent().getFirst().bookTitle());
+        verify(userAdapter).getBookLikes(pageable);
     }
 }
