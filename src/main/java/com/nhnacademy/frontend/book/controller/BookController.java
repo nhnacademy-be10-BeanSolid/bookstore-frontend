@@ -1,27 +1,23 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
-import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
 import com.nhnacademy.frontend.common.adapter.UserAdapter;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;
-
 import com.nhnacademy.frontend.coupon.domain.CouponScope;
 import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -49,9 +45,10 @@ public class BookController {
                     // 카테고리 범위 쿠폰 필터링
                     if (policy.getCouponScope() == CouponScope.CATEGORY && policy.getCategoryIds() != null && !policy.getCategoryIds().isEmpty()) {
                         // 현재 도서의 카테고리 ID 목록을 가져옵니다.
-                        List<Long> bookCategoryIds = bookDetail.bookCategories().stream()
-                                .map(com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto::categoryId)
-                                .collect(Collectors.toList());
+                        List<Long> bookCategoryIds = new ArrayList<>(bookDetail.bookCategories()
+                                .stream()
+                                .map(BookCategoryResponseDto::categoryId)
+                                .toList());
 
                         // 쿠폰의 카테고리 ID 중 하나라도 도서의 카테고리 ID에 포함되는지 확인합니다.
                         return policy.getCategoryIds().stream()
@@ -59,7 +56,7 @@ public class BookController {
                     }
                     return false;
                 })
-                .collect(Collectors.toList());
+                .toList();
         model.addAttribute("bookCoupons", bookCoupons);
 
         return "book/book-detail";
