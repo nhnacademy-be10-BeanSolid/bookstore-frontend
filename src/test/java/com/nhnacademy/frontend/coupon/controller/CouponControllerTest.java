@@ -60,7 +60,7 @@ class CouponControllerTest {
         // When & Then
         mockMvc.perform(get("/my-coupons"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/auth/login"));
+                .andExpect(redirectedUrl("/auth/login")); 
     }
 
 }
