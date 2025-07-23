@@ -9,7 +9,6 @@ import java.util.List;
 
 @FeignClient(name = "gateway-service", contextId = "couponAdminAdaptor")
 public interface CouponAdminAdaptor {
-
     @PostMapping("/coupon-api/admin/coupon-policies")
     void createCouponPolicy(@RequestBody CouponPolicyCreateRequest request);
 
