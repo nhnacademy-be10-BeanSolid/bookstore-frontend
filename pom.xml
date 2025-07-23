@@ -96,6 +96,14 @@
             <artifactId>thymeleaf-layout-dialect</artifactId>
         </dependency>
 
+        <!-- Start of new dependency for Swagger UI -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+            <version>5.17.1</version>
+        </dependency>
+        <!-- End of new dependency for Swagger UI -->
+
         <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
