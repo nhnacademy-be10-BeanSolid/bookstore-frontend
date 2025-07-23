@@ -25,12 +25,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,32 +42,49 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         properties = {
                 "spring.session.store-type=none",
                 "spring.thymeleaf.enabled=false"
+        },
+        excludeAutoConfiguration = {
+                org.springframework.boot.autoconfigure.session.SessionAutoConfiguration.class,
+                org.springframework.cloud.openfeign.FeignAutoConfiguration.class
         })
 
 
 @AutoConfigureMockMvc(addFilters = false)
 class CouponControllerTest {
 
-    @Autowired MockMvc mockMvc;
-    @MockBean CouponService couponService;
-    @MockBean RedisConnectionFactory redisConnectionFactory;
+    @Autowired
+    MockMvc mockMvc;
+    @MockBean
+    CouponService couponService;
+    @MockBean
+    RedisConnectionFactory redisConnectionFactory;
     @MockBean
     private CouponAdapter couponAdapter;
     @MockBean
     private UserAdapter userAdapter;
 
-    private Authentication auth;
+    private Authentication userAuth;
+    private Authentication adminAuth;
 
     @BeforeEach
     void setUp() {
-        auth = new UsernamePasswordAuthenticationToken(
+        userAuth = new UsernamePasswordAuthenticationToken(
                 new CustomPrincipal("1", "ROLE_USER"),
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-        // userAdapter.getUser() Mocking
-        when(userAdapter.getUser(anyString()))
+        adminAuth = new UsernamePasswordAuthenticationToken(
+                new CustomPrincipal("2", "ADMIN"),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
+        // userAdapter.getUser() Mocking for userAuth
+        when(userAdapter.getUser("1"))
                 .thenReturn(new ResponseEntity<>(ResponseUser.builder().userNo(1L).build(), HttpStatus.OK));
+
+        // userAdapter.getUser() Mocking for adminAuth
+        when(userAdapter.getUser("2"))
+                .thenReturn(new ResponseEntity<>(ResponseUser.builder().userNo(2L).build(), HttpStatus.OK));
     }
 
 
@@ -81,18 +97,57 @@ class CouponControllerTest {
 
         when(couponService.getActiveUserCoupons(anyLong())).thenReturn(active);
 
-        mockMvc.perform(get("/my-coupons").principal(auth))
+        mockMvc.perform(get("/my-coupons").principal(userAuth))
                 .andExpect(status().isOk())
-                .andExpect(view().name("coupon/my-coupons")) // 오타 수정
+                .andExpect(view().name("coupon/my-coupons"))
                 .andExpect(model().attribute("activeCoupons", active));
     }
 
     @Test
     @DisplayName("인증되지 않은 사용자의 활성 쿠폰 조회 - 리다이렉트")
     void getMyActiveCoupons_unauthenticatedUser_redirect() throws Exception {
-        mockMvc.perform(get("/my-coupons"))       // ② null principal 전달 안 함
+        mockMvc.perform(get("/my-coupons"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/auth/login"));
+    }
+
+    @Test
+    @DisplayName("인증된 관리자 사용자의 활성 쿠폰 조회 - 성공 (빈 목록)")
+    void getMyActiveCoupons_adminUser_success() throws Exception {
+        mockMvc.perform(get("/my-coupons").principal(adminAuth))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"))
+                .andExpect(model().attribute("activeCoupons", Collections.emptyList()));
+        verify(couponService, never()).getActiveUserCoupons(anyLong());
+    }
+
+    @Test
+    @DisplayName("활성 쿠폰 조회 - 사용자 번호 null 시 에러 메시지")
+    void getMyActiveCoupons_userNoNull_errorMessage() throws Exception {
+        when(userAdapter.getUser("1"))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.OK)); // userNo가 null인 경우
+
+        mockMvc.perform(get("/my-coupons").principal(userAuth))
+                .andExpect(status().isOk())
+                .andExpect(view().name("coupon/my-coupons"))
+                .andExpect(model().attributeExists("errorMessage"))
+                .andExpect(model().attribute("activeCoupons", Collections.emptyList()));
+        verify(couponService, never()).getActiveUserCoupons(anyLong());
+    }
+
+    @Test
+    @DisplayName("활성 쿠폰 조회 - 서비스 예외 처리 시 에러 메시지")
+    void getMyActiveCoupons_serviceError_errorMessage() throws Exception {
+        when(userAdapter.getUser("1"))
+                .thenReturn(new ResponseEntity<>(ResponseUser.builder().userNo(1L).build(), HttpStatus.OK));
+        doThrow(new RuntimeException("쿠폰 조회 실패"))
+                .when(couponService).getActiveUserCoupons(anyLong());
+
+        mockMvc.perform(get("/my-coupons").principal(userAuth))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error/error"))
+                .andExpect(model().attributeExists("errorMessage"))
+                .andExpect(model().attribute("activeCoupons", Collections.emptyList()));
     }
 
     @Test
@@ -108,15 +163,16 @@ class CouponControllerTest {
                 .build();
 
         when(couponService.issueCouponToUser(anyLong(), anyLong()))
-                .thenReturn(issued);   // ← long 대신 DTO 반환
+                .thenReturn(issued);
 
         mockMvc.perform(post("/my-coupons/issue")
                         .param("couponPolicyId", "1")
-                        .principal(auth))
+                        .principal(userAuth))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/my-coupons"))
                 .andExpect(flash().attributeExists("message"));
     }
+
     @Test
     @DisplayName("쿠폰 발급 - 인증 안 된 경우")
     void issueCoupon_unauthenticatedUser() throws Exception {
@@ -134,9 +190,107 @@ class CouponControllerTest {
 
         mockMvc.perform(post("/my-coupons/issue")
                         .param("couponPolicyId", "1")
-                        .principal(auth))
+                        .principal(userAuth))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/my-coupons"))
                 .andExpect(flash().attributeExists("error"));
     }
+
+    @Test
+    @DisplayName("쿠폰 발급 - 관리자 계정 리다이렉트")
+    void issueCoupon_adminUser_redirect() throws Exception {
+        mockMvc.perform(post("/my-coupons/issue")
+                        .param("couponPolicyId", "1")
+                        .principal(adminAuth))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-coupons"))
+                .andExpect(flash().attributeExists("error"));
+        verify(couponService, never()).issueCouponToUser(anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("쿠폰 발급 - 사용자 번호 null 시 에러 메시지")
+    void issueCoupon_userNoNull_errorMessage() throws Exception {
+        when(userAdapter.getUser("1"))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.OK)); // userNo가 null인 경우
+
+        mockMvc.perform(post("/my-coupons/issue")
+                        .param("couponPolicyId", "1")
+                        .principal(userAuth))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-coupons"))
+                .andExpect(flash().attributeExists("error"));
+        verify(couponService, never()).issueCouponToUser(anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("카테고리 쿠폰 발급 - 성공")
+    void issueCategoryCoupon_authenticatedUser_success() throws Exception {
+        when(couponService.issueCategoryCoupon(anyLong(), anyLong(), anyLong()))
+                .thenReturn(UserCouponResponse.builder().userCouponId(1L).build());
+
+        mockMvc.perform(post("/my-coupons/issue/category")
+                        .contentType("application/json")
+                        .content("{\"couponPolicyId\":1, \"categoryId\":10}")
+                        .principal(userAuth))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-coupons"))
+                .andExpect(flash().attributeExists("message"));
+    }
+
+    @Test
+    @DisplayName("카테고리 쿠폰 발급 - 인증 안 된 경우")
+    void issueCategoryCoupon_unauthenticatedUser_redirect() throws Exception {
+        mockMvc.perform(post("/my-coupons/issue/category")
+                        .contentType("application/json")
+                        .content("{\"couponPolicyId\":1, \"categoryId\":10}"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/auth/login"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @DisplayName("카테고리 쿠폰 발급 - 서비스 예외 처리")
+    void issueCategoryCoupon_serviceError() throws Exception {
+        doThrow(new RuntimeException("카테고리 쿠폰 발급 실패"))
+                .when(couponService).issueCategoryCoupon(anyLong(), anyLong(), anyLong());
+
+        mockMvc.perform(post("/my-coupons/issue/category")
+                        .contentType("application/json")
+                        .content("{\"couponPolicyId\":1, \"categoryId\":10}")
+                        .principal(userAuth))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-coupons"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    @Test
+    @DisplayName("카테고리 쿠폰 발급 - 관리자 계정 리다이렉트")
+    void issueCategoryCoupon_adminUser_redirect() throws Exception {
+        mockMvc.perform(post("/my-coupons/issue/category")
+                        .contentType("application/json")
+                        .content("{\"couponPolicyId\":1, \"categoryId\":10}")
+                        .principal(adminAuth))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-coupons"))
+                .andExpect(flash().attributeExists("error"));
+        verify(couponService, never()).issueCategoryCoupon(anyLong(), anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("카테고리 쿠폰 발급 - 사용자 번호 null 시 에러 메시지")
+    void issueCategoryCoupon_userNoNull_errorMessage() throws Exception {
+        when(userAdapter.getUser("1"))
+                .thenReturn(new ResponseEntity<>(null, HttpStatus.OK)); // userNo가 null인 경우
+
+        mockMvc.perform(post("/my-coupons/issue/category")
+                        .contentType("application/json")
+                        .content("{\"couponPolicyId\":1, \"categoryId\":10}")
+                        .principal(userAuth))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/my-coupons"))
+                .andExpect(flash().attributeExists("error"));
+        verify(couponService, never()).issueCategoryCoupon(anyLong(), anyLong(), anyLong());
+    }
+
 }
