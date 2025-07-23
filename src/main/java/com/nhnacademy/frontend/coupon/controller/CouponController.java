@@ -65,7 +65,6 @@ public class CouponController {
     public String issueCoupon(@RequestParam Long couponPolicyId,
                               Authentication authentication,
                               RedirectAttributes redirect) {
-
         if (!isAuthenticated(authentication)) {
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "로그인이 필요합니다.");
             return REDIRECT_LOGIN;
