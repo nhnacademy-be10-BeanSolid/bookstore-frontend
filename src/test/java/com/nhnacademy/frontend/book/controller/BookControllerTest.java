@@ -1,6 +1,8 @@
 package com.nhnacademy.frontend.book.controller;
 
 import com.nhnacademy.frontend.auth.filter.JwtAuthenticationFilter;
+import com.nhnacademy.frontend.common.adapter.CouponAdapter;
+import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.BookDetailResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;
@@ -39,6 +41,12 @@ class BookControllerTest {
 
     @MockBean
     BookService bookService;
+
+    @MockBean
+    CouponAdapter couponAdapter;
+
+    @MockBean
+    UserAdapter userAdapter;
 
     @MockBean
     private RedisConnectionFactory redisConnectionFactory;
