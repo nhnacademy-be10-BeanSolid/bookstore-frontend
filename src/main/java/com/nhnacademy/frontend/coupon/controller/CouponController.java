@@ -32,44 +32,25 @@ public class CouponController {
     private static final String REDIRECT_LOGIN      = "redirect:/auth/login";
 
     private final CouponService couponService;
-    private final UserAdapter userAdapter; // UserAdapter 주입
+    private final UserAdapter userAdapter;
 
     @GetMapping
     public String getMyActiveCoupons(Authentication authentication, Model model) {
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (!isAuthenticated(authentication)) {
             return REDIRECT_LOGIN;
         }
 
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        log.info("getMyActiveCoupons: principal.getUsername() = {}, principal.getUserType() = {}", principal.getUsername(), principal.getUserType());
+        log.info("getMyActiveCoupons: username={}, userType={}", principal.getUsername(), principal.getUserType());
 
-
-        if ("admin".equals(principal.getUsername()) && "ADMIN".equals(principal.getUserType())) {
+        if (isAdmin(principal)) {
             model.addAttribute(ACTIVE_COUPONS, Collections.emptyList());
             return VIEW_MY_COUPON;
         }
 
-        if ("ADMIN".equals(principal.getUserType())) {
-            model.addAttribute(ACTIVE_COUPONS, Collections.emptyList());
-            return VIEW_MY_COUPON;
-        }
-
-        // principal.getUsername() (로그인 ID)를 사용하여 userNo 조회
-        Long userNo = null;
-        ResponseEntity<ResponseUser> responseEntity = null; // 변수 선언 위치 변경
-        try {
-            responseEntity = userAdapter.getUser(principal.getUsername()); // responseEntity에 값 할당
-            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                userNo = responseEntity.getBody().getUserNo();
-            } else {
-                log.error("CouponController: Failed to get ResponseUser for username '{}'. Status: {}", principal.getUsername(), responseEntity.getStatusCode());
-            }
-        } catch (Exception e) {
-            log.error("CouponController: Failed to get userNo for username '{}'. Error: {}", principal.getUsername(), e.getMessage());
-        }
-
+        Long userNo = fetchUserNo(principal);
         if (userNo == null) {
-            log.error("CouponController: userNo is null for username '{}'.", principal.getUsername());
+            log.error("getMyActiveCoupons: userNo is null for username={}", principal.getUsername());
             model.addAttribute("errorMessage", "사용자 정보를 가져오는 데 실패했습니다. 쿠폰 목록을 불러올 수 없습니다.");
             model.addAttribute(ACTIVE_COUPONS, Collections.emptyList());
             return VIEW_MY_COUPON;
@@ -77,44 +58,29 @@ public class CouponController {
 
         List<UserCouponResponse> coupons = couponService.getActiveUserCoupons(userNo);
         model.addAttribute(ACTIVE_COUPONS, coupons);
-
         return VIEW_MY_COUPON;
     }
-
 
     @PostMapping("/issue")
     public String issueCoupon(@RequestParam Long couponPolicyId,
                               Authentication authentication,
                               RedirectAttributes redirect) {
 
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (!isAuthenticated(authentication)) {
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "로그인이 필요합니다.");
             return REDIRECT_LOGIN;
         }
 
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        log.info("issueCoupon: principal.getUsername() = {}, principal.getUserType() = {}", principal.getUsername(), principal.getUserType());
+        log.info("issueCoupon: username={}, userType={}", principal.getUsername(), principal.getUserType());
 
-        if ("ADMIN".equals(principal.getUserType())) {
+        if (isAdmin(principal)) {
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "관리자는 쿠폰을 발급받을 수 없습니다.");
             return REDIRECT_MY_COUPONS;
         }
 
-        // principal.getUsername() (로그인 ID)를 사용하여 userNo 조회
-        Long userNo = null;
-        ResponseEntity<ResponseUser> responseEntity = null; // 변수 선언 위치 변경
-        try {
-            responseEntity = userAdapter.getUser(principal.getUsername()); // responseEntity에 값 할당
-            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                userNo = responseEntity.getBody().getUserNo();
-            }
-        } catch (Exception e) {
-            log.error("CouponController: Failed to get ResponseUser for username '{}' during coupon issue. Status: {}", principal.getUsername(), responseEntity.getStatusCode());
-            log.error("CouponController: Failed to get userNo for username '{}' during coupon issue. Error: {}", principal.getUsername(), e.getMessage());
-        }
-
+        Long userNo = fetchUserNo(principal);
         if (userNo == null) {
-            log.error("CouponController: userNo is null for username '{}' during coupon issue.", principal.getUsername());
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "쿠폰 발급에 실패했습니다. (오류: 사용자 ID를 가져오지 못했습니다.)");
             return REDIRECT_MY_COUPONS;
         }
@@ -123,7 +89,7 @@ public class CouponController {
             couponService.issueCouponToUser(userNo, couponPolicyId);
             redirect.addFlashAttribute(FLASH_ATTR_MESSAGE, "쿠폰이 성공적으로 발급되었습니다!");
         } catch (Exception e) {
-            log.error("쿠폰 발급 오류: {}", e.getMessage(), e);
+            log.error("issueCoupon: 쿠폰 발급 오류", e);
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "쿠폰 발급 중 문제가 발생했습니다.");
         }
 
@@ -135,32 +101,21 @@ public class CouponController {
                                       Authentication authentication,
                                       RedirectAttributes redirect) {
 
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (!isAuthenticated(authentication)) {
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "로그인이 필요합니다.");
             return REDIRECT_LOGIN;
         }
 
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        log.info("issueCategoryCoupon: principal.getUsername() = {}, principal.getUserType() = {}", principal.getUsername(), principal.getUserType());
+        log.info("issueCategoryCoupon: username={}, userType={}", principal.getUsername(), principal.getUserType());
 
-        if ("ADMIN".equals(principal.getUserType())) {
+        if (isAdmin(principal)) {
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "관리자는 쿠폰을 발급받을 수 없습니다.");
             return REDIRECT_MY_COUPONS;
         }
 
-        Long userNo = null;
-        ResponseEntity<ResponseUser> responseEntity = null;
-        try {
-            responseEntity = userAdapter.getUser(principal.getUsername());
-            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                userNo = responseEntity.getBody().getUserNo();
-            }
-        } catch (Exception e) {
-            log.error("CouponController: Failed to get ResponseUser for username '{}' during category coupon issue. Error: {}", principal.getUsername(), e.getMessage());
-        }
-
+        Long userNo = fetchUserNo(principal);
         if (userNo == null) {
-            log.error("CouponController: userNo is null for username '{}' during category coupon issue.", principal.getUsername());
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "쿠폰 발급에 실패했습니다. (오류: 사용자 ID를 가져오지 못했습니다.)");
             return REDIRECT_MY_COUPONS;
         }
@@ -169,10 +124,32 @@ public class CouponController {
             couponService.issueCategoryCoupon(userNo, request.getCouponPolicyId(), request.getCategoryId());
             redirect.addFlashAttribute(FLASH_ATTR_MESSAGE, "카테고리 쿠폰이 성공적으로 발급되었습니다!");
         } catch (Exception e) {
-            log.error("카테고리 쿠폰 발급 오류: {}", e.getMessage(), e);
+            log.error("issueCategoryCoupon: 카테고리 쿠폰 발급 오류", e);
             redirect.addFlashAttribute(FLASH_ATTR_ERROR, "카테고리 쿠폰 발급 중 문제가 발생했습니다.");
         }
 
         return REDIRECT_MY_COUPONS;
+    }
+
+    private boolean isAuthenticated(Authentication authentication) {
+        return authentication != null && authentication.isAuthenticated();
+    }
+
+    private boolean isAdmin(CustomPrincipal principal) {
+        return "ADMIN".equalsIgnoreCase(principal.getUserType());
+    }
+
+    private Long fetchUserNo(CustomPrincipal principal) {
+        try {
+            ResponseEntity<ResponseUser> response = userAdapter.getUser(principal.getUsername());
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return response.getBody().getUserNo();
+            } else {
+                log.error("fetchUserNo: Failed to get user. status={}, username={}", response.getStatusCode(), principal.getUsername());
+            }
+        } catch (Exception e) {
+            log.error("fetchUserNo: Exception for username={}. msg={}", principal.getUsername(), e.getMessage(), e);
+        }
+        return null;
     }
 }
