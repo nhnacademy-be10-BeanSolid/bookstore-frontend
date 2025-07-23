@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -30,12 +33,31 @@ public class CouponController {
             return "redirect:/auth/login";
         }
         CustomPrincipal customPrincipal = (CustomPrincipal) authentication.getPrincipal();
-        String userNo = customPrincipal.getUsername();
+        Long userNo = Long.parseLong(customPrincipal.getUsername()); // String -> Long 변환
         log.info("Frontend CouponController: Fetching coupons for userNo (from Authentication): {}", userNo);
 
         List<UserCouponResponse> activeCoupons = couponService.getActiveUserCoupons(userNo);
         model.addAttribute("activeCoupons", activeCoupons);
 
-        return "coupon/my-coupons";
+        return "coupon/my-coupon";
+    }
+
+    @PostMapping("/issue")
+    public String issueCoupon(@RequestParam Long couponPolicyId, Authentication authentication, RedirectAttributes redirectAttributes) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+            return "redirect:/auth/login";
+        }
+        CustomPrincipal customPrincipal = (CustomPrincipal) authentication.getPrincipal();
+        Long userNo = Long.parseLong(customPrincipal.getUsername());
+
+        try {
+            couponService.issueCouponToUser(userNo, couponPolicyId);
+            redirectAttributes.addFlashAttribute("message", "쿠폰이 성공적으로 발급되었습니다!");
+        } catch (Exception e) {
+            log.error("쿠폰 발급 중 오류 발생: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "쿠폰 발급 중 오류가 발생했습니다: " + e.getMessage());
+        }
+        return "redirect:/my-coupons";
     }
 }
