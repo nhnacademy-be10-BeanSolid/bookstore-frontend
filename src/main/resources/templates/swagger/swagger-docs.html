@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title layout:fragment="title">API Documentation</title>
+    <!-- Swagger UI CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.1/swagger-ui.min.css" />
+    <style layout:fragment="style">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div id="swagger-ui"></div>
+
+    <!-- Swagger UI JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.1/swagger-ui-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.1/swagger-ui-standalone-preset.min.js"></script>
+    <script th:inline="javascript">
+        window.onload = function() {
+            // 컨트롤러에서 전달받은 swaggerConfig 객체
+            const swaggerServices = /*[[${swaggerServices}]]*/ [];
+
+            if (swaggerServices.length === 0) {
+                document.getElementById('swagger-ui').innerHTML = `
+                    <div style="padding: 20px; color: red;">
+                        Error loading Swagger UI: Could not retrieve service list.
+                        Please ensure the service list is configured correctly.
+                    </div>
+                `;
+                return;
+            }
+
+            const urls = swaggerServices.map(serviceName => ({
+                url: `/api-docs/${serviceName.toLowerCase()}/v3/api-docs`,
+                name: serviceName
+            }));
+
+            // Swagger UI 초기화
+            const ui = SwaggerUIBundle({
+                urls: urls,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                supportedSubmitMethods: []
+            });
+
+            window.ui = ui;
+        };
+    </script>
+</div>
+</body>
+</html>
