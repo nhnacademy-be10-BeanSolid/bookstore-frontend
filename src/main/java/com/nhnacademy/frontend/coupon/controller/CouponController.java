@@ -1,12 +1,13 @@
 package com.nhnacademy.frontend.coupon.controller;
 
 import com.nhnacademy.frontend.auth.principal.CustomPrincipal;
+import com.nhnacademy.frontend.common.adapter.UserAdapter; // UserAdapter 임포트
+import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser; // ResponseUser 임포트
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import com.nhnacademy.frontend.coupon.service.CouponService;
-import com.nhnacademy.frontend.user.adapter.UserAdapter; // 추가
-import com.nhnacademy.frontend.user.dto.response.UserResponse; // 추가
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity; // ResponseEntity 임포트
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +34,7 @@ public class CouponController {
     private static final String REDIRECT_LOGIN      = "redirect:/auth/login";
 
     private final CouponService couponService;
-    private final UserAdapter userAdapter; // 추가
+    private final UserAdapter userAdapter; // UserAdapter 주입
 
     @GetMapping
     public String getMyActiveCoupons(Authentication authentication, Model model) {
@@ -57,14 +58,16 @@ public class CouponController {
 
         // principal.getUsername() (로그인 ID)를 사용하여 userNo 조회
         Long userNo = null;
+        ResponseEntity<ResponseUser> responseEntity = null; // 변수 선언 위치 변경
         try {
-            UserResponse userResponse = userAdapter.getUserByUserId(principal.getUsername());
-            userNo = userResponse.getUserNo();
+            responseEntity = userAdapter.getUser(principal.getUsername()); // responseEntity에 값 할당
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                userNo = responseEntity.getBody().getUserNo();
+            } else {
+                log.error("CouponController: Failed to get ResponseUser for username '{}'. Status: {}", principal.getUsername(), responseEntity.getStatusCode());
+            }
         } catch (Exception e) {
             log.error("CouponController: Failed to get userNo for username '{}'. Error: {}", principal.getUsername(), e.getMessage());
-            model.addAttribute("errorMessage", "사용자 정보를 가져오는 데 실패했습니다. 쿠폰 목록을 불러올 수 없습니다.");
-            model.addAttribute(ACTIVE_COUPONS, Collections.emptyList());
-            return VIEW_MY_COUPON;
         }
 
         if (userNo == null) {
@@ -101,13 +104,15 @@ public class CouponController {
 
         // principal.getUsername() (로그인 ID)를 사용하여 userNo 조회
         Long userNo = null;
+        ResponseEntity<ResponseUser> responseEntity = null; // 변수 선언 위치 변경
         try {
-            UserResponse userResponse = userAdapter.getUserByUserId(principal.getUsername());
-            userNo = userResponse.getUserNo();
+            responseEntity = userAdapter.getUser(principal.getUsername()); // responseEntity에 값 할당
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                userNo = responseEntity.getBody().getUserNo();
+            }
         } catch (Exception e) {
+            log.error("CouponController: Failed to get ResponseUser for username '{}' during coupon issue. Status: {}", principal.getUsername(), responseEntity.getStatusCode());
             log.error("CouponController: Failed to get userNo for username '{}' during coupon issue. Error: {}", principal.getUsername(), e.getMessage());
-            redirect.addFlashAttribute(FLASH_ATTR_ERROR, "쿠폰 발급에 실패했습니다. (오류: 사용자 ID를 가져오지 못했습니다.)");
-            return REDIRECT_MY_COUPONS;
         }
 
         if (userNo == null) {
