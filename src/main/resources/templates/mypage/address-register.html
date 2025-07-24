@@ -6,39 +6,13 @@
     <title layout:fragment="title">주소 등록</title>
 </head>
 
-<div layout:fragment="content" class="container py-5">
+<div layout:fragment="content" class="container py-5 flex-grow-1">
     <div class="text-center mb-4">
         <h1 class="h2 fw-bold">주소 등록</h1>
         <hr>
     </div>
 
-    <!-- 마이페이지 메뉴 -->
-    <ul class="list-group mb-4">
-        <li class="list-group-item">
-            <a href="/mypage/address" class="text-decoration-none">회원주소 관리</a>
-        </li>
-        <li class="list-group-item">
-            <a href="/mypage/point" class="text-decoration-none">회원포인트내역 확인</a>
-        </li>
-        <li class="list-group-item">
-            <a href="/mypage/grade" class="text-decoration-none">회원등급 확인</a>
-        </li>
-        <li class="list-group-item">
-            <a href="/mypage/orders" class="text-decoration-none">주문관리</a>
-        </li>
-        <li class="list-group-item">
-            <a href="/mypage/edit" class="text-decoration-none">회원정보 수정(테스트용임 추후 삭제필요)</a>
-        </li>
-        <li class="list-group-item">
-            <a href="/mypage/myinfo" class="text-decoration-none">내 정보</a>
-        </li>
-        <li class="list-group-item">
-            <a th:href="@{/reviews/user/{userId}(userId=${loginUserId})}" class="text-decoration-none">내 리뷰</a>
-        </li>
-        <li class="list-group-item">
-            <a th:href="@{/mypage/book-likes}" class="text-decoration-none">내 좋아요 목록</a>
-        </li>
-    </ul>
+    
 
     <form th:action="@{/mypage/address/register}" method="post" class="needs-validation" novalidate>
         <div class="mb-3">

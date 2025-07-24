@@ -145,7 +145,7 @@ public class MypageController {
 
     @GetMapping("/address/register")
     public String mypageAddressRegisterForm() {
-        return "address-register";
+        return "mypage/address-register";
     }
 
     @GetMapping("/point")
