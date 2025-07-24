@@ -1,42 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>내 등급</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-        .info-container {
-            max-width: 500px;
-            margin: auto;
-        }
-        .info-item {
-            margin-bottom: 15px;
-        }
-        .label {
-            font-weight: bold;
-        }
-    </style>
+    <title layout:fragment="title">내 등급</title>
 </head>
-<body>
-<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-<div class="info-container">
-    <h1>내 등급</h1>
-    <div class="info-item">
-        <span class="label">내 등급:</span>
-        <span th:text="${user.userGradeName}">userGradeName</span>
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-4">
+        <h1 class="h2 fw-bold">내 등급</h1>
+        <hr>
     </div>
-    <div class="info-item">
-        <span class="label">내 등급 혜택:</span>
-        <span th:text="${pointType.typeName}">typeName</span><br>
-        <span th:text="' (적립률: ' + ${pointType.earningRate} + '%)'">earningRate</span>
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">등급 정보 상세</h5>
+            <dl class="row">
+                <dt class="col-sm-4">내 등급:</dt>
+                <dd class="col-sm-8" th:text="${user.userGradeName}"></dd>
+
+                <dt class="col-sm-4">내 등급 혜택:</dt>
+                <dd class="col-sm-8">
+                    <span th:text="${pointType.typeName}"></span>
+                    <span th:text="' (적립률: ' + ${pointType.earningRate} + '%)'"></span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <form th:action="@{/mypage/grade/update}" method="post">
+            <button type="submit" id="submitBtn" class="btn btn-primary">변경하기-테스트 시 사용</button>
+        </form>
+        <a href="/mypage" class="btn btn-secondary">마이페이지로 돌아가기</a>
     </div>
 </div>
-<form th:action="@{/mypage/grade/update}" method="post">
-    <button type="submit" id="submitBtn" class="btn btn-primary">변경하기-테스트 시 사용</button>
-</form>
-
-</body>
 </html>
