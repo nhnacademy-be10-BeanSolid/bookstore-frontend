@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
 
 import java.util.Collections;
 
@@ -65,53 +67,44 @@ class AdminPointTypeControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void registerPointType_validRequest_redirects() throws Exception {
+    void registerPointType_validRequest_returnsOk() throws Exception {
+        PointTypeCreateRequestDto requestDto = new PointTypeCreateRequestDto("적립", 100, 1, "VIP", true);
         doNothing().when(adminService).addPointType(any(PointTypeCreateRequestDto.class));
 
-        mockMvc.perform(post("/admin/pointtype/register")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("typeName", "적립")
-                        .param("earningPoint", "100")
-                        .param("earningRate", "1")
-                        .param("gradeName", "VIP")
-                        .param("isActive", "true"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/pointtype"));
+        mockMvc.perform(post("/admin/pointtype")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void deletePointType_redirects() throws Exception {
+    void deletePointType_returnsOk() throws Exception {
         doNothing().when(adminService).deletePointType(1L);
 
         mockMvc.perform(delete("/admin/pointtype/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/pointtype"));
+                .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void changeActive_redirects() throws Exception {
+    void changeActive_returnsOk() throws Exception {
         doNothing().when(adminService).changeActive(2L);
 
         mockMvc.perform(put("/admin/pointtype/2/isactive"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/pointtype"));
+                .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    void editPointType_post_redirects() throws Exception {
+    void editPointType_returnsOk() throws Exception {
+        PointTypeUpdateRequestDto requestDto = new PointTypeUpdateRequestDto("수정타입", 200, 2, "GOLD");
         doNothing().when(adminService).updatePointType(eq(3L), any(PointTypeUpdateRequestDto.class));
 
-        mockMvc.perform(put("/admin/pointtype/3/edit")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("typeName", "수정타입")
-                        .param("earningPoint", "200")
-                        .param("earningRate", "2")
-                        .param("gradeName", "GOLD"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/pointtype"));
+        mockMvc.perform(put("/admin/pointtype/3")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
     }
 
     @Test
