@@ -5,6 +5,7 @@ import com.nhnacademy.frontend.order.dto.response.OrderSummaryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin/orders")
 @RequiredArgsConstructor
-public class OrderAdminController {
+public class AdminOrderController {
 
     private final OrderAdminService orderAdminService;
 
     @GetMapping
-    public String orderList(Pageable pageable, Model model) {
+    public String orderList(@PageableDefault Pageable pageable, Model model) {
         Page<OrderSummaryResponse> orders = orderAdminService.getAllOrders(pageable);
         model.addAttribute("orders", orders);
 
