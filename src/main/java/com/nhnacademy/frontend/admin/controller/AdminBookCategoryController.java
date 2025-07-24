@@ -63,7 +63,7 @@ public class AdminBookCategoryController {
         if (bindingResult.hasErrors()) {
             throw new ValidationFailedException(bindingResult);
         }
-        BookCategoryResponseDto response = bookService.createCategory(request);
+        bookService.createCategory(request);
         log.debug("Category Create Success : {}", request.getCategoryName());
         return ResponseEntity.ok().build();
     }
