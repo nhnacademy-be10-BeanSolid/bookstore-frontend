@@ -5,7 +5,6 @@ import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeCreateRe
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
-import feign.FeignException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/pointtype")
