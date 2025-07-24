@@ -343,7 +343,7 @@ class MyPageControllerTest {
     void mypageAddressRegisterForm() throws Exception {
         mockMvc.perform(get("/mypage/address/register"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("address-register"));
+                .andExpect(view().name("mypage/address-register"));
     }
 
     @Test
