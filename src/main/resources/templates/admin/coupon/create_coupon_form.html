@@ -1,119 +1,117 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
     <title>쿠폰 정책 생성</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form div { margin-bottom: 10px; }
-        label { display: inline-block; width: 150px; }
-        input[type="text"], input[type="number"], select { width: 200px; padding: 5px; }
-        button { padding: 8px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
-        #selectedBooksList { border: 1px solid #ccc; padding: 10px; min-height: 50px; margin-top: 10px; }
-        .selected-book-item { display: flex; justify-content: space-between; align-items: center; padding: 5px; border-bottom: 1px dashed #eee; }
-        .selected-book-item button { background-color: #dc3545; margin-left: 10px; }
-        .success-message { color: green; font-weight: bold; margin-bottom: 15px; }
+    <style layout:fragment="css">
+        /* 추가적인 CSS가 필요하면 여기에 작성 */
     </style>
 </head>
 <body>
-    <h1>새 쿠폰 정책 생성</h1>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="card-title mb-0">새 쿠폰 정책 생성</h1>
+                    </div>
+                    <div class="card-body">
+                        <div id="messageContainer" class="alert" style="display: none;" role="alert"></div>
 
-    <div id="messageContainer" class="success-message" style="display: none;"></div>
+                        <form th:action="@{/admin/coupons/create}" th:object="${couponPolicyCreateRequest}" method="post">
+                            <div class="mb-3">
+                                <label for="couponName" class="form-label">쿠폰 이름:</label>
+                                <input type="text" id="couponName" th:field="*{couponName}" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponDiscountType" class="form-label">할인 유형:</label>
+                                <select id="couponDiscountType" th:field="*{couponDiscountType}" class="form-select" required>
+                                    <option value="AMOUNT">정액 할인</option>
+                                    <option value="PERCENT">정률 할인</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponDiscountAmount" id="discountAmountLabel" class="form-label">할인 금액 (원):</label>
+                                <input type="number" id="couponDiscountAmount" th:field="*{couponDiscountAmount}" class="form-control" required placeholder="예: 10000 (원)">
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponMinimumOrderAmount" class="form-label">최소 주문 금액:</label>
+                                <input type="number" id="couponMinimumOrderAmount" th:field="*{couponMinimumOrderAmount}" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponMaximumDiscountAmount" class="form-label">최대 할인 금액:</label>
+                                <input type="number" id="couponMaximumDiscountAmount" th:field="*{couponMaximumDiscountAmount}" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponScope" class="form-label">쿠폰 적용 범위:</label>
+                                <select id="couponScope" th:field="*{couponScope}" class="form-select" required>
+                                    <option value="ALL">전체</option>
+                                    <option value="BOOK">도서</option>
+                                    <option value="CATEGORY">카테고리</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponExpiredAt" class="form-label">만료일:</label>
+                                <input type="datetime-local" id="couponExpiredAt" th:field="*{couponExpiredAt}" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponIssuePeriod" class="form-label">발급 기간 (일):</label>
+                                <input type="number" id="couponIssuePeriod" th:field="*{couponIssuePeriod}" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="couponType" class="form-label">쿠폰 유형:</label>
+                                <select id="couponType" th:field="*{couponType}" class="form-select" required>
+                                    <option value="GENERAL">일반</option>
+                                    <option value="WELCOME">웰컴</option>
+                                    <option value="BIRTHDAY">생일</option>
+                                </select>
+                            </div>
 
-    <form th:action="@{/admin/coupons/create}" th:object="${couponPolicyCreateRequest}" method="post">
-        <div>
-            <label for="couponName">쿠폰 이름:</label>
-            <input type="text" id="couponName" th:field="*{couponName}" required>
-        </div>
-        <div>
-            <label for="couponDiscountType">할인 유형:</label>
-            <select id="couponDiscountType" th:field="*{couponDiscountType}" required>
-                <option value="AMOUNT">정액 할인</option>
-                <option value="PERCENT">정률 할인</option>
-            </select>
-        </div>
-        <div>
-            <label for="couponDiscountAmount" id="discountAmountLabel">할인 금액 (원):</label>
-            <input type="number" id="couponDiscountAmount" th:field="*{couponDiscountAmount}" required placeholder="예: 10000 (원)">
-        </div>
-        <div>
-            <label for="couponMinimumOrderAmount">최소 주문 금액:</label>
-            <input type="number" id="couponMinimumOrderAmount" th:field="*{couponMinimumOrderAmount}">
-        </div>
-        <div>
-            <label for="couponMaximumDiscountAmount">최대 할인 금액:</label>
-            <input type="number" id="couponMaximumDiscountAmount" th:field="*{couponMaximumDiscountAmount}">
-        </div>
-        <div>
-            <label for="couponScope">쿠폰 적용 범위:</label>
-            <select id="couponScope" th:field="*{couponScope}" required>
-                <option value="ALL">전체</option>
-                <option value="BOOK">도서</option>
-                <option value="CATEGORY">카테고리</option>
-            </select>
-        </div>
-        <div>
-            <label for="couponExpiredAt">만료일:</label>
-            <input type="datetime-local" id="couponExpiredAt" th:field="*{couponExpiredAt}">
-        </div>
-        <div>
-            <label for="couponIssuePeriod">발급 기간 (일):</label>
-            <input type="number" id="couponIssuePeriod" th:field="*{couponIssuePeriod}">
-        </div>
-        <div>
-            <label for="couponType">쿠폰 유형:</label>
-            <select id="couponType" th:field="*{couponType}" required>
-                <option value="GENERAL">일반</option>
-                <option value="WELCOME">웰컴</option>
-                <option value="BIRTHDAY">생일</option>
-            </select>
-        </div>
+                            <!-- Book Selection Section -->
+                            <div id="bookSelectionSection" class="mb-3" style="display: none;">
+                                <h2 class="h5">도서 선택</h2>
+                                <div class="input-group mb-3">
+                                    <select id="bookSelect" multiple size="5" class="form-select">
+                                        <option th:each="book : ${allBooks}" th:value="${book.bookId}" th:text="|${book.title} (${book.author})|"></option>
+                                    </select>
+                                    <button type="button" id="addSelectedBooksBtn" class="btn btn-outline-primary">선택된 도서 추가</button>
+                                </div>
+                                <h3 class="h6">선택된 도서:</h3>
+                                <div id="selectedBooksList" class="list-group">
+                                    <!-- 선택된 도서가 여기에 표시됩니다 -->
+                                </div>
+                                <input type="hidden" id="bookIdsInput" th:field="*{bookIds}">
+                            </div>
 
-        <!-- Book Selection Section -->
-        <div id="bookSelectionSection" style="display: none;">
-            <h2>도서 선택</h2>
-            <div>
-                <label for="bookSelect">도서 목록:</label>
-                <select id="bookSelect" multiple size="5">
-                    <option th:each="book : ${allBooks}" th:value="${book.bookId}" th:text="|${book.title} (${book.author})|"></option>
-                </select>
-                <button type="button" id="addSelectedBooksBtn">선택된 도서 추가</button>
+                            <!-- Category Selection Section -->
+                            <div id="categorySelectionSection" class="mb-3" style="display: none;">
+                                <h2 class="h5">카테고리 선택</h2>
+                                <div class="input-group mb-3">
+                                    <select id="categorySelect" multiple size="5" class="form-select">
+                                        <option th:each="category : ${allCategories}" th:value="${category.categoryId}" th:text="${category.categoryName}"></option>
+                                    </select>
+                                    <button type="button" id="addSelectedCategoriesBtn" class="btn btn-outline-primary">선택된 카테고리 추가</button>
+                                </div>
+                                <h3 class="h6">선택된 카테고리:</h3>
+                                <div id="selectedCategoriesList" class="list-group">
+                                    <!-- 선택된 카테고리가 여기에 표시됩니다 -->
+                                </div>
+                                <input type="hidden" id="categoryIdsInput" th:field="*{categoryIds}">
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="submit" class="btn btn-primary">쿠폰 생성</button>
+                                <a th:href="@{/admin/coupons}" class="btn btn-secondary">목록으로 돌아가기</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <h3>선택된 도서:</h3>
-            <div id="selectedBooksList">
-                <!-- 선택된 도서가 여기에 표시됩니다 -->
-            </div>
-            <input type="hidden" id="bookIdsInput" th:field="*{bookIds}">
         </div>
+    </div>
 
-        <!-- Category Selection Section -->
-        <div id="categorySelectionSection" style="display: none;">
-            <h2>카테고리 선택</h2>
-            <div>
-                <label for="categorySelect">카테고리 목록:</label>
-                <select id="categorySelect" multiple size="5">
-                    <option th:each="category : ${allCategories}" th:value="${category.categoryId}" th:text="${category.categoryName}"></option>
-                </select>
-                <button type="button" id="addSelectedCategoriesBtn">선택된 카테고리 추가</button>
-            </div>
-            <h3>선택된 카테고리:</h3>
-            <div id="selectedCategoriesList">
-                <!-- 선택된 카테고리가 여기에 표시됩니다 -->
-            </div>
-            <input type="hidden" id="categoryIdsInput" th:field="*{categoryIds}">
-        </div>
-
-        <div>
-            <button type="submit">쿠폰 생성</button>
-            <a th:href="@{/admin/coupons}" class="btn btn-secondary">목록으로 돌아가기</a>
-        </div>
-    </form>
-
-    <script>
+    <script layout:fragment="script">
         const discountTypeSelect = document.getElementById('couponDiscountType');
         const discountAmountLabel = document.getElementById('discountAmountLabel');
-
         const discountAmountInput = document.getElementById('couponDiscountAmount');
 
         discountTypeSelect.addEventListener('change', function() {
@@ -195,10 +193,10 @@
                     if (!selectedBookIds.has(bookId)) {
                         selectedBookIds.add(bookId);
                         const selectedBookItem = document.createElement('div');
-                        selectedBookItem.classList.add('selected-book-item');
+                        selectedBookItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
                         selectedBookItem.innerHTML = `
                             <span>${bookTitle} (ID: ${bookId})</span>
-                            <button type="button" data-book-id="${bookId}" class="remove-book-btn">삭제</button>
+                            <button type="button" data-book-id="${bookId}" class="btn btn-sm btn-danger remove-book-btn">삭제</button>
                         `;
                         selectedBooksListDiv.appendChild(selectedBookItem);
                         updateBookIdsInput();
@@ -212,7 +210,7 @@
             if (event.target.classList.contains('remove-book-btn')) {
                 const bookIdToRemove = event.target.dataset.bookId;
                 selectedBookIds.delete(bookIdToRemove);
-                event.target.closest('.selected-book-item').remove();
+                event.target.closest('.list-group-item').remove();
                 updateBookIdsInput();
             }
         });
@@ -226,10 +224,10 @@
                     if (!selectedCategoryIds.has(categoryId)) {
                         selectedCategoryIds.add(categoryId);
                         const selectedCategoryItem = document.createElement('div');
-                        selectedCategoryItem.classList.add('selected-category-item');
+                        selectedCategoryItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
                         selectedCategoryItem.innerHTML = `
                             <span>${categoryName} (ID: ${categoryId})</span>
-                            <button type="button" data-category-id="${categoryId}" class="remove-category-btn">삭제</button>
+                            <button type="button" data-category-id="${categoryId}" class="btn btn-sm btn-danger remove-category-btn">삭제</button>
                         `;
                         selectedCategoriesListDiv.appendChild(selectedCategoryItem);
                         updateCategoryIdsInput();
@@ -242,7 +240,7 @@
             if (event.target.classList.contains('remove-category-btn')) {
                 const categoryIdToRemove = event.target.dataset.categoryId;
                 selectedCategoryIds.delete(categoryIdToRemove);
-                event.target.closest('.selected-category-item').remove();
+                event.target.closest('.list-group-item').remove();
                 updateCategoryIdsInput();
             }
         });
@@ -258,6 +256,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('success') && urlParams.get('success') === 'true') {
             messageContainer.textContent = '쿠폰이 성공적으로 생성되었습니다!';
+            messageContainer.classList.add('alert-success');
             messageContainer.style.display = 'block';
             // 메시지를 잠시 후 사라지게 하려면:
             setTimeout(() => {
@@ -266,6 +265,10 @@
                 history.replaceState({}, document.title, window.location.pathname);
             }, 5000); // 5초 후 사라짐
         }
+
+        // 초기 로드 시 쿠폰 범위에 따라 섹션 표시
+        couponScopeSelect.dispatchEvent(new Event('change'));
     </script>
+</div>
 </body>
 </html>

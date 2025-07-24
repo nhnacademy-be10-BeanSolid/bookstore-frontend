@@ -1,26 +1,52 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8"/>
     <title>결제 실패</title>
-    <style>
-        body { font-family: sans-serif; margin: 40px; text-align: center; }
-        .section { margin: 20px 0; display: inline-block; text-align: left; }
-        .label { font-weight: bold; width: 100px; display: inline-block; }
-        button { margin: 8px; padding: 8px 16px; }
+    <style layout:fragment="css">
+        /* 추가적인 CSS가 필요하면 여기에 작성 */
     </style>
 </head>
 <body>
-<h2 style="color:red;">결제에 실패했습니다 😢</h2>
-<div class="section">
-    <div><span class="label">주문번호:</span> <span th:text="${orderId}">-</span></div>
-    <div><span class="label">결제키:</span> <span th:text="${paymentKey}">-</span></div>
-    <div th:if="${message}">
-        <span class="label">에러메시지:</span> <span th:text="${message}">-</span>
+<div layout:fragment="content">
+    <div class="container mt-5 d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+        <div class="card shadow-lg p-5 text-center" style="max-width: 600px; width: 100%;">
+            <div class="mb-4">
+                <h1 class="card-title h3 mb-2 text-danger">결제에 실패했습니다 😢</h1>
+                <p class="text-muted">결제 처리 중 문제가 발생했습니다.</p>
+            </div>
+
+            <div class="card bg-light border-danger mb-4 text-start">
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">🧾 주문번호:</span>
+                            <span class="text-dark font-monospace" th:text="${orderId}">-</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">🔐 결제키:</span>
+                            <span class="text-dark font-monospace" th:text="${paymentKey}">-</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center" th:if="${message}">
+                            <span class="fw-bold">에러메시지:</span>
+                            <span class="text-danger" th:text="${message}">-</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 col-md-8 mx-auto mt-4">
+                <a th:href="@{/payments/form(orderId=${orderId}, amount=${amount})}" class="btn btn-primary btn-lg">
+                    다시 결제하기
+                </a>
+                <a href="/" class="btn btn-outline-secondary btn-lg">
+                    홈으로 가기
+                </a>
+            </div>
+
+            <footer class="mt-4 text-muted small">
+                © 2025 Beansolid Bookstore. All rights reserved.
+            </footer>
+        </div>
     </div>
 </div>
-<button th:onclick="'location.href=\'/payments/form?orderId=' + ${orderId} + '&amount=' + ${amount}'">
-    다시 결제하기
-</button>
 </body>
 </html>
