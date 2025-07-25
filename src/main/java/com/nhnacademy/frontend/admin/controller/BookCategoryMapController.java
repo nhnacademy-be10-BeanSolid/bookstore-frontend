@@ -5,6 +5,7 @@ import com.nhnacademy.frontend.common.adapter.dto.book.response.BookCategoryMapR
 import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +26,18 @@ public class BookCategoryMapController {
     }
 
     @PostMapping
-    public String addCategoryFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookCategoryMapCreateRequestDto request) {
+    @ResponseBody // @ResponseBody 추가
+    public ResponseEntity<Void> addCategoryFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookCategoryMapCreateRequestDto request) {
         bookService.createBookCategoryMap(bookId, request);
         log.debug("Create category from book success - bookId {}, categoryId {}" , bookId, request.getCategoryId());
-        return "redirect:/admin/books/" + bookId + "/categories";
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{categoryId}")
-    public String removeCategoryFromBook(@PathVariable("bookId") Long bookId, @PathVariable("categoryId") Long categoryId) {
+    @ResponseBody // @ResponseBody 추가
+    public ResponseEntity<Void> removeCategoryFromBook(@PathVariable("bookId") Long bookId, @PathVariable("categoryId") Long categoryId) {
         bookService.deleteBookCategoryMap(bookId, categoryId);
         log.debug("Remove category from book success - bookId {}, categoryId {}" , bookId, categoryId);
-        return "redirect:/admin/books/" + bookId + "/categories";
+        return ResponseEntity.ok().build();
     }
 }
