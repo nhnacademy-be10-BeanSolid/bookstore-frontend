@@ -67,7 +67,6 @@ public class SecurityConfig {
                         .requestMatchers("/books/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/reviews/**").permitAll()
-                        .requestMatchers("/reviews/**").permitAll()
                         .requestMatchers("/search/**").permitAll()
                         .requestMatchers("/categories/**").permitAll()
                         .anyRequest().authenticated()
