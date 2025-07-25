@@ -60,7 +60,7 @@ class PaymentControllerTest {
                 3000
         );
 
-        when(userService.getCurrentUserPoints()).thenReturn(1000L);
+//        when(userService.getCurrentUserPoints()).thenReturn(1000L);
 
         mockMvc.perform(get("/payments/form")
                         .flashAttr("orderResponse", orderResponse))
