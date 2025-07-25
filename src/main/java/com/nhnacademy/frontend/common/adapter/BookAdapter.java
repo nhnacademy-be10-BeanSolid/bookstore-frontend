@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.common.adapter;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.SimpleBookResponseDto;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookSearchResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -77,9 +78,9 @@ public interface BookAdapter {
 
     // 외부 도서 검색
     @GetMapping("/book-api/admin/books/search")
-    BookSearchResponseDto searchBooks(
-            @RequestParam String query,
-            @RequestParam Integer start);
+    BookSearchResponseDto searchAladinBooks(@RequestParam("query") String query,
+                                            @RequestParam(value = "start", defaultValue = "1") Integer start,
+                                            @RequestParam(value = "MaxResults", defaultValue = "10") Integer maxResults);
 
     // 도서 업데이트
     @PutMapping("/book-api/admin/books/{bookId}")
@@ -142,4 +143,8 @@ public interface BookAdapter {
 
     @GetMapping("/book-api/users")
     ResponseEntity<Page<BookLikeResponse>> getBookLikes(Pageable pageable);
+
+    // 카테고리 이름으로 아이디 반환
+    @GetMapping("/book-api/categories/id")
+    Long getCategoryIdByName(@RequestParam("name") String categoryName);
 }

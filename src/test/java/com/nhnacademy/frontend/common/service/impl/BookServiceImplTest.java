@@ -197,16 +197,32 @@ class BookServiceImplTest {
     void searchNaverBooks_Success() {
         String query = "소설";
         Integer start = 1;
-        BookSearchResponseDto expected = new BookSearchResponseDto(100, 1, 20,
-                List.of(new BookItemResponseDto("제목", "링크",
-                        "이미지", "작가", "출판사",
-                        "출판일", "isbn", "설명")));
-        when(bookAdapter.searchBooks(query, start)).thenReturn(expected);
+        AladinItemDto dto = new AladinItemDto(
+                "제목", // title
+                "링크", // link
+                "작가", // author
+                "출판일", // pubDate
+                "설명", // description
+                "1234567890", // isbn (10자리)
+                "9781234567897",  // isbn13 (13자리)
+                27000, // priceSales
+                30000, // priceStandard
+                "이미지", // cover
+                "출판사", // publisher
+                51320 // categoryId
+        );
 
-        BookSearchResponseDto result = bookService.searchNaverBooks(query, start);
+        BookSearchResponseDto expected = new BookSearchResponseDto(
+                "제목", 100, 1, 10,
+                "소설", List.of(dto)
+        );
+
+        when(bookAdapter.searchAladinBooks(query, start, 100)).thenReturn(expected);
+
+        BookSearchResponseDto result = bookService.getBookSearchResponseDto(query, start, 100);
 
         assertThat(result).isEqualTo(expected);
-        verify(bookAdapter).searchBooks(query, start);
+        verify(bookAdapter).searchAladinBooks(query, start, 100);
     }
 
     @Test
