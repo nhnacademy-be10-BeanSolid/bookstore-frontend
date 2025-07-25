@@ -196,7 +196,6 @@
         document.querySelector('[name="image"]').value = item.cover;
         document.querySelector('[name="originalPrice"]').value = item.priceStandard ?? '';
         document.querySelector('[name="salePrice"]').value = item.priceSales ?? '';
-        document.querySelector('[name="categoryIds"]').value = item.categoryId ?? '';
 
         const modalEl = document.getElementById('bookSearchModal');
         const modal = bootstrap.Modal.getInstance(modalEl);

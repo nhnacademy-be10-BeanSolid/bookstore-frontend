@@ -11,7 +11,6 @@ public record AladinItemDto(
         Integer priceSales, // 판매가
         Integer priceStandard, // 정가
         String cover,
-        String publisher,
-        Integer categoryId
+        String publisher
 ) {
 }
