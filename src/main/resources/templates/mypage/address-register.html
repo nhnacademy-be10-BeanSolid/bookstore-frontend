@@ -12,56 +12,58 @@
         <hr>
     </div>
 
-    
-
-    <form th:action="@{/mypage/address/register}" method="post" class="needs-validation" novalidate>
+    <form th:action="@{/mypage/address/register}" method="post" class="needs-validation" novalidate id="addressForm">
+        <!-- 별칭 -->
         <div class="mb-3">
             <label for="addressNickName" class="form-label">별칭</label>
-            <input type="text" id="addressNickName" name="addressNickName" class="form-control" placeholder="예: 집, 회사" required>
-            <div class="invalid-feedback">
-                별칭을 입력해주세요.
-            </div>
+            <input type="text" id="addressNickName" name="addressNickName"
+                   class="form-control" placeholder="예: 집, 회사" required>
+            <div class="invalid-feedback">별칭을 입력해주세요.</div>
         </div>
 
+        <!-- 우편번호 + 찾기 -->
         <div class="mb-3 row">
             <label for="sample6_postcode" class="form-label">우편번호</label>
             <div class="col-sm-6">
-                <input type="text" id="sample6_postcode" class="form-control" placeholder="우편번호" required readonly>
+                <input type="text" id="sample6_postcode" name="postCode"
+                       class="form-control" placeholder="우편번호" required readonly>
             </div>
             <div class="col-sm-6">
-                <button type="button" onclick="sample6_execDaumPostcode()" class="btn btn-outline-secondary w-100">우편번호 찾기</button>
+                <button type="button" onclick="sample6_execDaumPostcode()"
+                        class="btn btn-outline-secondary w-100">우편번호 찾기</button>
             </div>
-            <div class="invalid-feedback">
-                우편번호를 입력해주세요.
-            </div>
+            <div class="invalid-feedback">우편번호를 입력해주세요.</div>
         </div>
 
+        <!-- 기본 주소 -->
         <div class="mb-3">
             <label for="sample6_address" class="form-label">주소</label>
-            <input type="text" id="sample6_address" class="form-control" placeholder="주소" required readonly>
-            <div class="invalid-feedback">
-                주소를 입력해주세요.
-            </div>
+            <input type="text" id="sample6_address" name="address"
+                   class="form-control" placeholder="주소" required readonly>
+            <div class="invalid-feedback">주소를 입력해주세요.</div>
         </div>
 
+        <!-- 상세주소 (name="addressDetail") -->
         <div class="mb-3">
             <label for="sample6_detailAddress" class="form-label">상세주소</label>
-            <input type="text" id="sample6_detailAddress" class="form-control" placeholder="상세주소">
+            <input type="text" id="sample6_detailAddress" name="addressDetail"
+                   class="form-control" placeholder="상세주소" required maxlength="255">
+            <div class="invalid-feedback">상세주소를 입력해주세요.</div>
         </div>
 
+        <!-- 참고항목 -->
         <div class="mb-3">
             <label for="sample6_extraAddress" class="form-label">참고항목</label>
-            <input type="text" id="sample6_extraAddress" class="form-control" placeholder="참고항목" readonly>
+            <input type="text" id="sample6_extraAddress" name="reference"
+                   class="form-control" placeholder="참고항목" readonly>
         </div>
 
-        <input type="hidden" id="addressDetail" name="addressDetail">
+        <!-- userId -->
         <input type="hidden" name="userId" th:value="${loginUserId}" />
 
         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-            <button type="submit" id="submitBtn" class="btn btn-primary me-md-2">등록하기</button>
-            <a th:href="@{/mypage/address}" class="btn btn-outline-secondary">
-                뒤로가기
-            </a>
+            <button type="submit" class="btn btn-primary me-md-2">등록하기</button>
+            <a th:href="@{/mypage/address}" class="btn btn-outline-secondary">뒤로가기</a>
         </div>
     </form>
 </div>
@@ -69,50 +71,39 @@
 <div layout:fragment="scripts">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-            const postcode = document.getElementById('sample6_postcode').value.trim();
-            const address = document.getElementById('sample6_address').value.trim();
-            const detailAddress = document.getElementById('sample6_detailAddress').value.trim();
-            const extraAddress = document.getElementById('sample6_extraAddress').value.trim();
-
-            const fullAddress = [postcode, address, detailAddress, extraAddress].filter(e => e).join(' ');
-            document.getElementById('addressDetail').value = fullAddress;
-        });
-
+        // 우편번호 팝업
         function sample6_execDaumPostcode() {
             new daum.Postcode({
                 oncomplete: function(data) {
-                    var addr = '';
-                    var extraAddr = '';
-
+                    let addr = data.roadAddress;
+                    let extra = '';
                     if (data.userSelectedType === 'R') {
-                        addr = data.roadAddress;
-                    } else {
-                        addr = data.roadAddress;
+                        if (data.bname && /[동|로|가]$/g.test(data.bname)) extra += data.bname;
+                        if (data.buildingName && data.apartment==='Y')
+                            extra += (extra? ', ' : '') + data.buildingName;
+                        extra = extra? ` (${extra})` : '';
                     }
-
-                    if(data.userSelectedType === 'R'){
-                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                            extraAddr += data.bname;
-                        }
-                        if(data.buildingName !== '' && data.apartment === 'Y'){
-                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                        }
-                        if(extraAddr !== ''){
-                            extraAddr = ' (' + extraAddr + ')';
-                        }
-                        document.getElementById("sample6_extraAddress").value = extraAddr;
-                    } else {
-                        document.getElementById("sample6_extraAddress").value = '';
-                    }
-
-                    document.getElementById('sample6_postcode').value = data.zonecode;
-                    document.getElementById("sample6_address").value = addr;
-                    document.getElementById("sample6_detailAddress").focus();
+                    document.getElementById('sample6_postcode').value   = data.zonecode;
+                    document.getElementById('sample6_address').value    = addr;
+                    document.getElementById('sample6_extraAddress').value = extra;
+                    document.getElementById('sample6_detailAddress').focus();
                 }
             }).open();
         }
+
+        // 폼 제출 시 우편번호+주소+상세주소 합치기
+        document.getElementById('addressForm').addEventListener('submit', function(e) {
+            const postcode      = document.getElementById('sample6_postcode').value.trim();
+            const address       = document.getElementById('sample6_address').value.trim();
+            const detailAddress = document.getElementById('sample6_detailAddress').value.trim();
+            const extra         = document.getElementById('sample6_extraAddress').value.trim();
+
+            // 합친 문자열 생성
+            const full = [postcode, address, detailAddress, extra].filter(v => v).join(' ');
+            // addressDetail 필드에 할당
+            document.getElementById('sample6_detailAddress').value = full;
+            // 주소 별도 필드 전송 그대로 유지되길 원치 않으면 address 필드 name 제거 가능
+        });
     </script>
 </div>
-
 </html>
