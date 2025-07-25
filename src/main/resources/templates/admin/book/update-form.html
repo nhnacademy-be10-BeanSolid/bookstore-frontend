@@ -5,6 +5,8 @@
     <title th:text="'도서 수정 - ' + ${book.title}">도서 수정</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toast UI Editor CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </head>
 <body>
 <div class="container my-5" style="max-width: 700px;">
@@ -22,7 +24,8 @@
         </div>
         <div class="mb-3">
             <label class="form-label">설명</label>
-            <textarea name="description" rows="4" class="form-control" th:text="${book.description}" required></textarea>
+            <input type="hidden" name="description" id="description" th:value="${book.description}"/>
+            <div id="editor"></div>
         </div>
         <div class="mb-3">
             <label class="form-label">목차</label>
@@ -74,5 +77,26 @@
 </div>
 <!-- Bootstrap JS (optional) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
+<script>
+    // 기존 설명 데이터 가져오기
+    const initialDescription = document.getElementById('description').value;
+
+    // 에디터 초기화 (기존 값으로 초기값 설정)
+    const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        height: '400px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: initialDescription, // 기존 설명 채워 넣기// 미리보기 스타일
+        hideModeSwitch: true,
+    });
+
+    // 폼 제출 시 hidden input에 에디터 내용 반영
+    document.querySelector('form').addEventListener('submit', function () {
+        document.getElementById('description').value = editor.getHTML();
+    });
+</script>
 </body>
 </html>
