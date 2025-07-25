@@ -26,7 +26,7 @@ public class BookCategoryMapController {
     }
 
     @PostMapping
-    @ResponseBody // @ResponseBody 추가
+    @ResponseBody
     public ResponseEntity<Void> addCategoryFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookCategoryMapCreateRequestDto request) {
         bookService.createBookCategoryMap(bookId, request);
         log.debug("Create category from book success - bookId {}, categoryId {}" , bookId, request.getCategoryId());
@@ -34,7 +34,7 @@ public class BookCategoryMapController {
     }
 
     @DeleteMapping("/{categoryId}")
-    @ResponseBody // @ResponseBody 추가
+    @ResponseBody
     public ResponseEntity<Void> removeCategoryFromBook(@PathVariable("bookId") Long bookId, @PathVariable("categoryId") Long categoryId) {
         bookService.deleteBookCategoryMap(bookId, categoryId);
         log.debug("Remove category from book success - bookId {}, categoryId {}" , bookId, categoryId);
