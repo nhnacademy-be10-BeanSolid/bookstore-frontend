@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,11 +27,11 @@ public class AdminBookTagController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("request", new BookTagCreateRequestDto());
-        return "admin/tag/create-form";
+        return "admin/tag/tag-create-form";
     }
 
     @GetMapping
-    public String getAllTags(Pageable pageable, Model model) {
+    public String getAllTags(@PageableDefault Pageable pageable, Model model) {
         Page<BookTagResponseDto> tagList = bookService.getAllBookTags(pageable);
         log.debug("TagListGet Success- page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
         model.addAttribute("tags", tagList.getContent());
@@ -38,20 +40,22 @@ public class AdminBookTagController {
     }
 
     @PostMapping
-    public String createBookTag(@Valid @ModelAttribute BookTagCreateRequestDto request,
+    @ResponseBody
+    public ResponseEntity<Void> createBookTag(@Valid @RequestBody BookTagCreateRequestDto request,
                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationFailedException(bindingResult);
         }
         BookTagResponseDto tag = bookService.createTag(request);
         log.debug("Tag Create Success : {}", tag.toString());
-        return "redirect:/admin/tags";
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{tagId}")
-    public String deleteBookTag(@PathVariable("tagId") Long tagId) {
+    @ResponseBody
+    public ResponseEntity<Void> deleteBookTag(@PathVariable("tagId") Long tagId) {
         bookService.deleteBookTag(tagId);
         log.debug("Tag Delete Success : {}", tagId);
-        return "redirect:/admin/tags";
+        return ResponseEntity.ok().build();
     }
 }

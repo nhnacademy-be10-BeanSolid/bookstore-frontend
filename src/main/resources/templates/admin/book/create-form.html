@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8" />
-    <title>도서 생성</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
-
+    <title layout:fragment="title">도서 생성</title>
 </head>
-<body>
-<div class="container my-5" style="max-width: 700px;">
-    <h1 class="mb-4">도서 등록</h1>
-    <form th:action="@{/admin/books}" method="post" th:object="${book}">
-        <!-- 도서 검색 모달 트리거 -->
+<th:block layout:fragment="content">
+<div class="container py-5 flex-grow-1">
+    <div class="text-center mb-5">
+        <h2 class="h2 fw-bold">도서 등록</h2>
+        <hr>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form id="bookCreateForm" th:action="@{/admin/books}" method="post" th:object="${book}">
+                        <!-- 도서 검색 모달 트리거 -->
         <button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#bookSearchModal">
             도서 검색
         </button>
@@ -103,107 +106,131 @@
             <label class="form-label">이미지 URL</label>
             <input type="text" th:field="*{image}" name="image" class="form-control"/>
         </div>
-        <div>
+        <div class="d-flex gap-2 justify-content-end">
             <button type="submit" class="btn btn-success">도서 등록</button>
             <a href="/admin/books" class="btn btn-secondary ms-2">도서 목록으로</a>
         </div>
     </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+</th:block>
 
-<!-- Bootstrap JS (필수: 모달 등 동작) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-<script>
-    function addCategoryIdInput() {
-        const container = document.getElementById('categoryIdsContainer');
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.name = 'categoryIds';
-        input.className = 'form-control mt-2';
-        input.style.maxWidth = '180px';
-        input.required = true;
-        container.appendChild(input);
-    }
+<th:block layout:fragment="scripts">
+    <!-- Bootstrap JS (필수: 모달 등 동작) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function addCategoryIdInput() {
+                const container = document.getElementById('categoryIdsContainer');
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.name = 'categoryIds';
+                input.className = 'form-control mt-2';
+                input.style.maxWidth = '180px';
+                input.required = true;
+                container.appendChild(input);
+            }
 
-    // 모달 검색 관련
-    let currentPage = 1;
-    const itemsPerPage = 10;
+            // 모달 검색 관련
+            let currentPage = 1;
+            const itemsPerPage = 10;
 
-    const editor = new toastui.Editor({
-        el: document.querySelector('#editor'),
-        height: '400px',
-        initialEditType: 'wysiwyg',
-        previewStyle: 'vertical',
-        initialValue: '', // 필요 시 기존 설명 값 넣기
-    });
-
-    // 폼 제출 시 editor 내용 textarea에 넣기
-    document.querySelector('form').addEventListener('submit', function () {
-        document.getElementById('description').value = editor.getHTML();
-    });
-
-    function searchBook(page = 1) {
-        const keyword = document.getElementById("searchKeyword").value;
-        if (!keyword) {
-            alert("검색어를 입력하세요.");
-            return;
-        }
-
-        const start = (page - 1) * itemsPerPage + 1;
-
-        fetch(`/admin/books-search?query=${encodeURIComponent(keyword)}&start=${start}`)
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById("searchResults");
-                resultsDiv.innerHTML = "";
-
-                currentPage = Math.floor((data.startIndex - 1) / itemsPerPage) + 1;
-                document.getElementById("currentPage").innerText = currentPage;
-
-                document.getElementById("prevPage").disabled = currentPage <= 1;
-                const totalPages = Math.ceil(data.totalResults / itemsPerPage);
-                document.getElementById("nextPage").disabled = currentPage >= totalPages;
-
-                data.item.forEach(item => {
-                    const div = document.createElement("div");
-                    div.className = "border rounded p-2 mb-2 d-flex align-items-center gap-3";
-                    div.innerHTML = `
-                        <img src="${item.cover}" width="60" class="img-thumbnail"/>
-                        <div>
-                            <strong>${item.title}</strong><br/>
-                            ${item.author} / ${item.publisher}
-                        </div>
-                        <button type="button" class="btn btn-outline-success btn-sm ms-auto">이 책 선택</button>
-                    `;
-                    div.querySelector("button").addEventListener("click", () => applyBookInfo(item));
-                    resultsDiv.appendChild(div);
-                });
+            const editor = new toastui.Editor({
+                el: document.querySelector('#editor'),
+                height: '400px',
+                initialEditType: 'wysiwyg',
+                previewStyle: 'vertical',
+                initialValue: '', // 필요 시 기존 설명 값 넣기
             });
-    }
 
-    function changePage(diff) {
-        const newPage = currentPage + diff;
-        if (newPage < 1) return;
-        searchBook(newPage);
-    }
-    function applyBookInfo(item) {
-        document.querySelector('[name="title"]').value = item.title;
-        editor.setHTML(item.description || ''); // ← 에디터에 내용 설정
-        document.querySelector('[name="author"]').value = item.author;
-        document.querySelector('[name="publisher"]').value = item.publisher;
-        document.querySelector('[name="publishAt"]').value = item.pubDate;
-        document.querySelector('[name="isbn"]').value = item.isbn13;
-        document.querySelector('[name="image"]').value = item.cover;
-        document.querySelector('[name="originalPrice"]').value = item.priceStandard ?? '';
-        document.querySelector('[name="salePrice"]').value = item.priceSales ?? '';
-        document.querySelector('[name="categoryIds"]').value = item.categoryId ?? '';
+            // 폼 제출 시 editor 내용 textarea에 넣기
+            document.getElementById('bookCreateForm').addEventListener('submit', function (event) {
+                const editorContent = editor.getHTML();
+                const descriptionTextarea = document.getElementById('description');
+                descriptionTextarea.value = editorContent;
+                event.target.submit(); // 실제 폼 제출
+            });
 
-        const modalEl = document.getElementById('bookSearchModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) {
-            modal.hide();
-        }
-    }
-</script>
-</body>
-</html>
+            window.searchBook = function(page = 1) {
+                const keyword = document.getElementById("searchKeyword").value;
+                if (!keyword) {
+                    alert("검색어를 입력하세요.");
+                    return;
+                }
+
+                const start = (page - 1) * itemsPerPage + 1;
+
+                fetch(`/admin/books-search?query=${encodeURIComponent(keyword)}&start=${start}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const resultsDiv = document.getElementById("searchResults");
+                        resultsDiv.innerHTML = "";
+
+                        currentPage = Math.floor((data.startIndex - 1) / itemsPerPage) + 1;
+                        document.getElementById("currentPage").innerText = currentPage;
+
+                        document.getElementById("prevPage").disabled = currentPage <= 1;
+                        const totalPages = Math.ceil(data.totalResults / itemsPerPage);
+                        document.getElementById("nextPage").disabled = currentPage >= totalPages;
+
+                        (data.item || []).forEach(item => {
+                            const div = document.createElement("div");
+                            div.className = "border rounded p-2 mb-2 d-flex align-items-center gap-3";
+                            div.innerHTML = `
+                                <img src="${item.cover}" width="60" class="img-thumbnail"/>
+                                <div>
+                                    <strong>${item.title}</strong><br/>
+                                    ${item.author} / ${item.publisher}
+                                </div>
+                                <button type="button" class="btn btn-outline-success btn-sm ms-auto">이 책 선택</button>
+                            `;
+                            div.querySelector("button").addEventListener("click", () => window.applyBookInfo(item));
+                            resultsDiv.appendChild(div);
+                        });
+                    });
+            };
+
+            window.changePage = function(diff) {
+                const newPage = currentPage + diff;
+                if (newPage < 1) return;
+                window.searchBook(newPage);
+            };
+            window.applyBookInfo = function(item) {
+                document.querySelector('[name="title"]').value = item.title;
+                const descriptionContent = item.description && item.description.trim() !== '' ? item.description : '상세 설명이 없습니다.';
+                editor.setHTML(descriptionContent); // ← 에디터에 내용 설정
+                document.querySelector('[name="author"]').value = item.author;
+                document.querySelector('[name="publisher"]').value = item.publisher;
+                document.querySelector('[name="publishAt"]').value = item.pubDate;
+                document.querySelector('[name="isbn"]').value = item.isbn13;
+                document.querySelector('[name="image"]').value = item.cover;
+                document.querySelector('[name="originalPrice"]').value = item.priceStandard ?? '';
+                document.querySelector('[name="salePrice"]').value = item.priceSales ?? '';
+                document.querySelector('[name="categoryIds"]').value = item.categoryId ?? '';
+
+                const modalEl = document.getElementById('bookSearchModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) {
+                    modal.hide();
+                } else {
+                    console.log("Modal instance not found.");
+                }
+            };
+
+            // 모달이 완전히 숨겨진 후 이벤트 리스너
+            const bookSearchModalElement = document.getElementById('bookSearchModal');
+            bookSearchModalElement.addEventListener('hidden.bs.modal', function () {
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                // 남아있는 모달 배경 강제 제거
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                document.body.style.paddingRight = '0px'; // padding-right를 0px로 설정
+            });
+        });
+    </script>
+</th:block>

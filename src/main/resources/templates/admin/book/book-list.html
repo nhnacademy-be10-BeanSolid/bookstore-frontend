@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>관리자 도서 목록</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title layout:fragment="title">관리자 도서 목록</title>
 </head>
-<body>
-<div class="container mt-5">
-    <h1 class="mb-4">도서 목록</h1>
-    <div class="mb-3 d-flex gap-2">
-        <a th:href="@{/admin/books/new}" class="btn btn-success">도서 등록</a>
-        <a th:href="@{/admin}" class="btn btn-secondary">관리자 페이지</a>
+
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-5">
+        <h1 class="h2 fw-bold">도서 목록</h1>
+        <hr>
     </div>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-            <thead class="table-dark">
+
+    <div class="table-responsive shadow rounded">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
             <tr>
                 <th>도서 ID</th>
                 <th>제목</th>
@@ -34,13 +33,13 @@
                     <a th:href="@{/admin/books/{id}(id=${book.id})}" class="btn btn-outline-primary btn-sm">상세</a>
                 </td>
                 <td>
-                    <a th:href="@{/admin/books/{id}/tags(id=${book.id})}" class="btn btn-outline-info btn-sm mb-1">태그 관리</a><br/>
-                    <a th:href="@{/admin/books/{id}/categories(id=${book.id})}" class="btn btn-outline-warning btn-sm">카테고리 관리</a>
+                    <a href="#" class="btn btn-outline-info btn-sm mb-1" th:data-book-id="${book.id}">태그 관리</a><br/>
+                    <a href="#" class="btn btn-outline-warning btn-sm" th:data-book-id="${book.id}" id="openCategoryManageModalBtn">카테고리 관리</a>
                 </td>
                 <td>
-                    <form th:action="@{/admin/books/{id}(id=${book.id})}" method="post" th:onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <form th:action="@{/admin/books/{id}(id=${book.id})}" method="post" th:onsubmit="return confirm('정말 삭제하시겠습니까?')">
                         <input type="hidden" name="_method" value="delete" />
-                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                        <button type="submit" class="btn btn-outline-danger btn-sm">삭제</button>
                     </form>
                 </td>
             </tr>
@@ -49,27 +48,363 @@
     </div>
 
     <!-- 페이지네이션 -->
-    <nav aria-label="도서 목록 페이지네이션">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
-                <a class="page-link" th:href="@{/admin/books(page=${page.number - 1}, size=${page.size})}" aria-label="이전">
-                    <span aria-hidden="true">&laquo; 이전</span>
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${page.number / 10 eq 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/books(page=${(page.number / 10 * 10) - 10}, size=${page.size})}" aria-label="Previous 10">
+                    <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li class="page-item disabled">
-                <span class="page-link">
-                    현재 페이지: <span th:text="${page.number + 1}">1</span>
-                </span>
+            <li class="page-item" th:classappend="${page.number eq 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/books(page=${page.number - 1}, size=${page.size})}" aria-label="Previous">
+                    <span aria-hidden="true">&lt;</span>
+                </a>
             </li>
-            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
-                <a class="page-link" th:href="@{/admin/books(page=${page.number + 1}, size=${page.size})}" aria-label="다음">
-                    <span aria-hidden="true">다음 &raquo;</span>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(page.number / 10 * 10, (page.number / 10 * 10) + 9 < page.totalPages ? (page.number / 10 * 10) + 9 : page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link" th:href="@{/admin/books(page=${i}, size=${page.size})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${page.number eq page.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/books(page=${page.number + 1}, size=${page.size})}" aria-label="Next">
+                    <span aria-hidden="true">&gt;</span>
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${(page.number / 10 * 10) + 9 >= page.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/books(page=${(page.number / 10 * 10) + 10}, size=${page.size})}" aria-label="Next 10">
+                    <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
         </ul>
     </nav>
+
+    <div class="d-flex justify-content-end mt-4">
+        <a th:href="@{/admin/books/new}" class="btn btn-success me-2">도서 등록</a>
+        <a th:href="@{/admin}" class="btn btn-secondary">관리자 페이지</a>
+    </div>
+
+    <div id="tagManageModalContainer"></div>
+    <div id="categoryManageModalContainer"></div> <!-- 카테고리 모달 컨테이너 추가 -->
+
+    <script>
+        window.openTagManageModal = function(bookId) {
+            fetch(`/admin/books/${bookId}/tags`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const container = document.getElementById('tagManageModalContainer');
+                    container.innerHTML = html;
+
+                    const tagManageModalElement = document.getElementById('tagManageModal');
+                    if (tagManageModalElement) {
+                        const tagManageModal = new bootstrap.Modal(tagManageModalElement);
+
+                        // 태그 추가 폼 이벤트 리스너
+                        const addTagForm = tagManageModalElement.querySelector('#addTagForm');
+                        if (addTagForm) {
+                            addTagForm.addEventListener('submit', function(event) {
+                                event.preventDefault(); // 폼 기본 제출 동작 방지
+
+                                const formData = new FormData(addTagForm);
+                                fetch(addTagForm.action, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams(formData).toString()
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.text().then(text => { throw new Error(text) });
+                                    }
+                                    return response.text();
+                                })
+                                .then(() => {
+                                    // 성공 시 모달 유지 및 태그 목록 업데이트
+                                    updateTagListInModal(bookId, tagManageModalElement); // 새로운 함수 호출
+                                })
+                                .catch(error => {
+                                    console.error('Error adding tag:', error);
+                                });
+                            });
+                        }
+
+                        // 태그 삭제 폼 이벤트 리스너
+                        tagManageModalElement.querySelectorAll('.delete-tag-form').forEach(form => {
+                            form.addEventListener('submit', function(event) {
+                                event.preventDefault(); // 폼 기본 제출 동작 방지
+
+                                if (!confirm('이 태그를 삭제하시겠습니까?')) {
+                                    return;
+                                }
+
+                                fetch(form.action, {
+                                    method: 'POST', // _method=delete를 사용하므로 POST
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams(new FormData(form)).toString()
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.text().then(text => { throw new Error(text) });
+                                    }
+                                    return response.text();
+                                })
+                                .then(() => {
+                                    updateTagListInModal(bookId, tagManageModalElement); // 성공 시 태그 목록만 업데이트
+                                })
+                                .catch(error => {
+                                    console.error('Error deleting tag:', error);
+                                });
+                            });
+                        });
+
+                        tagManageModal.show();
+                    } else {
+                        // 모달 요소가 없는 경우에 대한 처리 (예: 오류 로깅)
+                        console.error('Tag manage modal element not found after loading HTML.');
+                    }
+                })
+                .catch(error => console.error('Error loading tag manage modal:', error));
+        }
+
+        // 태그 목록을 업데이트하는 새로운 함수
+        function updateTagListInModal(bookId, modalElement) {
+            fetch(`/admin/books/${bookId}/tags`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text(); // HTML로 파싱
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTagList = doc.getElementById('currentTagList'); // tag-manage.html에서 태그 목록을 가져옴
+
+                    if (newTagList) {
+                        const currentTagList = modalElement.querySelector('#currentTagList');
+                        if (currentTagList) {
+                            currentTagList.innerHTML = newTagList.innerHTML;
+
+                            // 새로 추가된 삭제 폼에 이벤트 리스너 다시 연결
+                            modalElement.querySelectorAll('.delete-tag-form').forEach(form => {
+                                form.addEventListener('submit', function(event) {
+                                    event.preventDefault();
+                                    
+
+                                    if (!confirm('이 태그를 삭제하시겠습니까?')) {
+                                        return;
+                                    }
+
+                                    fetch(form.action, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: new URLSearchParams(new FormData(form)).toString()
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            return response.text().then(text => { throw new Error(text) });
+                                        }
+                                        return response.text();
+                                    })
+                                    .then(() => {
+                                        updateTagListInModal(bookId, modalElement); // 성공 시 태그 목록만 업데이트
+                                    })
+                                    .catch(error => {
+                                        });
+                                });
+                            });
+                        } else {
+                            // currentTagList 요소가 없는 경우에 대한 처리
+                            console.error('currentTagList element not found in modal.');
+                        }
+                    } else {
+                        // newTagList 요소가 없는 경우에 대한 처리
+                        console.error('newTagList element not found in fetched HTML.');
+                    }
+                })
+                .catch(error => console.error('Error updating tag list in modal:', error));
+        }
+
+        // --- 카테고리 관리 관련 코드 추가 시작 ---
+        window.openCategoryManageModal = function(bookId) {
+            fetch(`/admin/books/${bookId}/categories`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    const container = document.getElementById('categoryManageModalContainer');
+                    container.innerHTML = html;
+
+                    const categoryManageModalElement = document.getElementById('categoryManageModal');
+                    if (categoryManageModalElement) {
+                        const categoryManageModal = new bootstrap.Modal(categoryManageModalElement);
+
+                        // 카테고리 추가 폼 이벤트 리스너
+                        const addCategoryForm = categoryManageModalElement.querySelector('#addCategoryForm');
+                        if (addCategoryForm) {
+                            addCategoryForm.addEventListener('submit', function(event) {
+                                event.preventDefault(); // 폼 기본 제출 동작 방지
+
+                                const formData = new FormData(addCategoryForm);
+                                fetch(addCategoryForm.action, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams(formData).toString()
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.text().then(text => { throw new Error(text) });
+                                    }
+                                    return response.text();
+                                })
+                                .then(() => {
+                                    // 성공 시 모달 유지 및 카테고리 목록 업데이트
+                                    updateCategoryListInModal(bookId, categoryManageModalElement);
+                                })
+                                .catch(error => {
+                                    console.error('Error adding category:', error);
+                                    
+                                });
+                            });
+                        }
+
+                        // 카테고리 삭제 폼 이벤트 리스너
+                        categoryManageModalElement.querySelectorAll('.delete-category-form').forEach(form => {
+                            form.addEventListener('submit', function(event) {
+                                event.preventDefault(); // 폼 기본 제출 동작 방지
+
+                                if (!confirm('이 카테고리를 삭제하시겠습니까?')) {
+                                    return;
+                                }
+
+                                fetch(form.action, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams(new FormData(form)).toString()
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.text().then(text => { throw new Error(text) });
+                                    }
+                                    return response.text();
+                                })
+                                .then(() => {
+                                    updateCategoryListInModal(bookId, categoryManageModalElement);
+                                })
+                                .catch(error => {
+                                    console.error('Error deleting category:', error);
+                                    alert('카테고리 삭제 중 오류가 발생했습니다: ' + error.message);
+                                });
+                            });
+                        });
+
+                        categoryManageModal.show();
+                    } else {
+                        // 모달 요소가 없는 경우에 대한 처리 (예: 오류 로깅)
+                        console.error('Category manage modal element not found after loading HTML.');
+                    }
+                })
+                .catch(error => console.error('Error loading category manage modal:', error));
+        }
+
+        // 카테고리 목록을 업데이트하는 새로운 함수
+        function updateCategoryListInModal(bookId, modalElement) {
+            fetch(`/admin/books/${bookId}/categories`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text(); // HTML로 파싱
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newCategoryList = doc.getElementById('currentCategoryList'); // category-manage.html에서 카테고리 목록을 가져옴
+
+                    if (newCategoryList) {
+                        const currentCategoryList = modalElement.querySelector('#currentCategoryList');
+                        if (currentCategoryList) {
+                            currentCategoryList.innerHTML = newCategoryList.innerHTML; // 현재 모달의 카테고리 목록 업데이트
+                            
+
+                            // 새로 추가된 삭제 폼에 이벤트 리스너 다시 연결
+                            modalElement.querySelectorAll('.delete-category-form').forEach(form => {
+                                form.addEventListener('submit', function(event) {
+                                    event.preventDefault();
+                                    
+
+                                    if (!confirm('이 카테고리를 삭제하시겠습니까?')) {
+                                        return;
+                                    }
+
+                                    fetch(form.action, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: new URLSearchParams(new FormData(form)).toString()
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            return response.text().then(text => { throw new Error(text) });
+                                        }
+                                        return response.text();
+                                    })
+                                    .then(() => {
+                                        updateCategoryListInModal(bookId, modalElement);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error deleting category:', error);
+                                        alert('카테고리 삭제 중 오류가 발생했습니다: ' + error.message);
+                                    });
+                                });
+                            });
+                        } else {
+                            // currentCategoryList 요소가 없는 경우에 대한 처리
+                            console.error('currentCategoryList element not found in modal.');
+                        }
+                    } else {
+                        // newCategoryList 요소가 없는 경우에 대한 처리
+                        console.error('newCategoryList element not found in fetched HTML.');
+                    }
+                })
+                .catch(error => console.error('Error updating category list in modal:', error));
+        }
+        // --- 카테고리 관리 관련 코드 추가 끝 ---
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a[data-book-id]').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // 기본 링크 동작 방지
+                    const bookId = this.getAttribute('data-book-id');
+                    if (bookId) {
+                        // 태그 관리 버튼과 카테고리 관리 버튼을 구분하여 처리
+                        if (this.textContent.includes('태그 관리')) {
+                            window.openTagManageModal(bookId);
+                        } else if (this.textContent.includes('카테고리 관리')) {
+                            window.openCategoryManageModal(bookId);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </div>
-<!-- Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 </html>

@@ -5,6 +5,7 @@ import com.nhnacademy.frontend.common.adapter.dto.book.response.BookTagMapRespon
 import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +26,18 @@ public class BookTagMapController {
     }
 
     @PostMapping
-    public String addTagFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookTagMapCreateRequestDto request) {
+    @ResponseBody
+    public ResponseEntity<Void> addTagFromBook(@PathVariable("bookId") Long bookId, @ModelAttribute BookTagMapCreateRequestDto request) {
         bookService.createBookTagMap(bookId, request);
         log.debug("Create tag from book success - bookId : {}, tagId : {}", bookId, request.getTagId());
-        return "redirect:/admin/books/" + bookId + "/tags";
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{tagId}")
-    public String removeTagFromBook(@PathVariable("bookId") Long bookId, @PathVariable("tagId") Long tagId) {
+    @ResponseBody
+    public ResponseEntity<Void> removeTagFromBook(@PathVariable("bookId") Long bookId, @PathVariable("tagId") Long tagId) {
         bookService.deleteBookTagMap(bookId, tagId);
         log.debug("Remove tag from book success - bookId : {}, tagId : {}", bookId, tagId);
-        return "redirect:/admin/books/" + bookId + "/tags";
+        return ResponseEntity.ok().build();
     }
 }

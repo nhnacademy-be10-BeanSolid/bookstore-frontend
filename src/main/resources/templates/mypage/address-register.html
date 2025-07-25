@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title layout:fragment="title">주소 등록</title>
+</head>
+
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-4">
+        <h1 class="h2 fw-bold">주소 등록</h1>
+        <hr>
+    </div>
+
+    
+
+    <form th:action="@{/mypage/address/register}" method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="addressNickName" class="form-label">별칭</label>
+            <input type="text" id="addressNickName" name="addressNickName" class="form-control" placeholder="예: 집, 회사" required>
+            <div class="invalid-feedback">
+                별칭을 입력해주세요.
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="sample6_postcode" class="form-label">우편번호</label>
+            <div class="col-sm-6">
+                <input type="text" id="sample6_postcode" class="form-control" placeholder="우편번호" required readonly>
+            </div>
+            <div class="col-sm-6">
+                <button type="button" onclick="sample6_execDaumPostcode()" class="btn btn-outline-secondary w-100">우편번호 찾기</button>
+            </div>
+            <div class="invalid-feedback">
+                우편번호를 입력해주세요.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="sample6_address" class="form-label">주소</label>
+            <input type="text" id="sample6_address" class="form-control" placeholder="주소" required readonly>
+            <div class="invalid-feedback">
+                주소를 입력해주세요.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="sample6_detailAddress" class="form-label">상세주소</label>
+            <input type="text" id="sample6_detailAddress" class="form-control" placeholder="상세주소">
+        </div>
+
+        <div class="mb-3">
+            <label for="sample6_extraAddress" class="form-label">참고항목</label>
+            <input type="text" id="sample6_extraAddress" class="form-control" placeholder="참고항목" readonly>
+        </div>
+
+        <input type="hidden" id="addressDetail" name="addressDetail">
+        <input type="hidden" name="userId" th:value="${loginUserId}" />
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" id="submitBtn" class="btn btn-primary me-md-2">등록하기</button>
+            <a th:href="@{/mypage/address}" class="btn btn-outline-secondary">
+                뒤로가기
+            </a>
+        </div>
+    </form>
+</div>
+
+<div layout:fragment="scripts">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const postcode = document.getElementById('sample6_postcode').value.trim();
+            const address = document.getElementById('sample6_address').value.trim();
+            const detailAddress = document.getElementById('sample6_detailAddress').value.trim();
+            const extraAddress = document.getElementById('sample6_extraAddress').value.trim();
+
+            const fullAddress = [postcode, address, detailAddress, extraAddress].filter(e => e).join(' ');
+            document.getElementById('addressDetail').value = fullAddress;
+        });
+
+        function sample6_execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    var addr = '';
+                    var extraAddr = '';
+
+                    if (data.userSelectedType === 'R') {
+                        addr = data.roadAddress;
+                    } else {
+                        addr = data.roadAddress;
+                    }
+
+                    if(data.userSelectedType === 'R'){
+                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            extraAddr += data.bname;
+                        }
+                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        if(extraAddr !== ''){
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                        document.getElementById("sample6_extraAddress").value = extraAddr;
+                    } else {
+                        document.getElementById("sample6_extraAddress").value = '';
+                    }
+
+                    document.getElementById('sample6_postcode').value = data.zonecode;
+                    document.getElementById("sample6_address").value = addr;
+                    document.getElementById("sample6_detailAddress").focus();
+                }
+            }).open();
+        }
+    </script>
+</div>
+
+</html>
