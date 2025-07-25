@@ -73,5 +73,4 @@ public class MinioServiceImpl implements MinioService {
             log.error("MinIO 이미지 삭제 실패: {}", objectName, e);
         }
     }
-
 }

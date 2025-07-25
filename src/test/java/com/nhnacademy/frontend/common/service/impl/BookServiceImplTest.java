@@ -208,8 +208,7 @@ class BookServiceImplTest {
                 27000, // priceSales
                 30000, // priceStandard
                 "이미지", // cover
-                "출판사", // publisher
-                51320 // categoryId
+                "출판사" // publisher
         );
 
         BookSearchResponseDto expected = new BookSearchResponseDto(
