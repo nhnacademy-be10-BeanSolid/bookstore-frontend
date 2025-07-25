@@ -18,7 +18,9 @@ public class BookSearchController {
     @GetMapping("/admin/books-search")
     public BookSearchResponseDto searchAladinBooksJson(
             @RequestParam String query,
-            @RequestParam(defaultValue = "1") Integer start) {
-        return bookService.searchNaverBooks(query, start);
+            @RequestParam(defaultValue = "1") Integer start,
+            @RequestParam(name = "MaxResults", defaultValue = "10") Integer maxResults) {
+
+        return bookService.getBookSearchResponseDto(query, start, maxResults);
     }
 }

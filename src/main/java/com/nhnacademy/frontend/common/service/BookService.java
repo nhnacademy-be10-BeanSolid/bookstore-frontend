@@ -2,6 +2,7 @@ package com.nhnacademy.frontend.common.service;
 
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookSearchResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,7 +35,7 @@ public interface BookService {
 
     BookResponseDto createBook(BookCreateRequestDto request);
 
-    BookSearchResponseDto searchNaverBooks(String query, Integer start);
+    BookSearchResponseDto getBookSearchResponseDto(String query, Integer start, Integer maxResults);
 
     BookDetailResponseDto updateBook(Long bookId, BookUpdateRequestDto request);
 
