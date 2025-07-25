@@ -157,18 +157,18 @@
                 const resultsDiv = document.getElementById("searchResults");
                 resultsDiv.innerHTML = "";
 
-                currentPage = Math.floor((data.start - 1) / itemsPerPage) + 1;
+                currentPage = Math.floor((data.startIndex - 1) / itemsPerPage) + 1;
                 document.getElementById("currentPage").innerText = currentPage;
 
                 document.getElementById("prevPage").disabled = currentPage <= 1;
-                const totalPages = Math.ceil(data.total / itemsPerPage);
+                const totalPages = Math.ceil(data.totalResults / itemsPerPage);
                 document.getElementById("nextPage").disabled = currentPage >= totalPages;
 
-                data.items.forEach(item => {
+                data.item.forEach(item => {
                     const div = document.createElement("div");
                     div.className = "border rounded p-2 mb-2 d-flex align-items-center gap-3";
                     div.innerHTML = `
-                        <img src="${item.image}" width="60" class="img-thumbnail"/>
+                        <img src="${item.cover}" width="60" class="img-thumbnail"/>
                         <div>
                             <strong>${item.title}</strong><br/>
                             ${item.author} / ${item.publisher}
@@ -186,31 +186,23 @@
         if (newPage < 1) return;
         searchBook(newPage);
     }
-
-    // function applyBookInfo(item) {
-    //     document.querySelector('[name="title"]').value = item.title;
-    //     document.querySelector('[name="description"]').value = item.description;
-    //     document.querySelector('[name="author"]').value = item.author;
-    //     document.querySelector('[name="publisher"]').value = item.publisher;
-    //     document.querySelector('[name="publishAt"]').value = item.pubdate;
-    //     document.querySelector('[name="isbn"]').value = item.isbn;
-    //     document.querySelector('[name="image"]').value = item.image;
-    //     // 모달 닫기 (Bootstrap)
-    //     const modal = bootstrap.Modal.getInstance(document.getElementById('bookSearchModal'));
-    //     modal.hide();
-    // }
     function applyBookInfo(item) {
         document.querySelector('[name="title"]').value = item.title;
         editor.setHTML(item.description || ''); // ← 에디터에 내용 설정
         document.querySelector('[name="author"]').value = item.author;
         document.querySelector('[name="publisher"]').value = item.publisher;
-        document.querySelector('[name="publishAt"]').value = item.pubdate;
-        document.querySelector('[name="isbn"]').value = item.isbn;
-        document.querySelector('[name="image"]').value = item.image;
+        document.querySelector('[name="publishAt"]').value = item.pubDate;
+        document.querySelector('[name="isbn"]').value = item.isbn13;
+        document.querySelector('[name="image"]').value = item.cover;
+        document.querySelector('[name="originalPrice"]').value = item.priceStandard ?? '';
+        document.querySelector('[name="salePrice"]').value = item.priceSales ?? '';
+        document.querySelector('[name="categoryIds"]').value = item.categoryId ?? '';
 
-        // 모달 닫기
-        const modal = bootstrap.Modal.getInstance(document.getElementById('bookSearchModal'));
-        modal.hide();
+        const modalEl = document.getElementById('bookSearchModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) {
+            modal.hide();
+        }
     }
 </script>
 </body>
