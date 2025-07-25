@@ -119,6 +119,12 @@ public class MypageController {
         return "mypage/address";
     }
 
+    @GetMapping("/address-select")
+    public String getAddressSelectPopup(Model model) {
+        model.addAttribute("addresses", mypageService.getAllAddresses());
+        return "mypage/address-select-popup";
+    }
+
     @DeleteMapping("/address/{addressId}")
     public ResponseEntity<Void> mypageDeleteAddress(@PathVariable Long addressId) {
         mypageService.deleteAddress(addressId);
@@ -139,7 +145,7 @@ public class MypageController {
 
     @GetMapping("/address/register")
     public String mypageAddressRegisterForm() {
-        return "mypage/address_register";
+        return "mypage/address-register";
     }
 
     @GetMapping("/point")

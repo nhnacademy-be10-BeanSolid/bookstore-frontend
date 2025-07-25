@@ -22,6 +22,9 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -47,7 +50,7 @@ class AdminBookTagControllerTest {
     void showCreateForm() throws Exception {
         mockMvc.perform(get("/admin/tags/new"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/tag/create-form"));
+                .andExpect(view().name("admin/tag/tag-create-form"));
     }
 
     @Test
@@ -74,22 +77,26 @@ class AdminBookTagControllerTest {
 
     @Test
     void createBookTag_Success() throws Exception {
-        BookTagResponseDto response = new BookTagResponseDto(1L, "테스트");
+        BookTagCreateRequestDto requestDto = new BookTagCreateRequestDto("테스트");
 
-        when(bookService.createTag(any(BookTagCreateRequestDto.class))).thenReturn(response);
+        when(bookService.createTag(any(BookTagCreateRequestDto.class))).thenReturn(null);
 
         mockMvc.perform(post("/admin/tags")
-                .param("tagName", "테스트"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/tags"));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
 
-        verify(bookService, times(1)).createTag(any());
+        verify(bookService, times(1)).createTag(any(BookTagCreateRequestDto.class));
     }
 
     @Test
     void createBookTag_ValidationFail() throws Exception {
+        BookTagCreateRequestDto requestDto = new BookTagCreateRequestDto("");
+
         mockMvc.perform(post("/admin/tags")
-                .param("tagName", ""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
                 .andExpect(view().name("error/error"))
                 .andExpect(model().attribute("statusCode", 400));
     }
@@ -99,8 +106,7 @@ class AdminBookTagControllerTest {
         doNothing().when(bookService).deleteBookTag(1L);
 
         mockMvc.perform(delete("/admin/tags/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/tags"));
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).deleteBookTag(1L);
     }

@@ -24,6 +24,9 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
@@ -111,51 +114,52 @@ class AdminBookCategoryControllerTest {
 
     @Test
     void createCategory_Success() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L, "테스트", null, null,
-                LocalDateTime.now(), null
-        );
+        BookCategoryCreateRequestDto requestDto = new BookCategoryCreateRequestDto("테스트", null);
 
-        when(bookService.createCategory(any(BookCategoryCreateRequestDto.class))).thenReturn(response);
+        when(bookService.createCategory(any(BookCategoryCreateRequestDto.class))).thenReturn(null);
 
         mockMvc.perform(post("/admin/categories")
-                .param("categoryName", "테스트"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/categories/1"));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).createCategory(any(BookCategoryCreateRequestDto.class));
     }
 
     @Test
     void createBookCategory_ValidationFail() throws Exception {
+        BookCategoryCreateRequestDto requestDto = new BookCategoryCreateRequestDto("", null);
+
         mockMvc.perform(post("/admin/categories")
-                .param("categoryName", ""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
                 .andExpect(view().name("error/error"))
                 .andExpect(model().attribute("statusCode", 400));
     }
 
     @Test
     void updateCategory_Success() throws Exception {
-        BookCategoryResponseDto response = new BookCategoryResponseDto(
-                1L, "수정 테스트", null, null,
-                LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.now()
-        );
+        BookCategoryUpdateRequestDto requestDto = new BookCategoryUpdateRequestDto("수정 테스트", null);
 
-        when(bookService.updateCategory(eq(1L), any(BookCategoryUpdateRequestDto.class)))
-                .thenReturn(response);
+        when(bookService.updateCategory(eq(1L), any(BookCategoryUpdateRequestDto.class))).thenReturn(null);
 
         mockMvc.perform(put("/admin/categories/1")
-                        .param("categoryName", "수정 테스트"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/categories/1"));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).updateCategory(eq(1L), any(BookCategoryUpdateRequestDto.class));
     }
 
     @Test
     void updateCategory_ValidationFail() throws Exception {
-        mockMvc.perform(post("/admin/categories")
-                        .param("categoryName", ""))
+        BookCategoryUpdateRequestDto requestDto = new BookCategoryUpdateRequestDto("", null);
+
+        mockMvc.perform(put("/admin/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
                 .andExpect(view().name("error/error"))
                 .andExpect(model().attribute("statusCode", 400));
     }
@@ -165,8 +169,7 @@ class AdminBookCategoryControllerTest {
         doNothing().when(bookService).deleteCategory(1L);
 
         mockMvc.perform(delete("/admin/categories/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/categories"));
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).deleteCategory(1L);
     }

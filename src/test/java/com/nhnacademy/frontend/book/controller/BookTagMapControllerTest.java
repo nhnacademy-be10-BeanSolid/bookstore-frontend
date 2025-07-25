@@ -62,8 +62,7 @@ class BookTagMapControllerTest {
 
         mockMvc.perform(post("/admin/books/1/tags")
                         .param("tagId", String.valueOf(tagId)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/books/" + bookId + "/tags"));
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).createBookTagMap(eq(bookId), any(BookTagMapCreateRequestDto.class));
     }
@@ -73,8 +72,7 @@ class BookTagMapControllerTest {
         doNothing().when(bookService).deleteBookTagMap(1L,1L);
 
         mockMvc.perform(delete("/admin/books/1/tags/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/books/1/tags"));
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).deleteBookTagMap(1L,1L);
     }

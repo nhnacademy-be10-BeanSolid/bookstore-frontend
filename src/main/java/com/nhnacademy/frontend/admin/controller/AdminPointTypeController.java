@@ -5,16 +5,15 @@ import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeCreateRe
 import com.nhnacademy.frontend.common.adapter.dto.user.request.PointTypeUpdateRequestDto;
 import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponsePointType;
 import com.nhnacademy.frontend.common.exception.ValidationFailedException;
-import feign.FeignException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/pointtype")
@@ -36,21 +35,16 @@ public class AdminPointTypeController {
         return "admin/pointtype/pointTypeForm";
     }
 
-    @PostMapping("/register")
-    public String registerPointType(@Valid @ModelAttribute PointTypeCreateRequestDto pointTypeCreateRequestDto, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+    @PostMapping
+    @ResponseBody
+    public ResponseEntity<Void> registerPointType(@Valid @RequestBody PointTypeCreateRequestDto pointTypeCreateRequestDto, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
             throw new ValidationFailedException(bindingResult);
         }
 
-        try {
-            adminService.addPointType(pointTypeCreateRequestDto);
-            redirectAttributes.addFlashAttribute("registerSuccess", "등록 성공!");
-        } catch (FeignException e) {
-            redirectAttributes.addFlashAttribute("registerFail", "등록 실패!");
-        }
-
-        return REDIRECT_ADMIN_POINT_TYPE;
+        adminService.addPointType(pointTypeCreateRequestDto);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/register")
@@ -60,36 +54,30 @@ public class AdminPointTypeController {
     }
 
     @DeleteMapping("/{typeId}")
-    public String deletePointType(@PathVariable Long typeId, RedirectAttributes redirectAttributes){
+    @ResponseBody
+    public ResponseEntity<Void> deletePointType(@PathVariable Long typeId){
 
-        try{
-            adminService.deletePointType(typeId);
-            redirectAttributes.addFlashAttribute("deleteSuccess", "삭제 성공!");
-        } catch (FeignException e){
-            redirectAttributes.addFlashAttribute("deleteFail", "삭제 실패! 포인트 db 확인 필요!");
-        }
-
-        return REDIRECT_ADMIN_POINT_TYPE;
+        adminService.deletePointType(typeId);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{typeId}/isactive")
-    public String changeActive(@PathVariable Long typeId, RedirectAttributes redirectAttributes){
+    @ResponseBody
+    public ResponseEntity<Void> changeActive(@PathVariable Long typeId){
 
         adminService.changeActive(typeId);
-
-        redirectAttributes.addFlashAttribute("changeSuccess", "변경 성공!");
-
-        return REDIRECT_ADMIN_POINT_TYPE;
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{typeId}/edit")
-    public String editPointType(@Valid @ModelAttribute PointTypeUpdateRequestDto requestDto, @PathVariable Long typeId, RedirectAttributes redirectAttributes){
+    @PutMapping("/{typeId}")
+    @ResponseBody
+    public ResponseEntity<Void> editPointType(@Valid @RequestBody PointTypeUpdateRequestDto requestDto, @PathVariable Long typeId, BindingResult bindingResult){
 
+        if(bindingResult.hasErrors()){
+            throw new ValidationFailedException(bindingResult);
+        }
         adminService.updatePointType(typeId, requestDto);
-
-        redirectAttributes.addFlashAttribute("editSuccess", "수정 성공!");
-
-        return REDIRECT_ADMIN_POINT_TYPE;
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{typeId}/edit")

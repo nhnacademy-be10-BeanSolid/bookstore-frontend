@@ -66,8 +66,7 @@ class AdminBookCategoryMapControllerTest {
 
         mockMvc.perform(post("/admin/books/1/categories")
                         .param("categoryId", String.valueOf(categoryId)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/books/" + bookId + "/categories"));
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).createBookCategoryMap(eq(bookId), any(BookCategoryMapCreateRequestDto.class));
     }
@@ -77,8 +76,7 @@ class AdminBookCategoryMapControllerTest {
         doNothing().when(bookService).deleteBookCategoryMap(1L, 1L);
 
         mockMvc.perform(delete("/admin/books/1/categories/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/books/1/categories"));
+                .andExpect(status().isOk());
 
         verify(bookService, times(1)).deleteBookCategoryMap(1L,1L);
     }

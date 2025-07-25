@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>포인트 적립 규정 관리</title>
-    <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title layout:fragment="title">포인트 적립 규정 관리</title>
 </head>
-<body class="bg-light">
-<div class="container my-5">
-    <h1 class="mb-4 text-center">포인트 적립 규정 목록</h1>
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-5">
+        <h2 class="h2 fw-bold">포인트 적립 규정 목록</h2>
+        <hr>
+    </div>
 
-    <div class="table-responsive">
+    <div class="table-responsive shadow rounded">
         <table class="table table-bordered table-hover align-middle text-center">
             <thead class="table-light">
             <tr>
@@ -37,89 +38,322 @@
                               th:classappend="${pointType.isActive} ? 'text-success' : 'text-secondary'"></span>
                 </td>
                 <td>
-                    <a th:href="@{'/admin/pointtype/' + ${pointType.typeId} + '/edit'}">
-                        <button type="button" class="btn btn-outline-primary btn-sm">수정</button>
-                    </a>
+                    <button type="button" class="btn btn-outline-primary btn-sm edit-point-type-btn"
+                            th:data-point-type-id="${pointType.typeId}"
+                            data-bs-toggle="modal" data-bs-target="#pointTypeUpdateModal">수정</button>
                 </td>
                 <td>
-                    <form th:action="@{'/admin/pointtype/' + ${pointType.typeId} + '/isactive'}" method="post" class="d-inline">
-                        <input type="hidden" name="_method" value="put"/>
-                        <button type="submit"
-                                class="btn btn-outline-warning btn-sm"
-                                th:text="${pointType.isActive} ? '비활성화' : '활성화'"
-                                onclick="return confirm('정말 상태를 변경하시겠습니까?');">
-                            상태 변경
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="btn btn-outline-warning btn-sm toggle-status-btn"
+                            th:data-point-type-id="${pointType.typeId}"
+                            th:text="${pointType.isActive} ? '비활성화' : '활성화'">
+                        상태 변경
+                    </button>
                 </td>
                 <td>
-                    <form th:action="@{'/admin/pointtype/' + ${pointType.typeId}}" method="post" class="d-inline">
-                        <input type="hidden" name="_method" value="delete"/>
-                        <button type="submit"
-                                class="btn btn-outline-danger btn-sm"
-                                onclick="return confirm('정말 삭제하시겠습니까?');">
-                            삭제
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm delete-point-type-btn"
+                            th:data-point-type-id="${pointType.typeId}">
+                        삭제
+                    </button>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="my-4 text-end">
+    <div class="my-4 d-flex justify-content-end">
+        <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#pointTypeCreateModal">규정 생성하기</button>
         <a th:href="@{/admin}">
-            <button type="button" class="btn btn-success">관리자페이지</button>
-        </a>
-        <a th:href="@{/admin/pointtype/register}">
-            <button type="button" class="btn btn-success">등록</button>
+            <button type="button" class="btn btn-secondary">관리자 페이지</button>
         </a>
     </div>
 
+    <!-- PointType Create Modal -->
+    <div class="modal fade" id="pointTypeCreateModal" tabindex="-1" aria-labelledby="pointTypeCreateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pointTypeCreateModalLabel">포인트 적립 규정 등록</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Create form content will be loaded here -->
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PointType Update Modal -->
+    <div class="modal fade" id="pointTypeUpdateModal" tabindex="-1" aria-labelledby="pointTypeUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pointTypeUpdateModalLabel">포인트 적립 규정 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Update form content will be loaded here -->
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 페이지네이션 -->
-    <nav aria-label="Page navigation" class="d-flex justify-content-center">
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
         <ul class="pagination">
-            <li class="page-item" th:classappend="${!page.hasPrevious()} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/templates/admin/pointtype(page=${page.number - 1}, size=${page.size})}"
-                   th:if="${page.hasPrevious()}">이전</a>
-                <span class="page-link" th:unless="${page.hasPrevious()}">이전</span>
+            <li class="page-item" th:classappend="${page.number / 10 eq 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/pointtype(page=${(page.number / 10 * 10) - 10}, size=${page.size})}" aria-label="Previous 10">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
             </li>
-            <li class="page-item active">
-                <span class="page-link">
-                    현재 페이지: <span th:text="${page.number + 1}">1</span>
-                </span>
+            <li class="page-item" th:classappend="${page.number eq 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/pointtype(page=${page.number - 1}, size=${page.size})}" aria-label="Previous">
+                    <span aria-hidden="true">&lt;</span>
+                </a>
             </li>
-            <li class="page-item" th:classappend="${!page.hasNext()} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/templates/admin/pointtype(page=${page.number + 1}, size=${page.size})}"
-                   th:if="${page.hasNext()}">다음</a>
-                <span class="page-link" th:unless="${page.hasNext()}">다음</span>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(page.number / 10 * 10, (page.number / 10 * 10) + 9 < page.totalPages ? (page.number / 10 * 10) + 9 : page.totalPages - 1)}"
+                th:classappend="${i == page.number} ? 'active'">
+                <a class="page-link" th:href="@{/admin/pointtype(page=${i}, size=${page.size})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${page.number eq page.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/pointtype(page=${page.number + 1}, size=${page.size})}" aria-label="Next">
+                    <span aria-hidden="true">&gt;</span>
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${(page.number / 10 * 10) + 9 >= page.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/pointtype(page=${(page.number / 10 * 10) + 10}, size=${page.size})}" aria-label="Next 10">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
             </li>
         </ul>
     </nav>
-
-    <!-- 알림 팝업 -->
-    <script th:if="${registerSuccess != null}">
-        alert('[[${registerSuccess}]]');
-    </script>
-    <script th:if="${registerFail != null}">
-        alert('[[${registerFail}]]');
-    </script>
-    <script th:if="${deleteSuccess != null}">
-        alert('[[${deleteSuccess}]]');
-    </script>
-    <script th:if="${deleteFail != null}">
-        alert('[[${deleteFail}]]');
-    </script>
-    <script th:if="${changeSuccess != null}">
-        alert('[[${changeSuccess}]]');
-    </script>
-    <script th:if="${editSuccess != null}">
-        alert('[[${editSuccess}]]');
-    </script>
 </div>
-<!-- Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script layout:fragment="scripts">
+    document.addEventListener('DOMContentLoaded', function() {
+        var pointTypeCreateModal = document.getElementById('pointTypeCreateModal');
+        pointTypeCreateModal.addEventListener('show.bs.modal', function (event) {
+            var modalBody = pointTypeCreateModal.querySelector('.modal-body');
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            fetch(`/admin/pointtype/register`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var createFormContent = doc.querySelector('.card-body');
+
+                    if (createFormContent) {
+                        modalBody.innerHTML = createFormContent.innerHTML;
+                        attachFormSubmitListener(modalBody.querySelector('#createPointTypeForm'), 'pointTypeCreateModal');
+                    } else {
+                        modalBody.innerHTML = '<p class="text-danger text-center">등록 폼을 불러오는데 실패했습니다.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching create form:', error);
+                    alert('등록 폼을 불러오는 중 오류가 발생했습니다.');
+                });
+        });
+
+        var pointTypeUpdateModal = document.getElementById('pointTypeUpdateModal');
+        pointTypeUpdateModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var pointTypeId = button.getAttribute('data-point-type-id');
+            var modalBody = pointTypeUpdateModal.querySelector('.modal-body');
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+            fetch(`/admin/pointtype/${pointTypeId}/edit`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var updateFormContent = doc.querySelector('.card-body');
+
+                    if (updateFormContent) {
+                        modalBody.innerHTML = updateFormContent.innerHTML;
+                        attachFormSubmitListener(modalBody.querySelector('#updatePointTypeForm'), 'pointTypeUpdateModal');
+                    } else {
+                        modalBody.innerHTML = '<p class="text-danger text-center">수정 폼을 불러오는데 실패했습니다.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching update form:', error);
+                    alert('수정 폼을 불러오는 중 오류가 발생했습니다.');
+                });
+        });
+
+        document.addEventListener('click', async function(event) {
+            // Handle toggle status button
+            if (event.target.classList.contains('toggle-status-btn')) {
+                const button = event.target;
+                const pointTypeId = button.getAttribute('data-point-type-id');
+                if (confirm('정말 상태를 변경하시겠습니까?')) {
+                    try {
+                        const response = await fetch(`/admin/pointtype/${pointTypeId}/isactive`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            alert('상태가 성공적으로 변경되었습니다.');
+                            location.reload();
+                        } else {
+                            const errorText = await response.text();
+                            alert('상태 변경 실패: ' + errorText);
+                        }
+                    } catch (error) {
+                        console.error('Error during status toggle:', error);
+                        alert('상태 변경 중 오류가 발생했습니다.');
+                    }
+                }
+            }
+
+            // Handle delete button
+            if (event.target.classList.contains('delete-point-type-btn')) {
+                const button = event.target;
+                const pointTypeId = button.getAttribute('data-point-type-id');
+                if (confirm('정말 삭제하시겠습니까?')) {
+                    try {
+                        const response = await fetch(`/admin/pointtype/${pointTypeId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            button.closest('tr').remove();
+                            alert('포인트 유형이 성공적으로 삭제되었습니다.');
+                        } else {
+                            const errorText = await response.text();
+                            alert('포인트 유형 삭제 실패: ' + errorText);
+                        }
+                    } catch (error) {
+                        console.error('Error during deletion:', error);
+                        alert('포인트 유형 삭제 중 오류가 발생했습니다.');
+                    }
+                }
+            }
+        });
+
+        function attachFormSubmitListener(form, modalId) {
+            if (!form) return;
+            if (form.dataset.listenerAttached) {
+                console.log('Listener already attached to form:', form.id);
+                return;
+            }
+            form.dataset.listenerAttached = 'true';
+            console.log('Attaching listener to form:', form.id);
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                let url = form.action;
+                const formData = new FormData(form);
+                let data = {};
+
+                if (form.id === 'createPointTypeForm') {
+                    url = '/admin/pointtype';
+                    data = {
+                        typeName: formData.get('typeName'),
+                        earningPoint: formData.get('earningPoint') ? parseInt(formData.get('earningPoint')) : null,
+                        earningRate: formData.get('earningRate') ? parseInt(formData.get('earningRate')) : null,
+                        gradeName: formData.get('gradeName'),
+                        isActive: formData.get('isActive') === 'true'
+                    };
+                } else if (form.id === 'updatePointTypeForm') {
+                    url = `/admin/pointtype/${formData.get('typeId')}`;
+                    data = {
+                        typeName: formData.get('typeName'),
+                        earningPoint: formData.get('earningPoint') ? parseInt(formData.get('earningPoint')) : null,
+                        earningRate: formData.get('earningRate') ? parseInt(formData.get('earningRate')) : null,
+                        gradeName: formData.get('gradeName'),
+                        isActive: formData.get('isActive') === 'true'
+                    };
+                }
+
+                let methodToUse = form.method.toUpperCase();
+                if (form.id === 'updatePointTypeForm') {
+                    methodToUse = 'PUT';
+                }
+
+                try {
+                    const response = await fetch(url, {
+                        method: methodToUse,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        const modalElement = document.getElementById(modalId);
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        if (modal) {
+                            modal.hide();
+                        }
+                        location.reload();
+                    } else {
+                        const errorText = await response.text();
+                        alert('작업 실패: ' + errorText);
+                    }
+                } catch (error) {
+                    console.error('Error during form submission:', error);
+                    alert('작업 중 오류가 발생했습니다.');
+                }
+            });
+        }
+
+        pointTypeUpdateModal.addEventListener('shown.bs.modal', function () {
+            attachFormSubmitListener(this.querySelector('#updatePointTypeForm'), 'pointTypeUpdateModal');
+        });
+
+        pointTypeCreateModal.addEventListener('shown.bs.modal', function () {
+            attachFormSubmitListener(this.querySelector('#createPointTypeForm'), 'pointTypeCreateModal');
+        });
+    });
+</script>
 </body>
 </html>

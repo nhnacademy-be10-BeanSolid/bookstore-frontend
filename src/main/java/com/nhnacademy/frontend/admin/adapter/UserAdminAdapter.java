@@ -33,6 +33,6 @@ public interface UserAdminAdapter {
     @GetMapping("/user-api/users")
     ResponseEntity<Page<ResponseUser>> getAllUsers(@RequestParam int page, @RequestParam int size);
 
-    @GetMapping("/user-api/users/bulk/status")
+    @PutMapping("/user-api/users/bulk/status")
     ResponseEntity<Void> bulkUpdateUserStatus();
 }
