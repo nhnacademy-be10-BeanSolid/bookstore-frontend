@@ -49,7 +49,7 @@ public class PaymentController {
 
         model.addAttribute("paymentRequest", dto);
         model.addAttribute("shippingFee", orderResponse.shippingFee());
-        model.addAttribute("currentPoints", userService.getCurrentUserPoints());
+//        model.addAttribute("currentPoints", userService.getCurrentUserPoints());
         return "payments/form";
     }
 
