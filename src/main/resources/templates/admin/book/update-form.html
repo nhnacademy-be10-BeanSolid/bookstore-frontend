@@ -56,7 +56,8 @@
                             <input type="number" name="salePrice" th:value="${book.salePrice}" min="1" required class="form-control" />
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" name="wrappable" th:checked="${book.wrappable}" class="form-check-input" id="wrappable" />
+                            <input type="hidden" name="wrappable" value="false" />
+                            <input type="checkbox" name="wrappable" value="true" th:checked="${book.wrappable}" class="form-check-input" id="wrappable" />
                             <label class="form-check-label" for="wrappable">포장 가능 여부</label>
                         </div>
                         <div class="mb-3">
