@@ -60,15 +60,15 @@ class PaymentControllerTest {
                 3000
         );
 
-//        when(userService.getCurrentUserPoints()).thenReturn(1000L);
+        when(userService.getCurrentUserPoints()).thenReturn(1000L);
 
         mockMvc.perform(get("/payments/form")
                         .flashAttr("orderResponse", orderResponse))
                 .andExpect(status().isOk())
                 .andExpect(view().name("payments/form"))
                 .andExpect(model().attributeExists("paymentRequest"))
-                .andExpect(model().attribute("shippingFee", 3000));
-//                .andExpect(model().attribute("currentPoints", 1000L));
+                .andExpect(model().attribute("shippingFee", 3000))
+                .andExpect(model().attribute("currentPoints", 1000L));
     }
 
     @Test
