@@ -1,10 +1,11 @@
 package com.nhnacademy.frontend.coupon.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
-import com.nhnacademy.frontend.common.adapter.UserAdapter;
-import com.nhnacademy.frontend.common.adapter.dto.user.response.ResponseUser;
-import com.nhnacademy.frontend.coupon.domain.UserCouponStatus;
+import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.frontend.coupon.dto.IssueCategoryCouponRequest;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,12 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,56 +27,72 @@ class CouponServiceImplTest {
     @Mock
     private CouponAdapter couponAdapter;
 
-    @Mock
-    private UserAdapter userAdapter;
-
     @InjectMocks
     private CouponServiceImpl couponService;
 
-    @Test
-    void getActiveUserCoupons() {
-        String userId = "testUser";
-        Long userNo = 1L;
+    private UserCouponResponse testUserCouponResponse;
+    private CouponPolicyResponse testCouponPolicyResponse;
 
-        ResponseUser mockUser = new ResponseUser(userNo, "testUser", "password", "nickname", "010-1234-5678", "test@test.com", LocalDate.now(), 1000, false, null, LocalDateTime.now(), null, null);
-        ResponseEntity<ResponseUser> userResponseEntity = ResponseEntity.ok(mockUser);
-
-        UserCouponResponse coupon1 = UserCouponResponse.builder()
+    @BeforeEach
+    void setUp() {
+        testUserCouponResponse = UserCouponResponse.builder()
                 .userCouponId(1L)
-                .userNo(String.valueOf(userNo))
-                .couponPolicyId(1L)
-                .couponName("Coupon1")
+                .couponName("Test User Coupon")
                 .couponDiscountAmount(1000)
-                .issuedAt(LocalDateTime.now())
                 .expiredAt(LocalDateTime.now().plusDays(7))
-                .usedAt(null)
-                .status(UserCouponStatus.ACTIVE)
-                .orderId(null)
                 .build();
 
-        UserCouponResponse coupon2 = UserCouponResponse.builder()
-                .userCouponId(2L)
-                .userNo(String.valueOf(userNo))
-                .couponPolicyId(2L)
-                .couponName("Coupon2")
-                .couponDiscountAmount(10)
-                .issuedAt(LocalDateTime.now())
-                .expiredAt(LocalDateTime.now().plusDays(14))
-                .usedAt(null)
-                .status(UserCouponStatus.ACTIVE)
-                .orderId(null)
+        testCouponPolicyResponse = CouponPolicyResponse.builder()
+                .couponId(1L)
+                .couponName("Test Coupon Policy")
                 .build();
+    }
 
-        List<UserCouponResponse> expectedCoupons = Arrays.asList(coupon1, coupon2);
-        ResponseEntity<List<UserCouponResponse>> couponResponseEntity = ResponseEntity.ok(expectedCoupons);
+    @Test
+    @DisplayName("활성 사용자 쿠폰 조회 - 성공")
+    void getActiveUserCoupons_success() {
+        when(couponAdapter.getActiveUserCoupons(anyLong()))
+                .thenReturn(ResponseEntity.ok(List.of(testUserCouponResponse)));
 
-        when(userAdapter.getUser(userId)).thenReturn(userResponseEntity);
-        when(couponAdapter.getActiveUserCoupons(String.valueOf(userNo))).thenReturn(couponResponseEntity);
+        List<UserCouponResponse> result = couponService.getActiveUserCoupons(1L);
 
-        List<UserCouponResponse> actualCoupons = couponService.getActiveUserCoupons(userId);
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).getUserCouponId()).isEqualTo(1L);
+    }
 
-        assertEquals(expectedCoupons.size(), actualCoupons.size());
-        assertEquals(expectedCoupons.get(0).getCouponName(), actualCoupons.get(0).getCouponName());
-        assertEquals(expectedCoupons.get(1).getCouponName(), actualCoupons.get(1).getCouponName());
+    @Test
+    @DisplayName("사용자에게 쿠폰 발급 - 성공")
+    void issueCouponToUser_success() {
+        when(couponAdapter.issueCouponToUser(anyLong(), anyLong()))
+                .thenReturn(ResponseEntity.ok(testUserCouponResponse));
+
+        UserCouponResponse result = couponService.issueCouponToUser(1L, 1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getUserCouponId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("모든 쿠폰 정책 조회 - 성공")
+    void getAllCouponPolicies_success() {
+        when(couponAdapter.getAllCouponPolicies())
+                .thenReturn(List.of(testCouponPolicyResponse));
+
+        List<CouponPolicyResponse> result = couponService.getAllCouponPolicies();
+
+        assertThat(result).isNotNull().hasSize(1);
+        assertThat(result.get(0).getCouponId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("카테고리 쿠폰 발급 - 성공")
+    void issueCategoryCoupon_success() {
+        when(couponAdapter.issueCategoryCoupon(any(IssueCategoryCouponRequest.class)))
+                .thenReturn(ResponseEntity.ok(testUserCouponResponse));
+
+        UserCouponResponse result = couponService.issueCategoryCoupon(1L, 1L, 10L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getUserCouponId()).isEqualTo(1L);
     }
 }

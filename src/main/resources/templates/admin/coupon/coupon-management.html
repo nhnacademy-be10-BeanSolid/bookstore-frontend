@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+    <title>관리자 쿠폰 관리</title>
+    <style>
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .coupon-table th, .coupon-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .coupon-table th {
+            background-color: #f2f2f2;
+        }
+        .issue-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .issue-button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>관리자 쿠폰 관리</h1>
+
+    <div th:if="${message}" class="message success">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${error}" class="message error">
+        <p th:text="${error}"></p>
+    </div>
+
+    <table class="coupon-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>쿠폰 이름</th>
+            <th>할인 유형</th>
+            <th>할인 금액/비율</th>
+            <th>최소 주문 금액</th>
+            <th>최대 할인 금액</th>
+            <th>적용 범위</th>
+            <th>만료일</th>
+            <th>발급 기간</th>
+            <th>쿠폰 유형</th>
+            <th>생성일</th>
+            <th>전체 발급</th>
+            <th>도서 선택 발급</th>
+            <th>사용자에게 발급</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="policy : ${couponPolicies}">
+            <td th:text="${policy.couponId}"></td>
+            <td th:text="${policy.couponName}"></td>
+            <td th:text="${policy.couponDiscountType}"></td>
+            <td th:text="${policy.couponDiscountAmount}"></td>
+            <td th:text="${policy.couponMinimumOrderAmount}"></td>
+            <td th:text="${policy.couponMaximumDiscountAmount}"></td>
+            <td th:text="${policy.couponScope}"></td>
+            <td th:text="${policy.couponExpiredAt}"></td>
+            <td th:text="${policy.couponIssuePeriod}"></td>
+            <td th:text="${policy.couponType}"></td>
+            <td th:text="${policy.couponCreatedAt}"></td>
+            <td>
+                <form th:action="@{/admin/coupons/issue-all/{couponPolicyId}(couponPolicyId=${policy.couponId})}" method="post">
+                    <button type="submit" class="issue-button">전체 발급</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/admin/coupons/issue-book(couponPolicyId=${policy.couponId})}" method="post">
+                    <select name="bookId" class="form-select" required>
+                        <option value="">도서 선택</option>
+                        <option th:each="book : ${books}" th:value="${book.id}" th:text="${book.title}"></option>
+                    </select>
+                    <button type="submit" class="issue-button mt-2">도서 쿠폰 발급</button>
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/admin/coupons/issue-to-user(couponPolicyId=${policy.couponId})}" method="post">
+                    <input type="number" name="userNo" placeholder="사용자 ID" required class="form-control mb-2"/>
+                    <button type="submit" class="issue-button">사용자에게 발급</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

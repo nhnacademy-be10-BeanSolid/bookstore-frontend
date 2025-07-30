@@ -114,6 +114,29 @@
       });
     </script>
 
+    <!-- 도서 관련 쿠폰 발급 -->
+    <div class="mt-4">
+        <h5>이 도서에 적용 가능한 쿠폰</h5>
+        <div th:if="${bookCoupons.isEmpty()}">
+            <p>현재 이 도서에 적용 가능한 쿠폰이 없습니다.</p>
+        </div>
+        <div th:each="coupon : ${bookCoupons}" class="card mb-2">
+            <div class="card-body">
+                <h6 class="card-title" th:text="${coupon.couponName}">쿠폰 이름</h6>
+                <p class="card-text">
+                    <span th:text="${coupon.couponDiscountType == T(com.nhnacademy.frontend.coupon.domain.CouponDiscountType).AMOUNT ? coupon.couponDiscountAmount + '원 할인' : coupon.couponDiscountAmount + '% 할인'}"></span>
+                    <span th:if="${coupon.couponMaximumDiscountAmount != null}"> (최대 <span th:text="${coupon.couponMaximumDiscountAmount}"></span>원 할인)</span>
+                    <span th:if="${coupon.couponMinimumOrderAmount != null}"> (<span th:text="${coupon.couponMinimumOrderAmount}"></span>원 이상 구매 시)</span>
+                </p>
+                <form th:action="@{/books/issue-coupon}" method="post">
+                    <input type="hidden" name="couponPolicyId" th:value="${coupon.couponId}" />
+                    <input type="hidden" name="bookId" th:value="${book.id}" />
+                    <button type="submit" class="btn btn-sm btn-info">쿠폰 발급받기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- 수량 반영 스크립트 -->
     <script th:inline="javascript">
       function updateQuantities() {

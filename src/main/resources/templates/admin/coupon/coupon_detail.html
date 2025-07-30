@@ -1,0 +1,84 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+<head>
+    <title>쿠폰 정책 상세</title>
+    <style layout:fragment="css">
+        /* 추가적인 CSS가 필요하면 여기에 작성 */
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <h1 class="mb-4">쿠폰 정책 상세</h1>
+
+        <div th:if="${couponPolicy}" class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" th:text="${couponPolicy.couponName}"></h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <label class="fw-bold">쿠폰 ID:</label>
+                        <span th:text="${couponPolicy.couponId}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">할인 유형:</label>
+                        <span th:text="${couponPolicy.couponDiscountType}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">할인 금액:</label>
+                        <span th:text="${couponPolicy.couponDiscountAmount}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">최소 주문 금액:</label>
+                        <span th:text="${couponPolicy.couponMinimumOrderAmount}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">최대 할인 금액:</label>
+                        <span th:text="${couponPolicy.couponMaximumDiscountAmount}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">쿠폰 적용 범위:</label>
+                        <span th:text="${couponPolicy.couponScope}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">만료일:</label>
+                        <span th:text="${couponPolicy.couponExpiredAt}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">발급 기간 (일):</label>
+                        <span th:text="${couponPolicy.couponIssuePeriod}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">쿠폰 유형:</label>
+                        <span th:text="${couponPolicy.couponType}"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="fw-bold">생성일:</label>
+                        <span th:text="${couponPolicy.couponCreatedAt}"></span>
+                    </li>
+                    <li class="list-group-item" th:if="${couponPolicy.couponScope == 'BOOK'}">
+                        <label class="fw-bold">적용 도서 ID:</label>
+                        <span th:text="${couponPolicy.bookIds}"></span>
+                    </li>
+                    <li class="list-group-item" th:if="${couponPolicy.couponScope == 'CATEGORY'}">
+                        <label class="fw-bold">적용 카테고리 ID:</label>
+                        <span th:text="${couponPolicy.categoryIds}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:unless="${couponPolicy}" class="alert alert-warning mt-4" role="alert">
+            쿠폰 정책을 찾을 수 없습니다.
+        </div>
+
+        <div class="mt-4">
+            <a th:href="@{/admin/coupons}" class="btn btn-secondary">목록으로 돌아가기</a>
+            <form th:action="@{/admin/coupons/{id}/delete(id=${couponPolicy.couponId})}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('정말로 이 쿠폰 정책을 삭제하시겠습니까?');">삭제</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

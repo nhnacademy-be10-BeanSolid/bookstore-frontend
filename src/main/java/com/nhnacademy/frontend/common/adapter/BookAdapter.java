@@ -144,6 +144,9 @@ public interface BookAdapter {
     @GetMapping("/book-api/users")
     ResponseEntity<Page<BookLikeResponse>> getBookLikes(Pageable pageable);
 
+    @GetMapping("/book-api/books")
+    Page<BookResponse> getAllBooks(Pageable pageable);
+
     // 카테고리 이름으로 아이디 반환
     @GetMapping("/book-api/categories/id")
     Long getCategoryIdByName(@RequestParam("name") String categoryName);

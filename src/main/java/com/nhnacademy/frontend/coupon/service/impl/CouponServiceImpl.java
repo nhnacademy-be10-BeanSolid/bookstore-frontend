@@ -1,9 +1,10 @@
 package com.nhnacademy.frontend.coupon.service.impl;
 
 import com.nhnacademy.frontend.common.adapter.CouponAdapter;
+import com.nhnacademy.frontend.coupon.dto.CouponPolicyResponse;
+import com.nhnacademy.frontend.coupon.dto.IssueCategoryCouponRequest;
 import com.nhnacademy.frontend.coupon.dto.UserCouponResponse;
 import com.nhnacademy.frontend.coupon.service.CouponService;
-import com.nhnacademy.frontend.common.adapter.UserAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,30 @@ import java.util.List;
 public class CouponServiceImpl implements CouponService {
 
     private final CouponAdapter couponAdapter;
-    private final UserAdapter userAdapter;
 
     @Override
-    public List<UserCouponResponse> getActiveUserCoupons(String userId) {
-        // userId를 userNo로 변환
-        Long userNo = userAdapter.getUser(userId).getBody().getUserNo();
-        log.info("CouponServiceImpl: userNo received from UserAdapter: {}", userNo);
-        return couponAdapter.getActiveUserCoupons(String.valueOf(userNo)).getBody();
+    public List<UserCouponResponse> getActiveUserCoupons(Long userNo) {
+        return couponAdapter.getActiveUserCoupons(userNo).getBody();
+    }
+
+    @Override
+    public UserCouponResponse issueCouponToUser(Long userNo, Long couponPolicyId) {
+        return couponAdapter.issueCouponToUser(userNo, couponPolicyId).getBody();
+    }
+
+    @Override
+    public List<CouponPolicyResponse> getAllCouponPolicies() {
+        return couponAdapter.getAllCouponPolicies();
+    }
+
+    @Override
+    public UserCouponResponse issueCategoryCoupon(Long userNo, Long couponPolicyId, Long categoryId) {
+        return couponAdapter.issueCategoryCoupon(
+                IssueCategoryCouponRequest.builder()
+                        .userId(userNo)
+                        .couponPolicyId(couponPolicyId)
+                        .categoryId(categoryId)
+                        .build()
+        ).getBody();
     }
 }
