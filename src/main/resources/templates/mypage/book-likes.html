@@ -3,19 +3,24 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>좋아요한 도서 목록</title>
+    
+    <title layout:fragment="title">좋아요한 도서 목록</title>
 </head>
-<body>
-<div layout:fragment="content" class="container my-5">
-    <h1 class="mb-4 text-center">좋아요한 도서</h1>
 
-    <div th:if="${bookLikes == null or #lists.isEmpty(bookLikes.content)}">
-        <p class="text-center">좋아요한 도서가 없습니다.</p>
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-4">
+        <h1 class="h2 fw-bold">좋아요한 도서</h1>
+        <hr>
+    </div>
+
+    
+
+    <div th:if="${bookLikes == null or #lists.isEmpty(bookLikes.content)}" class="alert alert-info text-center" role="alert">
+        좋아요한 도서가 없습니다.
     </div>
 
     <div th:unless="${bookLikes == null or #lists.isEmpty(bookLikes.content)}" class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-bordered table-hover align-middle">
             <thead class="table-light text-center">
             <tr>
                 <th scope="col" style="width: 60%;">책 제목</th>
@@ -57,6 +62,12 @@
             </li>
         </ul>
     </nav>
+
+    <div class="d-flex justify-content-end mt-3">
+        <a th:href="@{/mypage}" class="btn btn-outline-secondary">
+            마이페이지로 돌아가기
+        </a>
+    </div>
 </div>
-</body>
+
 </html>

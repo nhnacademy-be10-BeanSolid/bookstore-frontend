@@ -1,117 +1,89 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-  <meta charset="UTF-8">
-  <title th:text="'책 상세 - ' + ${book.title}">책 상세</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title layout:fragment="title" th:text="${book.title} + ' - 도서 상세 정보'"></title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.css" />
 </head>
-<body>
-<div class="container my-5" style="max-width: 900px;">
-  <h1 class="mb-4" th:text="'책 상세 정보: ' + ${book.title}">책 상세 정보</h1>
 
-  <table class="table table-bordered align-middle">
-    <tbody>
-    <tr>
-      <th class="table-secondary" style="width: 140px;">아이디</th>
-      <td th:text="${book.id}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">책 표지</th>
-      <td>
-        <img th:src="${book.image}" alt="책 표지" class="img-thumbnail" style="max-width: 200px; max-height: 300px;" />
-      </td>
-    </tr>
-    <tr>
-      <th class="table-secondary">제목</th>
-      <td th:text="${book.title}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">목차</th>
-      <td th:text="${book.toc}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">설명</th>
-      <td th:utext="${book.description}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">저자</th>
-      <td th:text="${book.author}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">출판사</th>
-      <td th:text="${book.publisher}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">출판일</th>
-      <td th:text="${book.publishAt}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">ISBN</th>
-      <td th:text="${book.isbn}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">원가</th>
-      <td th:text="${book.originalPrice} + '원'"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">판매가</th>
-      <td th:text="${book.salePrice} + '원'"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">포장 여부</th>
-      <td th:text="${book.wrappable ? '가능' : '불가능'}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">재고</th>
-      <td th:text="${book.stock} + ' 권'"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">책 상태</th>
-      <td th:text="${book.status}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">등록일</th>
-      <td th:text="${book.createAt}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">수정일</th>
-      <td th:text="${book.updateAt}"></td>
-    </tr>
-    <tr>
-      <th class="table-secondary">카테고리</th>
-      <td>
-        <ul class="list-inline mb-0">
-          <li class="list-inline-item badge bg-primary"
-              th:each="category : ${book.bookCategories}"
-              th:text="${category.categoryName}"></li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <th class="table-secondary">태그</th>
-      <td>
-        <ul class="list-inline mb-0">
-          <li class="list-inline-item badge bg-info text-dark"
-              th:each="tag : ${book.bookTags}"
-              th:text="${tag.tagName}"></li>
-        </ul>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-5">
+        <h1 class="h2 fw-bold" th:text="${book.title}"></h1>
+        <p class="text-muted">도서 상세 정보</p>
+        <hr>
+    </div>
 
-  <div class="d-flex gap-2 my-4">
-    <a th:href="@{/admin/books/{id}/edit(id=${book.id})}" class="btn btn-warning">수정</a>
-    <form th:action="@{/admin/books/{id}(id=${book.id})}" method="post"
-          th:onsubmit="return confirm('정말 삭제하시겠습니까?');" class="d-inline">
-      <input type="hidden" name="_method" value="delete" />
-      <button type="submit" class="btn btn-danger">삭제</button>
-    </form>
-    <a href="/admin/books" class="btn btn-secondary">책 목록으로</a>
-  </div>
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <div class="col-md-4 text-center">
+                    <img th:src="${book.image}" alt="책 표지" class="img-fluid rounded shadow-sm" style="max-height: 400px;">
+                </div>
+                <div class="col-md-8">
+                    <h3 class="card-title mb-3" th:text="${book.title}"></h3>
+                    <p class="card-text text-muted" th:text="${book.author} + ' / ' + ${book.publisher}"></p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+                            <p><strong>출판일:</strong> <span th:text="${book.publishAt}"></span></p>
+                            <p><strong>정가:</strong> <span th:text="${#numbers.formatInteger(book.originalPrice, 3, 'COMMA')} + '원'"></span></p>
+                            <p><strong>판매가:</strong> <span class="text-danger fw-bold" th:text="${#numbers.formatInteger(book.salePrice, 3, 'COMMA')} + '원'"></span></p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>재고:</strong> <span th:text="${book.stock} + ' 권'"></span></p>
+                            <p><strong>포장:</strong> <span th:text="${book.wrappable ? '가능' : '불가능'}"></span></p>
+                            <p><strong>상태:</strong> <span class="badge bg-success" th:text="${book.status}"></span></p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <strong>카테고리:</strong>
+                        <span th:each="category : ${book.bookCategories}" class="badge bg-primary me-1" th:text="${category.categoryName}"></span>
+                    </div>
+                    <div class="mt-2">
+                        <strong>태그:</strong>
+                        <span th:each="tag : ${book.bookTags}" class="badge bg-info text-dark me-1" th:text="${tag.tagName}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div>
+                <h4 class="mb-3">목차</h4>
+                <div class="p-3 bg-light rounded" th:text="${book.toc}" style="white-space: pre-wrap;"></div>
+            </div>
+
+            <div class="mt-4">
+                <h4 class="mb-3">설명</h4>
+                <div id="viewer"></div>
+                <div id="hiddenDescription" th:utext="${book.description}" style="display: none;"></div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a th:href="@{/admin/books/{id}/edit(id=${book.id})}" class="btn btn-outline-primary">수정</a>
+                <form th:action="@{/admin/books/{id}(id=${book.id})}" method="post" th:onsubmit="return confirm('정말 삭제하시겠습니까?');" class="d-inline">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button type="submit" class="btn btn-outline-danger">삭제</button>
+                </form>
+                <a href="/admin/books" class="btn btn-secondary">목록으로</a>
+            </div>
+        </div>
+    </div>
 </div>
-<!-- Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+
+<div layout:fragment="scripts">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const descriptionContent = document.getElementById('hiddenDescription').innerHTML;
+        const viewer = toastui.Editor.factory({
+            el: document.querySelector('#viewer'),
+            viewer: true,
+            initialValue: descriptionContent
+        });
+        /*]]>*/
+    </script>
+</div>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<head>
+  <title layout:fragment="title">태그 생성</title>
+</head>
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+  <div class="text-center mb-5">
+    <h2 class="h2 fw-bold">태그 생성</h2>
+    <hr>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <form th:action="@{/admin/tags}" th:object="${request}" method="post" id="createTagForm">
+            <div class="mb-3">
+              <label for="tagName" class="form-label">태그 이름</label>
+              <input type="text" class="form-control" th:field="*{tagName}" id="tagName" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">생성</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

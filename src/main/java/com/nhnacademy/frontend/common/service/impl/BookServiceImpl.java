@@ -3,6 +3,7 @@ package com.nhnacademy.frontend.common.service.impl;
 import com.nhnacademy.frontend.common.adapter.BookAdapter;
 import com.nhnacademy.frontend.common.adapter.dto.book.request.*;
 import com.nhnacademy.frontend.common.adapter.dto.book.response.*;
+import com.nhnacademy.frontend.common.adapter.dto.book.response.BookSearchResponseDto;
 import com.nhnacademy.frontend.common.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +100,6 @@ public class BookServiceImpl implements BookService {
         return bookAdapter.getBooks(categoryId, pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 
-
     @Override
     public BookDetailResponseDto getBookDetail(Long bookId) {
         log.info("BookDetail Get Start : {}", bookId);
@@ -119,9 +119,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookSearchResponseDto searchNaverBooks(String query, Integer start) {
-        log.info("Search Start - query: {}, start: {}", query, start);
-        return bookAdapter.searchBooks(query, start);
+    public BookSearchResponseDto getBookSearchResponseDto(String query, Integer start, Integer maxResults) {
+        return bookAdapter.searchAladinBooks(query, start, maxResults);
     }
 
     @Override

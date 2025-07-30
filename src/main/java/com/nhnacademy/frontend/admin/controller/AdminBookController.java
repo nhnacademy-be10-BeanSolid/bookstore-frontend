@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,11 +54,11 @@ public class AdminBookController {
 
     // 도서 리스트
     @GetMapping
-    public String getBookList(Pageable pageable, Model model) {
+    public String getBookList(@PageableDefault Pageable pageable, Model model) {
         Page<SimpleBookResponseDto> bookList = bookService.getAllBooks(pageable);
         List<CouponPolicyResponse> couponPolicies = couponAdapter.getAllCouponPolicies();
         log.info("BookListGet Success- page : {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        model.addAttribute("books", bookList.getContent());
+        model.addAttribute("books", bookList);
         model.addAttribute("page", bookList);
         model.addAttribute("couponPolicies", couponPolicies);
         return "admin/book/book-list";

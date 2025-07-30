@@ -1,66 +1,57 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>내 정보</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-        .info-container {
-            max-width: 500px;
-            margin: auto;
-        }
-        .info-item {
-            margin-bottom: 15px;
-        }
-        .label {
-            font-weight: bold;
-        }
-    </style>
+    <title layout:fragment="title">내 정보</title>
 </head>
-<body>
-<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-<div class="info-container">
-    <h1>내 정보</h1>
 
-    <div class="info-item">
-        <span class="label">아이디:</span>
-        <span th:text="${user.userId}">userId</span>
+<div layout:fragment="content" class="container py-5 flex-grow-1">
+    <div class="text-center mb-4">
+        <h1 class="h2 fw-bold">내 정보</h1>
+        <hr>
     </div>
-    <div class="info-item">
-        <span class="label">이름:</span>
-        <span th:text="${user.userName}">userName</span>
+
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">회원 정보 상세</h5>
+            <dl class="row">
+                <dt class="col-sm-4">아이디:</dt>
+                <dd class="col-sm-8" th:text="${user.userId}"></dd>
+
+                <dt class="col-sm-4">이름:</dt>
+                <dd class="col-sm-8" th:text="${user.userName}"></dd>
+
+                <dt class="col-sm-4">전화번호:</dt>
+                <dd class="col-sm-8" th:text="${user.userPhoneNumber}"></dd>
+
+                <dt class="col-sm-4">이메일:</dt>
+                <dd class="col-sm-8" th:text="${user.userEmail}"></dd>
+
+                <dt class="col-sm-4">생년월일:</dt>
+                <dd class="col-sm-8" th:text="${user.userBirth}"></dd>
+
+                <dt class="col-sm-4">포인트:</dt>
+                <dd class="col-sm-8" th:text="${user.userPoint}"></dd>
+
+                <dt class="col-sm-4">마지막 로그인:</dt>
+                <dd class="col-sm-8" th:text="${#strings.replace(user.lastLoginAt, 'T', ' ')}"></dd>
+
+                <dt class="col-sm-4">내 등급:</dt>
+                <dd class="col-sm-8" th:text="${user.userGradeName}"></dd>
+            </dl>
+        </div>
     </div>
-    <div class="info-item">
-        <span class="label">전화번호:</span>
-        <span th:text="${user.userPhoneNumber}">userPhoneNumber</span>
-    </div>
-    <div class="info-item">
-        <span class="label">이메일:</span>
-        <span th:text="${user.userEmail}">userEmail</span>
-    </div>
-    <div class="info-item">
-        <span class="label">생년월일:</span>
-        <span th:text="${user.userBirth}">userBirth</span>
-    </div>
-    <div class="info-item">
-        <span class="label">포인트:</span>
-        <span th:text="${user.userPoint}">userPoint</span>
-    </div>
-    <div class="info-item">
-        <span class="label">마지막 로그인:</span>
-        <span th:text="${#strings.replace(user.lastLoginAt, 'T', ' ')}">lastLoginAt</span>
-    </div>
-    <div class="info-item">
-        <span class="label">내 등급:</span>
-        <span th:text="${user.userGradeName}">userGradeName</span>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-primary" onclick="location.href='/mypage/edit'">회원정보 수정</button>
+        <button type="button" th:if="${userType == 'LOCAL'}" class="btn btn-secondary" onclick="location.href='/mypage/editpassword'">비밀번호 변경</button>
+        <a th:href="@{/mypage}" class="btn btn-outline-secondary">
+            마이페이지로 돌아가기
+        </a>
     </div>
 </div>
-<div class="info-item">
-    <button onclick="location.href='/mypage/edit'">회원정보 수정</button>
-    <button th:if="${userType == 'LOCAL'}" onclick="location.href='/mypage/editpassword'">비밀번호 변경</button>
-</div>
-</body>
+
 </html>

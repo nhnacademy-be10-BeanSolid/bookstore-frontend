@@ -19,7 +19,7 @@ public class AdminUserController {
     private final AdminService adminService;
 
     @GetMapping()
-    public String userForm(@PageableDefault(size=5) Pageable pageable, Model model) {
+    public String userForm(@PageableDefault Pageable pageable, Model model) {
 
         Page<ResponseUser> users = adminService.getAllUsers(pageable);
 
